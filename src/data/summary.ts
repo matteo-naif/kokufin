@@ -22,6 +22,31 @@ export function shiftMonth(month: string, delta: number): string {
   return `${year}-${String((index % 12) + 1).padStart(2, '0')}`
 }
 
+/** `YYYY-MM` → "Novembre 2026". */
+export function monthLabel(month: string): string {
+  const [y, m] = month.split('-').map(Number)
+  const label = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(new Date(y, m - 1))
+  return label[0].toUpperCase() + label.slice(1)
+}
+
+/** Dalla più recente; a parità di data, l'ultima inserita prima. */
+export function newestFirst(txs: Transaction[]): Transaction[] {
+  return [...txs].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)
+}
+
+/** Ideale del bucket in centesimi: percentuale × entrate del mese. */
+export function idealCents(pct: number, incomeCents: number): number {
+  return Math.round((pct * incomeCents) / 100)
+}
+
+export type BucketStatus = 'onTrack' | 'overCap' | 'goalReached' | 'belowGoal'
+
+/** Essenziali e Piacere hanno un tetto; Risparmi un obiettivo. */
+export function bucketStatus(bucket: Bucket, spent: number, ideal: number): BucketStatus {
+  if (bucket === 'savings') return spent >= ideal ? 'goalReached' : 'belowGoal'
+  return spent <= ideal ? 'onTrack' : 'overCap'
+}
+
 export function inMonth(txs: Transaction[], month: string): Transaction[] {
   return txs.filter((t) => monthOf(t.date) === month)
 }

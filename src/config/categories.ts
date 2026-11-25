@@ -3,6 +3,13 @@
 
 export type Bucket = 'essentials' | 'pleasure' | 'savings'
 
+/** Bucket nell'ordine in cui compaiono, con il nome mostrato all'utente. */
+export const BUCKETS: { id: Bucket; name: string }[] = [
+  { id: 'essentials', name: 'Essenziali' },
+  { id: 'pleasure', name: 'Piacere' },
+  { id: 'savings', name: 'Risparmi' },
+]
+
 export interface Category {
   id: string
   name: string
@@ -38,3 +45,5 @@ export const INCOME_CATEGORIES: Category[] = [
   { id: 'extra', name: 'Entrate extra' },
   { id: 'refunds', name: 'Rimborsi' },
 ]
+
+export const CATEGORY_NAME = new Map([...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].map((c) => [c.id, c.name]))

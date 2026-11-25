@@ -14,7 +14,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 ## 3. Schermate
 
 - [x] 3.1 Schermata "Aggiungi / modifica transazione" (`specs/transactions`)
-- [ ] 3.2 Schermata mese: barre, stati, elenco movimenti, navigazione tra mesi (`specs/monthly-overview`)
+- [x] 3.2 Schermata mese: barre, stati, elenco movimenti, navigazione tra mesi (`specs/monthly-overview`)
 - [ ] 3.3 Schermata ripartizione per categoria: barre orizzontali ordinate, con etichette dirette e titolo con il messaggio, secondo `specs/category-breakdown` e le "Regole per i grafici" di `design.md`
 - [ ] 3.4 Impostazioni (percentuali) (`specs/settings`)
 - [ ] 3.5 Backup JSON, esporta e importa (`specs/backup`)

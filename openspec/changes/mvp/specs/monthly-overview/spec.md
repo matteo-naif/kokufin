@@ -11,6 +11,10 @@ Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barr
 - **WHEN** l'utente usa le frecce
 - **THEN** la schermata mostra i dati del mese scelto, senza limiti sul passato
 
+#### Scenario: Ritorno al mese corrente
+- **WHEN** il mese mostrato non è quello corrente
+- **THEN** accanto alle frecce compare il pulsante "Mese corrente", che riporta al mese corrente
+
 #### Scenario: Bucket sopra il tetto
 - **WHEN** lo speso di Essenziali o Piacere supera l'ideale
 - **THEN** la barra mostra l'etichetta "Sopra il tetto" con la sua icona

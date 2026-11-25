@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
-import { categoryTotals, inMonth, monthOf, monthTotals, shiftMonth, today } from '@/data/summary'
+import {
+  bucketStatus,
+  categoryTotals,
+  idealCents,
+  inMonth,
+  monthLabel,
+  monthOf,
+  monthTotals,
+  newestFirst,
+  shiftMonth,
+  today,
+} from '@/data/summary'
 
 let nextId = 1
 function tx(date: string, amountCents: number, categoryId: string, kind: Transaction['kind'] = 'expense'): Transaction {
@@ -31,6 +42,40 @@ describe('mese', () => {
     const c = tx('2026-10-31', 100, 'groceries')
     const d = tx('2026-12-01', 100, 'groceries')
     expect(inMonth([a, b, c, d], '2026-11')).toEqual([a, b])
+  })
+})
+
+describe('monthLabel', () => {
+  it('mostra mese e anno in italiano con l\'iniziale maiuscola', () => {
+    expect(monthLabel('2026-11')).toBe('Novembre 2026')
+    expect(monthLabel('2027-01')).toBe('Gennaio 2027')
+  })
+})
+
+describe('newestFirst', () => {
+  it('ordina dalla più recente, a parità di data per inserimento', () => {
+    const a = tx('2026-11-02', 100, 'groceries')
+    const b = tx('2026-11-20', 100, 'groceries')
+    const c = tx('2026-11-02', 100, 'groceries')
+    expect(newestFirst([a, b, c])).toEqual([b, c, a])
+  })
+})
+
+describe('idealCents e bucketStatus', () => {
+  it('ideale = percentuale × entrate', () => {
+    expect(idealCents(30, 200000)).toBe(60000)
+    expect(idealCents(33, 1001)).toBe(330)
+    expect(idealCents(50, 0)).toBe(0)
+  })
+
+  it('Essenziali e Piacere: in linea fino all\'ideale, poi sopra il tetto', () => {
+    expect(bucketStatus('essentials', 60000, 60000)).toBe('onTrack')
+    expect(bucketStatus('pleasure', 60001, 60000)).toBe('overCap')
+  })
+
+  it('Risparmi: obiettivo raggiunto da ideale in su, altrimenti sotto', () => {
+    expect(bucketStatus('savings', 100000, 100000)).toBe('goalReached')
+    expect(bucketStatus('savings', 99999, 100000)).toBe('belowGoal')
   })
 })
 
