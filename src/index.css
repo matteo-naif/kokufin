@@ -1,0 +1,34 @@
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
+@import '@fontsource/work-sans/400.css';
+@import '@fontsource/work-sans/600.css';
+@import 'tailwindcss';
+
+/* Token del design system: vedi openspec/changes/mvp/design.md */
+@theme {
+  --font-heading: 'Space Mono', monospace;
+  --font-sans: 'Work Sans', sans-serif;
+
+  --color-primary: #5c3a21;
+  --color-chart-strong: #5c3a21;
+  --color-chart-soft: #b07c52;
+
+  --color-bg: #ffffff;
+  --color-surface: #f7f3ee;
+  --color-separator: #e6dfd6;
+  --color-border: #857768;
+  --color-text: #1f1a16;
+  --color-text-secondary: #5a5148;
+}
+
+@layer base {
+  body {
+    @apply bg-bg font-sans text-text;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
+  }
+}

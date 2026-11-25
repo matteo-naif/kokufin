@@ -2,9 +2,9 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 
 ## 1. Progetto
 
-- [ ] 1.1 Creare il progetto `kokufin` con Vite + React + TypeScript + Tailwind
-- [ ] 1.2 Aggiungere i font (`@fontsource/space-mono`, `@fontsource/work-sans`) e i token del design system
-- [ ] 1.3 Aggiungere `eslint-plugin-jsx-a11y` al lint e `lang="it"` al documento
+- [x] 1.1 Creare il progetto `kokufin` con Vite + React + TypeScript + Tailwind
+- [x] 1.2 Aggiungere i font (`@fontsource/space-mono`, `@fontsource/work-sans`) e i token del design system
+- [x] 1.3 Attivare il plugin `jsx-a11y` di oxlint nel lint e `lang="it"` al documento
 
 ## 2. Dati
 
@@ -28,7 +28,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 
 - [ ] 5.1 Ogni scenario delle spec passa (test o controllo manuale descritto)
 - [ ] 5.2 Uso con tastiera numerica su telefono
-- [ ] 5.3 Nessuna violazione del lint `jsx-a11y` e della scansione `axe` su ogni schermata
+- [ ] 5.3 Nessuna violazione del lint `jsx-a11y` (oxlint) e della scansione `axe` su ogni schermata
 - [ ] 5.4 Contrasti misurati con uno strumento (testo 4,5:1, componenti e grafici 3:1)
 - [ ] 5.5 Navigazione completa solo con tastiera, con focus visibile
 - [ ] 5.6 Prova manuale con TalkBack su telefono, su tutte le schermate
