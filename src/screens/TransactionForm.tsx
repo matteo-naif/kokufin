@@ -3,6 +3,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Field from '@/components/Field'
+import ScreenHeader from '@/components/ScreenHeader'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
@@ -11,7 +12,8 @@ import { today } from '@/data/summary'
 
 interface Props {
   transaction?: Transaction // assente = nuova transazione
-  onDone: () => void
+  onDone: () => void // dopo Salva o Elimina
+  onBack: () => void
 }
 
 interface FormValues {
@@ -27,7 +29,7 @@ const KINDS = [
   { value: 'income', label: 'Entrata' },
 ] as const
 
-export default function TransactionForm({ transaction, onDone }: Props) {
+export default function TransactionForm({ transaction, onDone, onBack }: Props) {
   const {
     register,
     handleSubmit,
@@ -64,7 +66,7 @@ export default function TransactionForm({ transaction, onDone }: Props) {
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-6 p-4">
-      <h1 className="text-2xl font-bold">{transaction ? 'Modifica transazione' : 'Nuova transazione'}</h1>
+      <ScreenHeader title={transaction ? 'Modifica transazione' : 'Nuova transazione'} onBack={onBack} />
 
       {/* Il focus sul primo campo non valido lo sposta react-hook-form (shouldFocusError) */}
       <form onSubmit={handleSubmit(save)} noValidate className="flex flex-col gap-6">
@@ -139,9 +141,6 @@ export default function TransactionForm({ transaction, onDone }: Props) {
         <div className="flex flex-wrap gap-3">
           <button type="submit" className={primaryButtonClass}>
             Salva
-          </button>
-          <button type="button" onClick={onDone} className={secondaryButtonClass}>
-            Annulla
           </button>
           {transaction && (
             <button ref={deleteRef} type="button" onClick={() => setConfirming(true)} className={`${secondaryButtonClass} ml-auto`}>

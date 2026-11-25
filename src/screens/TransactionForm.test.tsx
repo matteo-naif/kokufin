@@ -33,16 +33,32 @@ afterEach(() => {
 
 function setup(transaction?: Transaction) {
   const onDone = vi.fn()
+  const onBack = vi.fn()
   render(
     <>
-      <TransactionForm transaction={transaction} onDone={onDone} />
+      <TransactionForm transaction={transaction} onDone={onDone} onBack={onBack} />
       <Toaster />
     </>,
   )
-  return { user: userEvent.setup(), onDone }
+  return { user: userEvent.setup(), onDone, onBack }
 }
 
 describe('TransactionForm', () => {
+  // Spec navigation, requisito "Freccia indietro"
+  it('ha la freccia Indietro accanto al titolo, che esce senza salvare; non c\'è il pulsante Annulla', async () => {
+    const { user, onDone, onBack } = setup()
+    expect(screen.queryByRole('button', { name: 'Annulla' })).toBeNull()
+    await user.type(screen.getByLabelText('Importo (€)'), '12,50')
+    const back = screen.getByRole('button', { name: 'Indietro' })
+    expect(back.className).toContain('size-11')
+    expect(back.querySelector('svg')!.getAttribute('aria-hidden')).toBe('true')
+    await user.click(back)
+
+    expect(onBack).toHaveBeenCalled()
+    expect(onDone).not.toHaveBeenCalled()
+    expect(await db.transactions.count()).toBe(0)
+  })
+
   it('salva una spesa con la data di oggi', async () => {
     const { user, onDone } = setup()
     await user.type(screen.getByLabelText('Importo (€)'), '12,50')

@@ -17,14 +17,16 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [x] 3.2 Schermata mese: barre, stati, elenco movimenti, navigazione tra mesi (`specs/monthly-overview`)
 - [x] 3.3 Schermata ripartizione per categoria: barre orizzontali ordinate, con etichette dirette e titolo con il messaggio, secondo `specs/category-breakdown` e le "Regole per i grafici" di `design.md`
 - [x] 3.4 Impostazioni: percentuali (`specs/settings`) e interruttore "Suoni" (`specs/sounds`)
-- [ ] 3.5 Backup JSON, esporta e importa (`specs/backup`)
-- [ ] 3.6 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
-- [x] 3.7 Routing con wouter (indirizzi `#/`) e ritorno al mese con il tasto Indietro (`specs/navigation`)
+- [x] 3.5 Backup JSON, esporta e importa (`specs/backup`)
+- [x] 3.6 Routing con wouter (indirizzi `#/`) e ritorno al mese con il tasto Indietro (`specs/navigation`)
+- [x] 3.7 Impostazioni come indice con le sezioni Preferenze e Backup, ognuna con il proprio indirizzo (`specs/settings`, `specs/navigation`)
+- [x] 3.8 Freccia indietro nell'intestazione delle viste secondarie al posto dei pulsanti Annulla (`specs/navigation`)
 
 ## 4. Android
 
 - [ ] 4.1 Aggiungere Capacitor Android con `appName` "Kokufin" e `appId` `it.matteonaif.kokufin`
-- [ ] 4.2 Generare l'APK di debug
+- [ ] 4.2 Backup nell'APK (`specs/backup`): la WebView non supporta `navigator.share` con file né `<a download>`, quindi nell'app nativa (`Capacitor.isNativePlatform()`) "Esporta" scrive il JSON nella cache con `@capacitor/filesystem` e lo passa al foglio di condivisione con `@capacitor/share`. Nel browser resta il comportamento attuale. Verificare sul telefono che "Esporta" proponga di salvare o condividere il file e che "Importa" apra il selettore di file
+- [ ] 4.3 Generare l'APK di debug
 
 ## 5. Verifica
 
@@ -35,3 +37,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [ ] 5.5 Navigazione completa solo con tastiera, con focus visibile
 - [ ] 5.6 Prova manuale con TalkBack su telefono, su tutte le schermate
 - [ ] 5.7 Carattere al 200% e larghezza 320 px senza perdite di contenuto
+
+## 6. Minori
+
+- [ ] 6.1 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
