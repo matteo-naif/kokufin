@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import ConfirmDialog from '../components/ConfirmDialog'
-import Field from '../components/Field'
-import { inputClass, primaryButtonClass, secondaryButtonClass } from '../components/styles'
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../config/categories'
-import { db, type Transaction } from '../data/db'
-import { centsToInput, parseAmount } from '../data/money'
-import { today } from '../data/summary'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import Field from '@/components/Field'
+import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
+import { db, type Transaction } from '@/data/db'
+import { centsToInput, parseAmount } from '@/data/money'
+import { today } from '@/data/summary'
 
 interface Props {
   transaction?: Transaction // assente = nuova transazione

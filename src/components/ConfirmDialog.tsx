@@ -1,5 +1,5 @@
 import { type RefObject, useEffect, useId, useRef } from 'react'
-import { primaryButtonClass, secondaryButtonClass } from './styles'
+import { primaryButtonClass, secondaryButtonClass } from '@/components/styles'
 
 interface Props {
   open: boolean

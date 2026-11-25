@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Bucket } from '../config/categories'
+import type { Bucket } from '@/config/categories'
 
 export interface Transaction {
   id: number

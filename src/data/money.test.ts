@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { centsToInput, formatCents, parseAmount } from './money'
+import { centsToInput, formatCents, parseAmount } from '@/data/money'
 
 describe('parseAmount', () => {
   it.each([

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from './categories'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
 
 describe('categorie', () => {
   it('hanno id unici tra spese ed entrate', () => {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from './config/categories'
-import { type Transaction, transactionsInMonth } from './data/db'
-import { formatCents } from './data/money'
-import { monthOf, today } from './data/summary'
-import TransactionForm from './screens/TransactionForm'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
+import { type Transaction, transactionsInMonth } from '@/data/db'
+import { formatCents } from '@/data/money'
+import { monthOf, today } from '@/data/summary'
+import TransactionForm from '@/screens/TransactionForm'
 
 const CATEGORY_NAME = new Map([...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].map((c) => [c.id, c.name]))
 

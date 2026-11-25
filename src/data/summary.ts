@@ -1,5 +1,5 @@
-import { type Bucket, EXPENSE_CATEGORIES } from '../config/categories'
-import type { Transaction } from './db'
+import { type Bucket, EXPENSE_CATEGORIES } from '@/config/categories'
+import type { Transaction } from '@/data/db'
 
 const BUCKET_OF = new Map(EXPENSE_CATEGORIES.map((c) => [c.id, c.bucket]))
 

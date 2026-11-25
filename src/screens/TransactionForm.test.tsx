@@ -3,10 +3,10 @@ import 'fake-indexeddb/auto'
 import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '../config/categories'
-import { db, type Transaction } from '../data/db'
-import { today } from '../data/summary'
-import TransactionForm from './TransactionForm'
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
+import { db, type Transaction } from '@/data/db'
+import { today } from '@/data/summary'
+import TransactionForm from '@/screens/TransactionForm'
 
 // jsdom non implementa <dialog>: stub minimo
 beforeAll(() => {
