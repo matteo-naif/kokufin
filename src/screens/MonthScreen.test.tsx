@@ -50,6 +50,12 @@ function bucket(name: string) {
   return within(list).getAllByRole('listitem').find((li) => li.textContent!.startsWith(name))!
 }
 
+/** Barra decorativa del bucket: riempimento e tacca dell'ideale. */
+function bar(name: string) {
+  const [fill, ideal] = bucket(name).querySelectorAll<HTMLElement>('[aria-hidden="true"] > div')
+  return { fill, ideal }
+}
+
 describe('MonthScreen', () => {
   it('ha un solo h1 con il mese, e le regioni main e nav', async () => {
     await setup()
@@ -89,18 +95,27 @@ describe('MonthScreen', () => {
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Mese precedente' }))
   })
 
-  it('Essenziali sopra il tetto: etichetta, icona e testo con speso e ideale', async () => {
+  it('Essenziali entro il tetto: quanto resta e ideale', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income') // ideale Essenziali 30% = 300 €
+    await add('2026-11-02', 20000, 'housing')
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Restano 100,00\u00a0€ su 300,00\u00a0€ ideali'))
+    expect(bucket('Essenziali').textContent).toContain('In linea')
+  })
+
+  it('Essenziali sopra il tetto: etichetta, icona e sforamento sull\'ideale', async () => {
     await add('2026-11-01', 100000, 'salary', 'income') // ideale Essenziali 30% = 300 €
     await add('2026-11-02', 35000, 'housing')
     await setup()
 
     const item = await vi.waitFor(() => {
       const li = bucket('Essenziali')
-      if (!li.textContent!.includes('350,00')) throw new Error('dati non ancora caricati')
+      if (!li.textContent!.includes('oltre il tetto')) throw new Error('dati non ancora caricati')
       return li
     })
     expect(item.textContent).toContain('Sopra il tetto')
-    expect(item.textContent).toContain('350,00 € spesi su 300,00 € ideali')
+    expect(item.textContent).toContain('50,00\u00a0€ oltre il tetto di 300,00\u00a0€')
     expect(item.querySelector('svg[aria-hidden="true"]')).toBeTruthy()
   })
 
@@ -112,7 +127,8 @@ describe('MonthScreen', () => {
 
     await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('1577,00\u00a0€ risparmiati su 900,00\u00a0€ ideali'))
     expect(bucket('Risparmi').textContent).toContain('Obiettivo raggiunto')
-    expect(bucket('Essenziali').textContent).toContain('200,00\u00a0€ spesi')
+    expect(bucket('Risparmi').textContent).not.toContain('Mancano')
+    expect(bucket('Essenziali').textContent).toContain('Restano 340,00\u00a0€ su 540,00\u00a0€ ideali')
   })
 
   it('Risparmi sotto l\'obiettivo', async () => {
@@ -121,7 +137,8 @@ describe('MonthScreen', () => {
     await setup()
 
     await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Sotto l\'obiettivo'))
-    expect(bucket('Risparmi').textContent).toContain('400,00\u00a0€ risparmiati')
+    expect(bucket('Risparmi').textContent).toContain('400,00\u00a0€ risparmiati su 500,00\u00a0€ ideali')
+    expect(bucket('Risparmi').textContent).toContain('Mancano 100,00\u00a0€ all\'obiettivo')
   })
 
   it('Risparmi negativo: segno meno, barra vuota, sotto l\'obiettivo', async () => {
@@ -132,6 +149,27 @@ describe('MonthScreen', () => {
     await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('-20,00\u00a0€ risparmiati'))
     expect(bucket('Risparmi').textContent).toContain('Sotto l\'obiettivo')
     expect(bucket('Risparmi').querySelector<HTMLElement>('[aria-hidden="true"] > div')!.style.width).toBe('0%')
+  })
+
+  it('le barre hanno una sola scala sulle entrate, con la tacca sull\'ideale', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income')
+    await add('2026-11-02', 25000, 'housing')
+    await setup()
+
+    await vi.waitFor(() => expect(bar('Essenziali').fill.style.width).toBe('25%'))
+    expect(bar('Essenziali').ideal.style.left).toBe('30%')
+    expect(bar('Piacere').ideal.style.left).toBe('20%')
+    expect(bar('Risparmi').ideal.style.left).toBe('50%')
+    expect(bar('Risparmi').fill.style.width).toBe('75%')
+  })
+
+  it('spese oltre le entrate: la barra si ferma alla larghezza piena', async () => {
+    await add('2026-11-01', 10000, 'salary', 'income')
+    await add('2026-11-02', 15000, 'housing')
+    await setup()
+
+    await vi.waitFor(() => expect(bar('Essenziali').fill.style.width).toBe('100%'))
+    expect(bucket('Essenziali').textContent).toContain('120,00\u00a0€ oltre il tetto di 30,00\u00a0€')
   })
 
   it('usa le percentuali salvate nelle impostazioni', async () => {

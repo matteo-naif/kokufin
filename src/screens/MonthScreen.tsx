@@ -133,19 +133,39 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                 {BUCKETS.map((b) => {
                   const amount = totals.buckets[b.id] // Risparmi: entrate − spese, può essere negativo
                   const ideal = idealCents(settings.idealPct[b.id], totals.income)
-                  const share = amount <= 0 ? 0 : ideal > 0 ? Math.min(amount / ideal, 1) : 1
+                  // Scala unica per i tre bucket: 100% = entrate del mese
+                  const share = Math.min(Math.max(amount / totals.income, 0), 1)
                   return (
                     <li key={b.id} className="flex flex-col gap-2">
                       <div className="flex flex-wrap items-center justify-between gap-x-4">
                         <span className="font-semibold">{b.name}</span>
                         <Status status={bucketStatus(b.id, amount, ideal)} />
                       </div>
-                      <p>
-                        {formatCents(amount)} {b.id === 'savings' ? 'risparmiati' : 'spesi'} su {formatCents(ideal)} ideali
-                      </p>
-                      {/* Barra decorativa: importo, ideale e stato sono già scritti sopra */}
-                      <div aria-hidden="true" className="h-3 rounded bg-separator">
+                      {b.id === 'savings' ? (
+                        <p>
+                          {formatCents(amount)} risparmiati su {formatCents(ideal)} ideali
+                          {amount < ideal && (
+                            <>
+                              <br />
+                              Mancano {formatCents(ideal - amount)} all'obiettivo
+                            </>
+                          )}
+                        </p>
+                      ) : (
+                        <p>
+                          {amount <= ideal
+                            ? `Restano ${formatCents(ideal - amount)} su ${formatCents(ideal)} ideali`
+                            : `${formatCents(amount - ideal)} oltre il tetto di ${formatCents(ideal)}`}
+                        </p>
+                      )}
+                      {/* Barra decorativa: testo, ideale e stato sono già scritti sopra */}
+                      <div aria-hidden="true" className="relative h-3 rounded bg-separator">
                         <div className="h-full rounded bg-primary" style={{ width: `${share * 100}%` }} />
+                        {/* Tacca dell'ideale: più alta della barra, si vede anche sopra il riempimento */}
+                        <div
+                          className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-text"
+                          style={{ left: `${settings.idealPct[b.id]}%` }}
+                        />
                       </div>
                     </li>
                   )

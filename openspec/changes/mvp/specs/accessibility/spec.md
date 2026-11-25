@@ -69,7 +69,7 @@ Il sistema SHALL esporre nome, ruolo e valore di ogni componente a screen reader
 
 #### Scenario: Barre dei bucket
 - **WHEN** viene mostrata una barra di bucket
-- **THEN** speso, ideale e stato sono disponibili come testo per lo screen reader, non solo come lunghezza della barra
+- **THEN** il testo del bucket (residuo o sforamento per Essenziali e Piacere, risparmio per Risparmi), l'ideale e lo stato sono disponibili come testo per lo screen reader, non solo come lunghezza della barra o posizione della tacca
 
 #### Scenario: Struttura della pagina
 - **WHEN** viene mostrata una schermata
