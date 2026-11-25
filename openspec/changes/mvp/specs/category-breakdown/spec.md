@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Ripartizione per categoria
-Il sistema SHALL mostrare, per il mese selezionato, un grafico a barre orizzontali con la quota di ogni categoria all'interno di un bucket, secondo le "Regole per i grafici" di `design.md`. Ogni riga riporta il nome della categoria, l'importo e la percentuale.
+Il sistema SHALL mostrare, per il mese selezionato, un grafico a barre orizzontali con la quota di ogni categoria all'interno di un bucket di spesa (Essenziali o Piacere), secondo le "Regole per i grafici" di `design.md`. Ogni riga riporta il nome della categoria, l'importo e la percentuale.
 
 #### Scenario: Scelta del bucket
 - **WHEN** l'utente seleziona un bucket

@@ -5,7 +5,7 @@ L'Excel mensile somma solo i totali di entrate, essenziali, piacere e risparmi. 
 ## What Changes
 
 - Nuova app Android chiamata Kokufin, usata da telefono, con dati solo locali.
-- Ogni transazione appartiene a una categoria, e ogni categoria a un bucket: Essenziali, Piacere, Risparmi.
+- Ogni transazione appartiene a una categoria. Le categorie di spesa appartengono a un bucket, Essenziali o Piacere. Il terzo bucket, Risparmi, non si registra: è quello che resta delle entrate dopo le spese Essenziali e Piacere.
 - Gli importi ideali dei bucket si calcolano dalle entrate del mese (default 30% / 20% / 50%).
 - Una sola statistica nella v1: ripartizione per categoria nel mese, in barre orizzontali.
 - L'accessibilità è un requisito fondamentale: ogni schermata rispetta le WCAG 2.2 livello AA (vedi `specs/accessibility`).
@@ -21,6 +21,7 @@ L'Excel mensile somma solo i totali di entrate, essenziali, piacere e risparmi. 
 - `settings`: percentuali ideali dei bucket
 - `backup`: esportazione e ripristino dei dati in JSON
 - `accessibility`: conformità WCAG 2.2 AA
+- `sounds`: suoni al tocco dei pulsanti di azione, disattivabili dalle impostazioni
 
 ## Fuori dalla v1
 
