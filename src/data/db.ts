@@ -13,11 +13,13 @@ export interface Transaction {
 export interface Settings {
   id: 'default'
   idealPct: Record<Bucket, number> // somma 100
+  soundsEnabled: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   id: 'default',
   idealPct: { essentials: 30, pleasure: 20, savings: 50 },
+  soundsEnabled: true,
 }
 
 export const db = new Dexie('kokufin') as Dexie & {

@@ -7,6 +7,10 @@ Il sistema SHALL permettere di registrare entrate e spese con importo, categoria
 - **WHEN** l'utente tocca "+", inserisce l'importo e sceglie una categoria
 - **THEN** la transazione è salvata con la data di oggi e compare nel mese corrente
 
+#### Scenario: Conferma del salvataggio
+- **WHEN** l'utente salva una transazione nuova o modificata
+- **THEN** l'app torna alla schermata del mese e mostra il toast di successo "Transazione salvata", annunciato dallo screen reader
+
 #### Scenario: Importo non valido
 - **WHEN** l'importo è vuoto, zero o negativo
 - **THEN** il salvataggio è bloccato e il campo mostra un messaggio di errore
@@ -21,3 +25,4 @@ Il sistema SHALL permettere di modificare ed eliminare una transazione dall'elen
 #### Scenario: Eliminazione
 - **WHEN** l'utente elimina una transazione e conferma
 - **THEN** la transazione scompare e i totali del mese si aggiornano
+- **AND** compare il toast di successo "Transazione eliminata", annunciato dallo screen reader

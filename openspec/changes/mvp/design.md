@@ -18,6 +18,7 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Vite + React + TypeScript + Tailwind.
 - Dexie (IndexedDB) per i dati locali.
 - react-hook-form per la gestione dei form.
+- sonner per i toast di conferma, con lo stile del design system (classi Tailwind, testi in `rem`). Gli errori di validazione non vanno nei toast: restano scritti accanto ai campi.
 - Barre orizzontali in HTML e CSS per il grafico di ripartizione, con la stessa tecnica delle barre dei bucket. Nessuna libreria di grafici: Recharts non serve più.
 - Capacitor per generare un APK da installare a mano, senza pubblicare online.
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.
@@ -48,6 +49,12 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Tinte del marrone per i grafici: `#5C3A21` (10,09:1 su bianco) e `#B07C52` (3,59:1). Entrambe superano il 3:1 su bianco richiesto per i grafici. Il loro uso è descritto in "Regole per i grafici".
 - Neutri: `#FFFFFF` (sfondo), `#F7F3EE` (superfici), `#E6DFD6` (separatori e fondo delle barre), `#5A5148` (testo secondario: 7,76:1 su bianco, 7,03:1 su `#F7F3EE`, 5,87:1 su `#E6DFD6`), `#1F1A16` (testo principale: 17,25:1 su bianco).
 - `#857768` per i bordi dei campi e dei componenti: 4,34:1 su bianco, 3,93:1 su `#F7F3EE`, 3,29:1 su `#E6DFD6`, quindi supera il 3:1 su tutti gli sfondi della palette. Non si usa per il testo, perché 4,34:1 non raggiunge 4,5:1.
+- Colori semantici, presi dalla palette di Tailwind, per i messaggi all'utente come i toast. Sono l'unica eccezione alla palette monocromatica e non si usano per bucket e grafici. Per ogni significato una tinta 800 per testo, icona e bordo e una tinta 50 per lo sfondo:
+  - Successo `#166534` su `#F0FDF4` (6,81:1; 7,13:1 su bianco).
+  - Errore `#991B1B` su `#FEF2F2` (7,60:1; 8,31:1 su bianco).
+  - Avviso `#92400E` su `#FFFBEB` (6,84:1; 7,09:1 su bianco).
+  - Informazione `#1E40AF` su `#EFF6FF` (8,01:1; 8,72:1 su bianco).
+  Come per gli stati dei bucket, il significato non è affidato al colore: ogni messaggio ha testo e icona.
 - Titoli in Space Mono, testi in Work Sans.
 - Con una sola tinta non si può affidare lo stato al colore. Lo stato di ogni bucket usa sempre un'etichetta di testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Field from '@/components/Field'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
@@ -51,11 +52,13 @@ export default function TransactionForm({ transaction, onDone }: Props) {
     const data = { date, amountCents: parseAmount(amount)!, kind, categoryId, ...(note.trim() && { note: note.trim() }) }
     if (transaction) await db.transactions.put({ id: transaction.id, ...data })
     else await db.transactions.add(data)
+    toast.success('Transazione salvata')
     onDone()
   }
 
   async function remove() {
     await db.transactions.delete(transaction!.id)
+    toast.success('Transazione eliminata')
     onDone()
   }
 
