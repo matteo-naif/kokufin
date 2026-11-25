@@ -23,6 +23,17 @@ Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barr
 - **WHEN** lo speso di Risparmi è inferiore all'ideale
 - **THEN** la barra mostra l'etichetta "Sotto l'obiettivo" con la sua icona
 
+### Requirement: Viste del mese
+Il sistema SHALL mostrare sotto l'intestazione del mese due tab: "Riepilogo", con entrate, barre dei bucket ed elenco movimenti, e "Categorie", con la ripartizione per categoria (`specs/category-breakdown`). Il mese selezionato è lo stesso per entrambi.
+
+#### Scenario: Cambio tab
+- **WHEN** l'utente passa da "Riepilogo" a "Categorie"
+- **THEN** la vista mostra la ripartizione dello stesso mese, e intestazione, frecce e "+" restano visibili
+
+#### Scenario: Tab da tastiera
+- **WHEN** il focus è su un tab e l'utente preme freccia destra o sinistra
+- **THEN** si attiva il tab successivo o precedente, secondo il pattern ARIA dei tab
+
 ### Requirement: Elenco movimenti
 Il sistema SHALL mostrare sotto le barre l'elenco delle transazioni del mese, dalla più recente.
 

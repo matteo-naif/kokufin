@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db, type Transaction } from '@/data/db'
-import MonthScreen from '@/screens/MonthScreen'
+import MonthScreen, { type MonthTab } from '@/screens/MonthScreen'
 
 beforeAll(() => {
   // Solo Date: timer veri per Dexie e user-event
@@ -27,7 +27,8 @@ function add(date: string, amountCents: number, categoryId: string, kind: Transa
 // Il mese selezionato vive nel genitore, come in App
 function Harness({ onOpen = () => {} }: { onOpen?: (tx?: Transaction) => void }) {
   const [month, setMonth] = useState('2026-11')
-  return <MonthScreen month={month} onMonthChange={setMonth} onOpen={onOpen} />
+  const [tab, setTab] = useState<MonthTab>('summary')
+  return <MonthScreen month={month} onMonthChange={setMonth} tab={tab} onTabChange={setTab} onOpen={onOpen} />
 }
 
 async function setup(onOpen?: (tx?: Transaction) => void) {
@@ -134,6 +135,21 @@ describe('MonthScreen', () => {
       'Viaggi',
       'Spesa alimentare',
     ])
+  })
+
+  it('il tab Categorie mostra la ripartizione dello stesso mese, con intestazione e frecce visibili', async () => {
+    await add('2026-10-05', 2500, 'restaurants')
+    const user = await setup()
+    await user.click(screen.getByRole('button', { name: 'Mese precedente' }))
+    await user.click(screen.getByRole('tab', { name: 'Categorie' }))
+    await user.click(screen.getByRole('radio', { name: 'Piacere' }))
+
+    expect(await screen.findByRole('heading', { level: 2, name: 'In Piacere pesa di più Ristoranti: 100%' })).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Ottobre 2026')
+    expect(screen.getByRole('button', { name: 'Aggiungi transazione' })).toBeTruthy()
+
+    await user.click(screen.getByRole('button', { name: 'Mese successivo' }))
+    expect(await screen.findByText('Nessuna spesa in Piacere a Novembre 2026.')).toBeTruthy()
   })
 
   it('"+" apre una nuova transazione e un movimento apre la modifica', async () => {
