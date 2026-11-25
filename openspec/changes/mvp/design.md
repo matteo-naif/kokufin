@@ -25,7 +25,7 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 ## Modello dati
 
 - `Transaction`: `id`, `date` (ISO `YYYY-MM-DD`), `amountCents` (intero, sempre positivo), `kind` (`income` | `expense`), `categoryId`, `note?`.
-- `Settings`: `idealPct` con tre valori (`essentials`, `pleasure`, `savings`) la cui somma è 100. Default 30 / 20 / 50.
+- `Settings`: `idealPct` con tre valori (`essentials`, `pleasure`, `savings`) la cui somma è 100. Default 30 / 20 / 50. `soundsEnabled` (booleano), default `true`.
 - Il mese non è salvato: si ricava dalla data della transazione.
 - I risparmi non si registrano: si calcolano. Risparmi del mese = entrate − spese Essenziali − spese Piacere. Il valore può essere negativo, quando le spese superano le entrate.
 - Le categorie di spesa appartengono solo a Essenziali (`essentials`) o Piacere (`pleasure`).

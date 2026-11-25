@@ -21,6 +21,7 @@ L'Excel mensile somma solo i totali di entrate, essenziali, piacere e risparmi. 
 - `settings`: percentuali ideali dei bucket
 - `backup`: esportazione e ripristino dei dati in JSON
 - `accessibility`: conformità WCAG 2.2 AA
+- `sounds`: suoni al tocco dei pulsanti di azione, disattivabili dalle impostazioni
 
 ## Fuori dalla v1
 
