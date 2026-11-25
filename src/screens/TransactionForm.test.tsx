@@ -2,7 +2,9 @@
 import 'fake-indexeddb/auto'
 import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { toast } from 'sonner'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import Toaster from '@/components/Toaster'
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
 import { today } from '@/data/summary'
@@ -23,11 +25,20 @@ beforeEach(async () => {
   await db.transactions.clear()
 })
 
-afterEach(cleanup)
+// Lo stato dei toast di sonner è globale: senza dismiss un toast passa al test successivo
+afterEach(() => {
+  cleanup()
+  toast.dismiss()
+})
 
 function setup(transaction?: Transaction) {
   const onDone = vi.fn()
-  render(<TransactionForm transaction={transaction} onDone={onDone} />)
+  render(
+    <>
+      <TransactionForm transaction={transaction} onDone={onDone} />
+      <Toaster />
+    </>,
+  )
   return { user: userEvent.setup(), onDone }
 }
 
@@ -39,6 +50,7 @@ describe('TransactionForm', () => {
     await user.click(screen.getByRole('button', { name: 'Salva' }))
 
     expect(onDone).toHaveBeenCalled()
+    expect(await screen.findByText('Transazione salvata')).toBeTruthy()
     const saved = await db.transactions.toArray()
     expect(saved).toEqual([
       { id: expect.any(Number), date: today(), amountCents: 1250, kind: 'expense', categoryId: 'restaurants' },
@@ -59,6 +71,7 @@ describe('TransactionForm', () => {
     expect(input.getAttribute('aria-invalid')).toBe('true')
     expect(input.getAttribute('aria-describedby')).toBe(error.id)
     expect(document.activeElement).toBe(input)
+    expect(screen.queryByText('Transazione salvata')).toBeNull()
   })
 
   it('blocca il salvataggio senza categoria e sposta il focus sulla prima', async () => {
@@ -100,6 +113,7 @@ describe('TransactionForm', () => {
     await user.click(screen.getByRole('button', { name: 'Salva' }))
 
     expect(onDone).toHaveBeenCalled()
+    expect(await screen.findByText('Transazione salvata')).toBeTruthy()
     expect(await db.transactions.get(id)).toEqual({ ...tx, amountCents: 700, note: 'mercato' })
   })
 
@@ -115,10 +129,12 @@ describe('TransactionForm', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Annulla' }))
     expect(document.activeElement).toBe(deleteButton)
     expect(await db.transactions.count()).toBe(1)
+    expect(screen.queryByText('Transazione eliminata')).toBeNull()
 
     await user.click(deleteButton)
     await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Elimina' }))
     expect(onDone).toHaveBeenCalled()
+    expect(await screen.findByText('Transazione eliminata')).toBeTruthy()
     expect(await db.transactions.count()).toBe(0)
   })
 

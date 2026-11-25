@@ -2,6 +2,7 @@
 import 'fake-indexeddb/auto'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { toast } from 'sonner'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Toaster from '@/components/Toaster'
 import { db, DEFAULT_SETTINGS, getSettings } from '@/data/db'
@@ -10,7 +11,11 @@ import SettingsScreen from '@/screens/SettingsScreen'
 beforeEach(async () => {
   await db.settings.clear()
 })
-afterEach(cleanup)
+// Lo stato dei toast di sonner è globale: senza dismiss un toast passa al test successivo
+afterEach(() => {
+  cleanup()
+  toast.dismiss()
+})
 
 async function setup() {
   const onDone = vi.fn()
