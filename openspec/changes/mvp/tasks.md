@@ -18,8 +18,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [x] 3.3 Schermata ripartizione per categoria: barre orizzontali ordinate, con etichette dirette e titolo con il messaggio, secondo `specs/category-breakdown` e le "Regole per i grafici" di `design.md`
 - [x] 3.4 Impostazioni: percentuali (`specs/settings`) e interruttore "Suoni" (`specs/sounds`)
 - [x] 3.5 Backup JSON, esporta e importa (`specs/backup`)
-- [ ] 3.6 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
-- [x] 3.7 Routing con wouter (indirizzi `#/`) e ritorno al mese con il tasto Indietro (`specs/navigation`)
+- [x] 3.6 Routing con wouter (indirizzi `#/`) e ritorno al mese con il tasto Indietro (`specs/navigation`)
 
 ## 4. Android
 
@@ -36,3 +35,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [ ] 5.5 Navigazione completa solo con tastiera, con focus visibile
 - [ ] 5.6 Prova manuale con TalkBack su telefono, su tutte le schermate
 - [ ] 5.7 Carattere al 200% e larghezza 320 px senza perdite di contenuto
+
+## 6. Minori
+
+- [ ] 6.1 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
