@@ -42,7 +42,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - `ideale = percentuale × entrate del mese`.
 - Essenziali e Piacere: speso ≤ ideale → "In linea", speso > ideale → "Sopra il tetto".
 - Risparmi: risparmiato ≥ ideale → "Obiettivo raggiunto", risparmiato < ideale → "Sotto l'obiettivo". La barra mostra "X risparmiati su Y ideali"; con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
-- Con entrate pari a zero l'ideale è 0 e la schermata mostra l'invito ad aggiungere un'entrata.
+- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito ad aggiungere un'entrata. Uno stato calcolato su un ideale nullo sarebbe fuorviante (per esempio "Obiettivo raggiunto" con 0 risparmiati su 0 ideali).
 
 ## Design system
 

@@ -34,7 +34,10 @@ function Harness({ onOpen = () => {} }: { onOpen?: (tx?: Transaction) => void })
 
 async function setup(onOpen?: (tx?: Transaction) => void) {
   render(<Harness onOpen={onOpen} />, { wrapper: IconProvider })
-  await screen.findByRole('list', { name: 'Bucket' })
+  // Dati caricati: con entrate compaiono i bucket, senza entrate solo l'invito
+  await vi.waitFor(() =>
+    expect(screen.queryByRole('list', { name: 'Bucket' }) ?? screen.queryByText(/Aggiungi un'entrata/)).toBeTruthy(),
+  )
   return userEvent.setup()
 }
 
@@ -138,9 +141,20 @@ describe('MonthScreen', () => {
     await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('su 500,00 € ideali'))
   })
 
-  it('senza entrate mostra l\'invito ad aggiungerne una', async () => {
+  it('senza entrate mostra solo l\'invito ad aggiungerne una, senza bucket né stati', async () => {
     await setup()
-    expect(await screen.findByText(/Aggiungi un'entrata/)).toBeTruthy()
+    expect(screen.getByText(/Aggiungi un'entrata/)).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Bucket' })).toBeNull()
+    expect(screen.queryByText('Obiettivo raggiunto')).toBeNull()
+  })
+
+  it('senza entrate ma con spese nasconde i bucket e lascia le spese nei movimenti', async () => {
+    await add('2026-11-03', 20000, 'groceries')
+    await setup()
+    expect(screen.getByText(/Aggiungi un'entrata/)).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Bucket' })).toBeNull()
+    expect(screen.queryByText('Sopra il tetto')).toBeNull()
+    expect(screen.getByRole('list', { name: 'Movimenti' }).textContent).toContain('200,00')
   })
 
   it('elenca i movimenti del mese dal più recente', async () => {

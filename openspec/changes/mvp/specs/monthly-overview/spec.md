@@ -31,6 +31,10 @@ Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barr
 - **WHEN** le spese Essenziali e Piacere superano le entrate del mese
 - **THEN** la barra Risparmi mostra il risparmio con il segno meno, la barra vuota e l'etichetta "Sotto l'obiettivo"
 
+#### Scenario: Mese senza entrate
+- **WHEN** il mese ha entrate pari a zero, con o senza spese
+- **THEN** al posto delle tre barre la schermata mostra solo l'invito ad aggiungere un'entrata, senza importi ideali né stati; le spese restano visibili nell'elenco movimenti e nella vista "Categorie"
+
 ### Requirement: Viste del mese
 Il sistema SHALL mostrare sotto l'intestazione del mese due tab: "Riepilogo", con entrate, barre dei bucket ed elenco movimenti, e "Categorie", con la ripartizione per categoria (`specs/category-breakdown`). Il mese selezionato è lo stesso per entrambi.
 

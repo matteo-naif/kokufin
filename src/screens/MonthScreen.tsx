@@ -127,6 +127,8 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                 )}
               </section>
 
+              {/* Senza entrate l'ideale è 0: niente barre, gli stati sarebbero fuorvianti */}
+              {data && totals.income > 0 && (
               <ul aria-label="Bucket" className="flex flex-col gap-6">
                 {BUCKETS.map((b) => {
                   const amount = totals.buckets[b.id] // Risparmi: entrate − spese, può essere negativo
@@ -149,6 +151,7 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                   )
                 })}
               </ul>
+              )}
 
               <section className="flex flex-col gap-2">
                 <h2 className="text-xl font-bold">Movimenti</h2>
