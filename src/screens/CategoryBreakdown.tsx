@@ -33,7 +33,7 @@ export default function CategoryBreakdown({ txs, month }: Props) {
             <h2 id={`breakdown-${s.id}`} className="text-xl font-bold">
               {s.name}
             </h2>
-            <p className="whitespace-nowrap text-text-secondary">{formatCents(s.cents)}</p>
+            <p className="whitespace-nowrap font-semibold text-text-secondary">{formatCents(s.cents)}</p>
           </div>
 
           {s.rows.length === 0 ? (

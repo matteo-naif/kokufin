@@ -9,7 +9,7 @@ Il sistema SHALL mostrare, per il mese selezionato, un'unica vista con le spese 
 
 #### Scenario: Titolo della sezione
 - **WHEN** viene mostrata una sezione
-- **THEN** il titolo è il nome del bucket, e accanto c'è il totale speso nel bucket, per esempio "Essenziali" con "820,00 €"
+- **THEN** il titolo è il nome del bucket, e accanto c'è il totale speso nel bucket in grassetto, per distinguerlo dagli importi delle categorie, per esempio "Essenziali" con "820,00 €"
 
 #### Scenario: Barre proporzionali
 - **WHEN** il grafico è mostrato
