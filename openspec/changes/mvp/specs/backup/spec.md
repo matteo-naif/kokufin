@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Backup e ripristino
-Il sistema SHALL esportare tutti i dati in un file JSON e ripristinarli da un file JSON.
+Il sistema SHALL esportare tutti i dati in un file JSON e ripristinarli da un file JSON, dalla pagina Backup delle impostazioni.
 
 #### Scenario: Esportazione
 - **WHEN** l'utente tocca "Esporta"
@@ -10,6 +10,7 @@ Il sistema SHALL esportare tutti i dati in un file JSON e ripristinarli da un fi
 #### Scenario: Ripristino
 - **WHEN** l'utente sceglie un file di backup valido e conferma
 - **THEN** i dati attuali sono sostituiti da quelli del file
+- **AND** l'app torna alla schermata del mese e mostra il toast "Dati ripristinati"
 
 #### Scenario: File non valido
 - **WHEN** il file non è un backup valido

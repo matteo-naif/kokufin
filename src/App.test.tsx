@@ -52,14 +52,14 @@ describe('App: navigazione', () => {
     expect(location.hash).toBe('#/')
   })
 
-  it('apre la nuova transazione a #/transactions/new; Annulla toglie la vista dalla cronologia', async () => {
+  it('apre la nuova transazione a #/transactions/new; la freccia Indietro toglie la vista dalla cronologia', async () => {
     const user = await start()
     await user.click(await screen.findByRole('button', { name: 'Aggiungi transazione' }))
     expect(location.hash).toBe('#/transactions/new')
     expect(h1()).toBe('Nuova transazione')
 
     const length = history.length
-    await user.click(screen.getByRole('button', { name: 'Annulla' }))
+    await user.click(screen.getByRole('button', { name: 'Indietro' }))
     await waitFor(() => expect(h1()).toBe('Novembre 2026'))
     expect(location.hash).toBe('#/')
     // tornati indietro, non una nuova voce: Indietro non riapre il form
@@ -100,10 +100,70 @@ describe('App: navigazione', () => {
   })
 
   it('aperta direttamente una vista secondaria, Salva porta al mese senza uscire dall\'app', async () => {
-    const user = await start('#/settings')
+    const user = await start('#/settings/preferences')
     await user.click(await screen.findByRole('button', { name: 'Salva' }))
 
     await waitFor(() => expect(h1()).toBe('Novembre 2026'))
     expect(location.hash).toBe('#/')
+  })
+
+  it('dalle impostazioni apre Preferenze e Backup; Indietro risale all\'indice e poi al mese', async () => {
+    const user = await start()
+    await user.click(await screen.findByRole('button', { name: 'Impostazioni' }))
+    await user.click(await screen.findByRole('link', { name: 'Preferenze' }))
+    expect(location.hash).toBe('#/settings/preferences')
+    expect(await screen.findByRole('heading', { level: 1, name: 'Preferenze' })).toBeTruthy()
+
+    await back('Impostazioni')
+    await user.click(screen.getByRole('link', { name: 'Backup' }))
+    expect(location.hash).toBe('#/settings/backup')
+    expect(h1()).toBe('Backup')
+
+    await back('Impostazioni')
+    await back('Novembre 2026')
+  })
+
+  it('Salva in Preferenze torna al mese, con mese e tab di prima, togliendo le impostazioni dalla cronologia', async () => {
+    const user = await start()
+    await user.click(await screen.findByRole('button', { name: 'Mese precedente' }))
+    await user.click(screen.getByRole('tab', { name: 'Categorie' }))
+    await user.click(screen.getByRole('button', { name: 'Impostazioni' }))
+    await user.click(await screen.findByRole('link', { name: 'Preferenze' }))
+    await user.click(await screen.findByRole('button', { name: 'Salva' }))
+
+    const length = history.length
+    await waitFor(() => expect(h1()).toBe('Ottobre 2026'))
+    expect(location.hash).toBe('#/')
+    expect(screen.getByRole('tab', { name: 'Categorie' }).getAttribute('aria-selected')).toBe('true')
+    // tornati indietro di due voci, nessuna nuova voce: Indietro non riapre le impostazioni
+    expect(history.length).toBe(length)
+  })
+
+  it('la freccia Indietro risale da Backup all\'indice e poi al mese, come il tasto Indietro', async () => {
+    const user = await start()
+    await user.click(await screen.findByRole('button', { name: 'Impostazioni' }))
+    await user.click(await screen.findByRole('link', { name: 'Backup' }))
+    await screen.findByRole('heading', { level: 1, name: 'Backup' })
+
+    await user.click(screen.getByRole('button', { name: 'Indietro' }))
+    await waitFor(() => expect(h1()).toBe('Impostazioni'))
+    expect(location.hash).toBe('#/settings')
+
+    await user.click(screen.getByRole('button', { name: 'Indietro' }))
+    await waitFor(() => expect(h1()).toBe('Novembre 2026'))
+    expect(location.hash).toBe('#/')
+  })
+
+  it.each([
+    ['#/settings/preferences', 'Impostazioni', '#/settings'],
+    ['#/settings/backup', 'Impostazioni', '#/settings'],
+    ['#/settings', 'Novembre 2026', '#/'],
+    ['#/transactions/new', 'Novembre 2026', '#/'],
+  ])('aperta direttamente %s, la freccia Indietro mostra la vista madre', async (hash, parentH1, parentHash) => {
+    const user = await start(hash)
+    await user.click(await screen.findByRole('button', { name: 'Indietro' }))
+
+    await waitFor(() => expect(h1()).toBe(parentH1))
+    expect(location.hash).toBe(parentHash)
   })
 })

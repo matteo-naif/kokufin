@@ -19,6 +19,8 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [x] 3.4 Impostazioni: percentuali (`specs/settings`) e interruttore "Suoni" (`specs/sounds`)
 - [x] 3.5 Backup JSON, esporta e importa (`specs/backup`)
 - [x] 3.6 Routing con wouter (indirizzi `#/`) e ritorno al mese con il tasto Indietro (`specs/navigation`)
+- [x] 3.7 Impostazioni come indice con le sezioni Preferenze e Backup, ognuna con il proprio indirizzo (`specs/settings`, `specs/navigation`)
+- [x] 3.8 Freccia indietro nell'intestazione delle viste secondarie al posto dei pulsanti Annulla (`specs/navigation`)
 
 ## 4. Android
 

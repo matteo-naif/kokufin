@@ -16,7 +16,7 @@ Il sistema SHALL riprodurre un suono breve al tocco dei pulsanti di azione ("+" 
 - **THEN** nessun pulsante riproduce suoni
 
 ### Requirement: Interruttore dei suoni
-Il sistema SHALL permettere di attivare e disattivare i suoni dalla schermata Impostazioni. La scelta è salvata con le altre impostazioni. Di default i suoni sono attivi.
+Il sistema SHALL permettere di attivare e disattivare i suoni dalla pagina Preferenze delle impostazioni. La scelta è salvata con le altre impostazioni. Di default i suoni sono attivi.
 
 #### Scenario: Disattivazione
 - **WHEN** l'utente spegne l'interruttore "Suoni"
