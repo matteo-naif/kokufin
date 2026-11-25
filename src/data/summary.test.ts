@@ -125,12 +125,14 @@ describe('categoryTotals', () => {
     tx('2026-11-06', 9999, 'housing'),
   ]
 
-  it('mostra solo le categorie del bucket con spese, dalla più alta', () => {
+  it('mostra solo le categorie del bucket con spese, dalla più alta, con la quota sulle spese del mese', () => {
+    // Spese del mese: 19999 (le entrate non contano)
     expect(categoryTotals(txs, 'pleasure')).toEqual([
-      { categoryId: 'restaurants', cents: 5000, pct: 50 },
-      { categoryId: 'travel', cents: 4000, pct: 40 },
-      { categoryId: 'entertainment', cents: 1000, pct: 10 },
+      { categoryId: 'restaurants', cents: 5000, pct: 25 },
+      { categoryId: 'travel', cents: 4000, pct: 20 },
+      { categoryId: 'entertainment', cents: 1000, pct: 5 },
     ])
+    expect(categoryTotals(txs, 'essentials')).toEqual([{ categoryId: 'housing', cents: 9999, pct: 50 }])
   })
 
   it('arrotonda le percentuali a interi senza correggere la somma', () => {

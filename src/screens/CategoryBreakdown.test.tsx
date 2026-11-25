@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
 import CategoryBreakdown from '@/screens/CategoryBreakdown'
@@ -12,82 +11,82 @@ function tx(amountCents: number, categoryId: string, kind: Transaction['kind'] =
   return { id: nextId++, date: '2026-11-10', amountCents, kind, categoryId }
 }
 
+// Spese del mese: 20000. Essenziali 10000 (Casa (affitto/mutuo)), Piacere 10000
 const NOVEMBER = [
   tx(200000, 'salary', 'income'),
   tx(4200, 'restaurants'),
   tx(800, 'restaurants'),
   tx(4000, 'travel'),
   tx(1000, 'entertainment'),
-  tx(9999, 'housing'),
+  tx(10000, 'housing'),
 ]
 
-function rows() {
-  return within(screen.getByRole('list', { name: /Ripartizione/ })).getAllByRole('listitem')
+function section(name: string) {
+  return screen.getByRole('region', { name })
 }
 
-function bars() {
-  return rows().map((li) => li.querySelector<HTMLElement>('[aria-hidden="true"] > div')!)
+function rows(name: string) {
+  return within(section(name)).getAllByRole('listitem')
 }
 
-async function choose(bucket: string) {
-  await userEvent.setup().click(screen.getByRole('radio', { name: bucket }))
+function bars(name: string) {
+  return rows(name).map((li) => li.querySelector<HTMLElement>('[aria-hidden="true"] > div')!)
 }
 
 describe('CategoryBreakdown', () => {
-  it('mostra solo le categorie del bucket scelto con spese, dalla più alta', async () => {
+  it('una sola vista: Essenziali e poi Piacere, ognuna con un titolo, senza controlli per scegliere', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Piacere')
-    expect(rows().map((li) => li.querySelector('span')!.textContent)).toEqual(['Ristoranti', 'Viaggi', 'Svago'])
+    expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual(['Essenziali', 'Piacere'])
+    expect(screen.queryByRole('radio')).toBeNull()
   })
 
-  it('barre da zero, larghezza = quota sul totale del bucket', async () => {
+  it('ogni sezione mostra solo le sue categorie con spese, dalla più alta', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Piacere')
-    expect(bars().map((b) => b.style.width)).toEqual(['50%', '40%', '10%'])
+    expect(rows('Piacere').map((li) => li.querySelector('span')!.textContent)).toEqual(['Ristoranti', 'Viaggi', 'Svago'])
+    expect(rows('Essenziali').map((li) => li.querySelector('span')!.textContent)).toEqual(['Casa (affitto/mutuo)'])
   })
 
-  it('il titolo dice il messaggio, sotto bucket e mese', async () => {
+  it('accanto al titolo: totale del bucket e quota sulle spese del mese', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Piacere')
-    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('In Piacere pesa di più Ristoranti: 50%')
-    expect(screen.getByText('Piacere · Novembre 2026')).toBeTruthy()
+    expect(within(section('Piacere')).getByText('100,00 € · 50%')).toBeTruthy()
   })
 
-  it('etichette dirette: nome, importo e percentuale su ogni riga, barra nascosta allo screen reader', async () => {
+  it('barre da zero, larghezza = quota sulle spese totali del mese, uguale in tutte le sezioni', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Piacere')
-    expect(rows()[1].textContent).toBe('Viaggi40,00 € · 40%')
-    for (const li of rows()) expect(li.querySelector('[aria-hidden="true"]')).toBeTruthy()
+    expect(bars('Piacere').map((b) => b.style.width)).toEqual(['25%', '20%', '5%'])
+    expect(bars('Essenziali').map((b) => b.style.width)).toEqual(['50%'])
   })
 
-  it('prima barra #5C3A21, le altre #B07C52', async () => {
+  it('etichette dirette: nome, importo e percentuale sul mese su ogni riga, barra nascosta allo screen reader', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Piacere')
-    expect(bars().map((b) => b.className.includes('bg-chart-strong'))).toEqual([true, false, false])
-    expect(bars().map((b) => b.className.includes('bg-chart-soft'))).toEqual([false, true, true])
+    expect(rows('Piacere')[1].textContent).toBe('Viaggi40,00\u00a0€ · 20%')
+    for (const li of [...rows('Essenziali'), ...rows('Piacere')]) expect(li.querySelector('[aria-hidden="true"]')).toBeTruthy()
   })
 
-  it('bucket senza spese: stato vuoto al posto del grafico', async () => {
+  it('solo la categoria più alta del mese è #5C3A21, le altre #B07C52', () => {
+    render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
+    expect(bars('Essenziali').map((b) => b.className.includes('bg-chart-strong'))).toEqual([true])
+    expect(bars('Piacere').map((b) => b.className.includes('bg-chart-soft'))).toEqual([true, true, true])
+  })
+
+  it('sezione senza spese: resta con titolo e "Nessuna spesa."', () => {
     render(<CategoryBreakdown txs={[tx(500, 'gifts')]} month="2026-11" />)
-    expect(screen.queryByRole('list')).toBeNull()
-    expect(screen.getByText('Nessuna spesa in Essenziali a Novembre 2026.')).toBeTruthy()
+    expect(within(section('Essenziali')).getByText('Nessuna spesa.')).toBeTruthy()
+    expect(within(section('Essenziali')).getByText('0,00 € · 0%')).toBeTruthy()
+    expect(rows('Piacere')).toHaveLength(1)
   })
 
-  it('offre solo i bucket di spesa: Risparmi non ha categorie', () => {
-    render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    expect(screen.getAllByRole('radio').map((r) => r.closest('label')!.textContent)).toEqual(['Essenziali', 'Piacere'])
+  it('mese senza spese: un solo stato vuoto al posto delle sezioni', () => {
+    render(<CategoryBreakdown txs={[tx(200000, 'salary', 'income')]} month="2026-11" />)
+    expect(screen.queryByRole('region')).toBeNull()
+    expect(screen.getByText('Nessuna spesa a Novembre 2026.')).toBeTruthy()
   })
 
-  it('si aggiorna quando cambiano mese e transazioni', async () => {
+  it('si aggiorna quando cambiano mese e transazioni', () => {
     const { rerender } = render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Piacere')
     rerender(<CategoryBreakdown txs={[tx(500, 'gifts')]} month="2026-10" />)
-    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('In Piacere pesa di più Regali: 100%')
-    expect(screen.getByText('Piacere · Ottobre 2026')).toBeTruthy()
-  })
-
-  it('di default mostra Essenziali', () => {
-    render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    expect(screen.getByRole('radio', { name: 'Essenziali', checked: true })).toBeTruthy()
+    expect(rows('Piacere')[0].textContent).toBe('Regali5,00\u00a0€ · 100%')
+    rerender(<CategoryBreakdown txs={[]} month="2026-09" />)
+    expect(screen.getByText('Nessuna spesa a Settembre 2026.')).toBeTruthy()
   })
 })
