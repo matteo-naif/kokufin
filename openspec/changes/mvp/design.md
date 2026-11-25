@@ -40,10 +40,11 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 ## Calcolo ideale e stato dei bucket
 
 - `ideale = percentuale × entrate del mese`.
-- Essenziali e Piacere: speso ≤ ideale → "In linea", speso > ideale → "Sopra il tetto". Il testo è "Restano Z su Y ideali" entro il tetto e "Z oltre il tetto di Y" sopra il tetto: dice ciò che l'utente vuole sapere (quanto può ancora spendere) senza fargli fare la sottrazione.
-- Risparmi: risparmiato ≥ ideale → "Obiettivo raggiunto", risparmiato < ideale → "Sotto l'obiettivo". Il testo è "X risparmiati su Y ideali", e sotto l'obiettivo si aggiunge "Mancano Z all'obiettivo"; con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
-- Barre dei bucket: una sola scala per le tre barre, 100% della larghezza = entrate del mese (regola 2 dei grafici). La lunghezza è l'importo diviso le entrate, tra 0 e 100%: oltre le entrate la barra si ferma al bordo e lo sforamento lo dice il testo. Una tacca verticale segna l'ideale, alla posizione della sua percentuale. La tacca è `#1F1A16`, larga 2 px e più alta della barra, così si vede sopra e sotto anche quando cade sul riempimento (17,25:1 su bianco).
-- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito ad aggiungere un'entrata. Uno stato calcolato su un ideale nullo sarebbe fuorviante (per esempio "Obiettivo raggiunto" con 0 risparmiati su 0 ideali).
+- Essenziali e Piacere: sopra la barra "Hai speso X"; sotto, il significato della tacca: "Hai a disposizione ancora Z" se speso ≤ ideale, "Hai sforato di Z" con `WarningIcon` se speso > ideale. Non c'è un'etichetta di stato quando va tutto bene: un "In linea" ripetuto su ogni barra non aggiunge informazione, e l'avviso si nota di più se è l'unico.
+- Risparmi: sopra la barra "Hai risparmiato X", senza tacca né riga sotto. Non è un obiettivo: è ciò che resta delle entrate dopo le spese. Con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
+- Barre dei bucket: una sola scala per le tre barre, 100% della larghezza = entrate del mese (regola 2 dei grafici). La lunghezza è l'importo diviso le entrate, tra 0 e 100%: oltre le entrate la barra si ferma al bordo e lo sforamento lo dice il testo. Per Essenziali e Piacere una tacca verticale segna l'ideale, alla posizione della sua percentuale. La tacca è `#1F1A16`, larga 2 px e più alta della barra, così si vede sopra e sotto anche quando cade sul riempimento (17,25:1 su bianco).
+- Le entrate non hanno un blocco a parte nel Riepilogo: sono la scala delle barre e compaiono nell'elenco movimenti.
+- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito ad aggiungere un'entrata. Barre e tacche su una scala nulla sarebbero fuorvianti.
 
 ## Design system
 
@@ -59,7 +60,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
   - Informazione `#1E40AF` su `#EFF6FF` (8,01:1; 8,72:1 su bianco).
   Come per gli stati dei bucket, il significato non è affidato al colore: ogni messaggio ha testo e icona.
 - Titoli in Space Mono, testi in Work Sans.
-- Con una sola tinta non si può affidare lo stato al colore. Lo stato di ogni bucket usa sempre un'etichetta di testo e un'icona, oltre alla barra.
+- Con una sola tinta non si può affidare lo stato al colore. Lo sforamento di un bucket usa sempre un testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
 
 ## Linee guida di interfaccia
@@ -74,7 +75,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Si importano i nomi con il suffisso `Icon` (per esempio `GearIcon`): quelli senza suffisso sono deprecati.
 - Peso `bold`, dimensione `1.25rem`, colore del testo (`currentColor`). Questi valori e `aria-hidden` sono fissati una volta sola da `IconProvider` (`src/components/IconProvider.tsx`), usato in `App`: le singole icone non li ripetono.
 - L'icona non porta mai da sola un significato: il nome accessibile lo dà il pulsante (`aria-label`) o il testo accanto, come per gli stati dei bucket.
-- Icone in uso: `GearIcon` (impostazioni), `PlusIcon` (aggiungi transazione), `CaretLeftIcon` e `CaretRightIcon` (mese precedente e successivo, voci dell'indice impostazioni), `ArrowLeftIcon` (indietro), `CheckIcon` (In linea, Obiettivo raggiunto), `WarningIcon` (Sopra il tetto), `ArrowDownIcon` (Sotto l'obiettivo).
+- Icone in uso: `GearIcon` (impostazioni), `PlusIcon` (aggiungi transazione), `CaretLeftIcon` e `CaretRightIcon` (mese precedente e successivo, voci dell'indice impostazioni), `ArrowLeftIcon` (indietro), `WarningIcon` (sforamento dell'ideale di un bucket).
 
 ## Regole per i grafici
 

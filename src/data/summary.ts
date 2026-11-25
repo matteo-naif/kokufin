@@ -39,14 +39,6 @@ export function idealCents(pct: number, incomeCents: number): number {
   return Math.round((pct * incomeCents) / 100)
 }
 
-export type BucketStatus = 'onTrack' | 'overCap' | 'goalReached' | 'belowGoal'
-
-/** Essenziali e Piacere hanno un tetto sullo speso; Risparmi un obiettivo sul risparmiato. */
-export function bucketStatus(bucket: Bucket, amount: number, ideal: number): BucketStatus {
-  if (bucket === 'savings') return amount >= ideal ? 'goalReached' : 'belowGoal'
-  return amount <= ideal ? 'onTrack' : 'overCap'
-}
-
 export function inMonth(txs: Transaction[], month: string): Transaction[] {
   return txs.filter((t) => monthOf(t.date) === month)
 }

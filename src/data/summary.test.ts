@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
 import {
-  bucketStatus,
   categoryTotals,
   idealCents,
   inMonth,
@@ -61,21 +60,11 @@ describe('newestFirst', () => {
   })
 })
 
-describe('idealCents e bucketStatus', () => {
+describe('idealCents', () => {
   it('ideale = percentuale × entrate', () => {
     expect(idealCents(30, 200000)).toBe(60000)
     expect(idealCents(33, 1001)).toBe(330)
     expect(idealCents(50, 0)).toBe(0)
-  })
-
-  it('Essenziali e Piacere: in linea fino all\'ideale, poi sopra il tetto', () => {
-    expect(bucketStatus('essentials', 60000, 60000)).toBe('onTrack')
-    expect(bucketStatus('pleasure', 60001, 60000)).toBe('overCap')
-  })
-
-  it('Risparmi: obiettivo raggiunto da ideale in su, altrimenti sotto', () => {
-    expect(bucketStatus('savings', 100000, 100000)).toBe('goalReached')
-    expect(bucketStatus('savings', 99999, 100000)).toBe('belowGoal')
   })
 })
 

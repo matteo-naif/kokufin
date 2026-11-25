@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Riepilogo del mese
-Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barre (Essenziali, Piacere, Risparmi) con un testo, l'ideale e lo stato. Per Essenziali e Piacere il testo dice quanto resta prima del tetto o di quanto lo si è superato, così non va calcolato a mente. Per Risparmi il testo riporta il risparmio del mese, cioè entrate − spese Essenziali − spese Piacere, e sotto l'obiettivo anche quanto manca. Le tre barre hanno una sola scala: il 100% della larghezza sono le entrate del mese. Ogni barra ha una tacca nel punto dell'ideale.
+Il sistema SHALL mostrare, per il mese selezionato, tre barre: Essenziali, Piacere e Risparmi. Sopra ogni barra c'è l'importo del mese: lo speso per Essenziali e Piacere ("Hai speso X"), il risparmio per Risparmi ("Hai risparmiato X"). Il risparmio non è un obiettivo: è entrate − spese Essenziali − spese Piacere. Le tre barre hanno una sola scala: il 100% della larghezza sono le entrate del mese. Essenziali e Piacere hanno una tacca nel punto dell'ideale e, su una riga sotto la barra, il significato della tacca: quanto resta a disposizione o di quanto la si è superata. Lo sforamento ha anche l'icona di avviso; negli altri casi non c'è nessuna etichetta di stato. L'importo delle entrate non è mostrato a parte: è la scala delle barre e compare nell'elenco movimenti.
 
 #### Scenario: Mese di default
 - **WHEN** l'utente apre l'app
@@ -15,29 +15,25 @@ Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barr
 - **WHEN** il mese mostrato non è quello corrente
 - **THEN** accanto alle frecce compare il pulsante "Mese corrente", che riporta al mese corrente
 
-#### Scenario: Bucket entro il tetto
+#### Scenario: Bucket entro l'ideale
 - **WHEN** lo speso di Essenziali è 200 € e l'ideale 300 €
-- **THEN** la barra mostra "Restano 100,00 € su 300,00 € ideali" e l'etichetta "In linea"
+- **THEN** sopra la barra c'è "Hai speso 200,00 €" e sotto "Hai a disposizione ancora 100,00 €", senza icona
 
-#### Scenario: Bucket sopra il tetto
+#### Scenario: Bucket oltre l'ideale
 - **WHEN** lo speso di Essenziali o Piacere supera l'ideale, per esempio 350 € spesi con ideale 300 €
-- **THEN** la barra mostra "50,00 € oltre il tetto di 300,00 €" e l'etichetta "Sopra il tetto" con la sua icona
-
-#### Scenario: Risparmi sotto l'obiettivo
-- **WHEN** il risparmio del mese è inferiore all'ideale, per esempio 400 € risparmiati con ideale 500 €
-- **THEN** la barra mostra "400,00 € risparmiati su 500,00 € ideali", sotto "Mancano 100,00 € all'obiettivo" e l'etichetta "Sotto l'obiettivo" con la sua icona
+- **THEN** sopra la barra c'è "Hai speso 350,00 €" e sotto "Hai sforato di 50,00 €" con l'icona di avviso
 
 #### Scenario: Risparmio calcolato
-- **WHEN** il mese ha 1800 € di entrate, 200 € di spese Essenziali e 23 € di spese Piacere, con ideale Risparmi al 50%
-- **THEN** la barra Risparmi mostra "1577,00 € risparmiati su 900,00 € ideali" e l'etichetta "Obiettivo raggiunto", senza la riga "Mancano"
+- **WHEN** il mese ha 1800 € di entrate, 200 € di spese Essenziali e 23 € di spese Piacere
+- **THEN** sopra la barra Risparmi c'è "Hai risparmiato 1577,00 €", e la barra non ha tacca né riga sotto
 
 #### Scenario: Risparmio negativo
 - **WHEN** le spese Essenziali e Piacere superano le entrate del mese
-- **THEN** la barra Risparmi mostra il risparmio con il segno meno, la barra vuota e l'etichetta "Sotto l'obiettivo"
+- **THEN** la barra Risparmi mostra il risparmio con il segno meno e la barra vuota
 
 #### Scenario: Scala delle barre sulle entrate
 - **WHEN** il mese ha 1000 € di entrate, 250 € di spese Essenziali e percentuali 30 / 20 / 50
-- **THEN** la barra Essenziali occupa il 25% della larghezza, con la tacca dell'ideale al 30%; la tacca di Piacere è al 20% e quella di Risparmi al 50%
+- **THEN** la barra Essenziali occupa il 25% della larghezza, con la tacca dell'ideale al 30%; la tacca di Piacere è al 20%; la barra Risparmi occupa il 75%, senza tacca
 
 #### Scenario: Spese oltre le entrate
 - **WHEN** lo speso di un bucket supera le entrate del mese
@@ -45,10 +41,10 @@ Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barr
 
 #### Scenario: Mese senza entrate
 - **WHEN** il mese ha entrate pari a zero, con o senza spese
-- **THEN** al posto delle tre barre la schermata mostra solo l'invito ad aggiungere un'entrata, senza importi ideali né stati; le spese restano visibili nell'elenco movimenti e nella vista "Categorie"
+- **THEN** al posto delle tre barre la schermata mostra solo l'invito ad aggiungere un'entrata; le spese restano visibili nell'elenco movimenti e nella vista "Categorie"
 
 ### Requirement: Viste del mese
-Il sistema SHALL mostrare sotto l'intestazione del mese due tab: "Riepilogo", con entrate, barre dei bucket ed elenco movimenti, e "Categorie", con la ripartizione per categoria (`specs/category-breakdown`). Il mese selezionato è lo stesso per entrambi.
+Il sistema SHALL mostrare sotto l'intestazione del mese due tab: "Riepilogo", con barre dei bucket ed elenco movimenti, e "Categorie", con la ripartizione per categoria (`specs/category-breakdown`). Il mese selezionato è lo stesso per entrambi.
 
 #### Scenario: Cambio tab
 - **WHEN** l'utente passa da "Riepilogo" a "Categorie"

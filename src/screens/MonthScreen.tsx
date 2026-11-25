@@ -1,10 +1,7 @@
 import {
-  ArrowDownIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  CheckIcon,
   GearIcon,
-  type Icon as PhosphorIcon,
   PlusIcon,
   WarningIcon,
 } from '@phosphor-icons/react'
@@ -14,8 +11,6 @@ import { BUCKETS, CATEGORY_NAME } from '@/config/categories'
 import { DEFAULT_SETTINGS, getSettings, type Settings, type Transaction, transactionsInMonth } from '@/data/db'
 import { formatCents } from '@/data/money'
 import {
-  type BucketStatus,
-  bucketStatus,
   idealCents,
   monthLabel,
   monthOf,
@@ -119,54 +114,35 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
             label: 'Riepilogo',
             panel: (
               <div className="flex flex-col gap-6">
-              <section aria-label="Entrate" className="flex flex-col gap-1">
-                <p className="text-text-secondary">Entrate</p>
-                <p className="font-heading text-3xl font-bold">{formatCents(totals.income)}</p>
-                {data && totals.income === 0 && (
-                  <p className="text-text-secondary">Aggiungi un'entrata per calcolare gli importi ideali dei bucket.</p>
-                )}
-              </section>
+              {data && totals.income === 0 && (
+                <p className="text-text-secondary">Aggiungi un'entrata per calcolare gli importi ideali dei bucket.</p>
+              )}
 
-              {/* Senza entrate l'ideale è 0: niente barre, gli stati sarebbero fuorvianti */}
+              {/* Senza entrate la scala è nulla: niente barre */}
               {data && totals.income > 0 && (
               <ul aria-label="Bucket" className="flex flex-col gap-6">
                 {BUCKETS.map((b) => {
                   const amount = totals.buckets[b.id] // Risparmi: entrate − spese, può essere negativo
-                  const ideal = idealCents(settings.idealPct[b.id], totals.income)
                   // Scala unica per i tre bucket: 100% = entrate del mese
                   const share = Math.min(Math.max(amount / totals.income, 0), 1)
                   return (
                     <li key={b.id} className="flex flex-col gap-2">
-                      <div className="flex flex-wrap items-center justify-between gap-x-4">
-                        <span className="font-semibold">{b.name}</span>
-                        <Status status={bucketStatus(b.id, amount, ideal)} />
-                      </div>
-                      {b.id === 'savings' ? (
-                        <p>
-                          {formatCents(amount)} risparmiati su {formatCents(ideal)} ideali
-                          {amount < ideal && (
-                            <>
-                              <br />
-                              Mancano {formatCents(ideal - amount)} all'obiettivo
-                            </>
-                          )}
-                        </p>
-                      ) : (
-                        <p>
-                          {amount <= ideal
-                            ? `Restano ${formatCents(ideal - amount)} su ${formatCents(ideal)} ideali`
-                            : `${formatCents(amount - ideal)} oltre il tetto di ${formatCents(ideal)}`}
-                        </p>
-                      )}
-                      {/* Barra decorativa: testo, ideale e stato sono già scritti sopra */}
+                      <span className="font-semibold">{b.name}</span>
+                      <p>
+                        {b.id === 'savings' ? 'Hai risparmiato' : 'Hai speso'} {formatCents(amount)}
+                      </p>
+                      {/* Barra decorativa: importi e sforamento sono scritti in testo */}
                       <div aria-hidden="true" className="relative h-3 rounded bg-separator">
                         <div className="h-full rounded bg-primary" style={{ width: `${share * 100}%` }} />
                         {/* Tacca dell'ideale: più alta della barra, si vede anche sopra il riempimento */}
-                        <div
-                          className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-text"
-                          style={{ left: `${settings.idealPct[b.id]}%` }}
-                        />
+                        {b.id !== 'savings' && (
+                          <div
+                            className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-text"
+                            style={{ left: `${settings.idealPct[b.id]}%` }}
+                          />
+                        )}
                       </div>
+                      {b.id !== 'savings' && <IdealLine spent={amount} ideal={idealCents(settings.idealPct[b.id], totals.income)} />}
                     </li>
                   )
                 })}
@@ -256,24 +232,17 @@ function AddFab({ onClick }: { onClick: () => void }) {
   )
 }
 
-const STATUS: Record<BucketStatus, { label: string; Icon: PhosphorIcon }> = {
-  onTrack: { label: 'In linea', Icon: CheckIcon },
-  goalReached: { label: 'Obiettivo raggiunto', Icon: CheckIcon },
-  overCap: { label: 'Sopra il tetto', Icon: WarningIcon },
-  belowGoal: { label: "Sotto l'obiettivo", Icon: ArrowDownIcon },
-}
-
-/** Stato del bucket: sempre etichetta di testo più icona, mai solo colore. */
-function Status({ status }: { status: BucketStatus }) {
-  const { label, Icon } = STATUS[status]
+/** Significato della tacca: quanto resta prima dell'ideale o di quanto lo si è superato. */
+function IdealLine({ spent, ideal }: { spent: number; ideal: number }) {
+  if (spent <= ideal) return <p>Hai a disposizione ancora {formatCents(ideal - spent)}</p>
+  // Lo sforamento è l'unico avviso: testo più icona, mai solo colore
   return (
-    <span className="flex items-center gap-1">
-      <Icon />
-      {label}
-    </span>
+    <p className="flex items-center gap-1">
+      <WarningIcon />
+      Hai sforato di {formatCents(spent - ideal)}
+    </p>
   )
 }
-
 
 /** "2026-11-03" → "3 nov". */
 function shortDate(date: string): string {
