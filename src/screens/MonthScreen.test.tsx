@@ -164,14 +164,14 @@ describe('MonthScreen', () => {
     const user = await setup()
     await user.click(screen.getByRole('button', { name: 'Mese precedente' }))
     await user.click(screen.getByRole('tab', { name: 'Categorie' }))
-    await user.click(screen.getByRole('radio', { name: 'Piacere' }))
 
-    expect(await screen.findByRole('heading', { level: 2, name: 'In Piacere pesa di più Ristoranti: 100%' })).toBeTruthy()
+    const pleasure = await screen.findByRole('region', { name: 'Piacere' })
+    await vi.waitFor(() => expect(within(pleasure).getByRole('listitem').textContent).toBe('Ristoranti25,00\u00a0€'))
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Ottobre 2026')
     expect(screen.getByRole('button', { name: 'Aggiungi transazione' })).toBeTruthy()
 
     await user.click(screen.getByRole('button', { name: 'Mese successivo' }))
-    expect(await screen.findByText('Nessuna spesa in Piacere a Novembre 2026.')).toBeTruthy()
+    expect(await screen.findByText('Nessuna spesa a Novembre 2026.')).toBeTruthy()
   })
 
   it('il FAB si stringe scorrendo in basso oltre 100 px e torna esteso scorrendo in alto', async () => {
