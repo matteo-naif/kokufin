@@ -19,6 +19,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [x] 3.4 Impostazioni: percentuali (`specs/settings`) e interruttore "Suoni" (`specs/sounds`)
 - [ ] 3.5 Backup JSON, esporta e importa (`specs/backup`)
 - [ ] 3.6 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
+- [x] 3.7 Routing con wouter (indirizzi `#/`) e ritorno al mese con il tasto Indietro (`specs/navigation`)
 
 ## 4. Android
 

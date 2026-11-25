@@ -18,6 +18,7 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Vite + React + TypeScript + Tailwind.
 - Dexie (IndexedDB) per i dati locali.
 - react-hook-form per la gestione dei form.
+- wouter per il routing, con indirizzi nella forma `#/` (`useHashLocation`): l'APK carica l'app da file locali, senza un server che risponda agli altri percorsi. Serve soprattutto al tasto Indietro di Android, che in Capacitor segue la cronologia della WebView.
 - sonner per i toast di conferma, con lo stile del design system (classi Tailwind, testi in `rem`). Gli errori di validazione non vanno nei toast: restano scritti accanto ai campi.
 - Barre orizzontali in HTML e CSS per il grafico di ripartizione, con la stessa tecnica delle barre dei bucket. Nessuna libreria di grafici: Recharts non serve più.
 - Capacitor per generare un APK da installare a mano, senza pubblicare online.
