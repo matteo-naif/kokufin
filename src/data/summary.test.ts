@@ -125,19 +125,13 @@ describe('categoryTotals', () => {
     tx('2026-11-06', 9999, 'housing'),
   ]
 
-  it('mostra solo le categorie del bucket con spese, dalla più alta, con la quota sulle spese del mese', () => {
-    // Spese del mese: 19999 (le entrate non contano)
+  it('mostra solo le categorie del bucket con spese, dalla più alta', () => {
     expect(categoryTotals(txs, 'pleasure')).toEqual([
-      { categoryId: 'restaurants', cents: 5000, pct: 25 },
-      { categoryId: 'travel', cents: 4000, pct: 20 },
-      { categoryId: 'entertainment', cents: 1000, pct: 5 },
+      { categoryId: 'restaurants', cents: 5000 },
+      { categoryId: 'travel', cents: 4000 },
+      { categoryId: 'entertainment', cents: 1000 },
     ])
-    expect(categoryTotals(txs, 'essentials')).toEqual([{ categoryId: 'housing', cents: 9999, pct: 50 }])
-  })
-
-  it('arrotonda le percentuali a interi senza correggere la somma', () => {
-    const thirds = [tx('2026-11-01', 100, 'entertainment'), tx('2026-11-02', 100, 'travel'), tx('2026-11-03', 100, 'gifts')]
-    expect(categoryTotals(thirds, 'pleasure').map((r) => r.pct)).toEqual([33, 33, 33])
+    expect(categoryTotals(txs, 'essentials')).toEqual([{ categoryId: 'housing', cents: 9999 }])
   })
 
   it('bucket senza spese → elenco vuoto', () => {

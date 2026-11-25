@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Ripartizione per categoria
-Il sistema SHALL mostrare, per il mese selezionato, un'unica vista con le spese per categoria in barre orizzontali, divisa in due sezioni con un titolo ciascuna: prima Essenziali, poi Piacere, sempre in quest'ordine. Le regole sono le "Regole per i grafici" di `design.md`. La vista ha una sola scala: il 100% sono le spese totali del mese (Essenziali più Piacere), così le barre sono confrontabili anche tra una sezione e l'altra. Ogni riga riporta il nome della categoria, l'importo e la percentuale sulle spese del mese.
+Il sistema SHALL mostrare, per il mese selezionato, un'unica vista con le spese per categoria in barre orizzontali, divisa in due sezioni con un titolo ciascuna: prima Essenziali, poi Piacere, sempre in quest'ordine. Le regole sono le "Regole per i grafici" di `design.md`. La vista ha una sola scala: il 100% sono le spese totali del mese (Essenziali più Piacere), così le barre sono confrontabili anche tra una sezione e l'altra. Ogni riga riporta il nome della categoria e l'importo, senza percentuali: la proporzione la dà la lunghezza della barra.
 
 #### Scenario: Due sezioni in una vista
 - **WHEN** il mese ha spese
@@ -9,7 +9,7 @@ Il sistema SHALL mostrare, per il mese selezionato, un'unica vista con le spese 
 
 #### Scenario: Titolo della sezione
 - **WHEN** viene mostrata una sezione
-- **THEN** il titolo è il nome del bucket, e accanto ci sono il totale speso nel bucket e la sua quota intera sulle spese del mese, per esempio "Essenziali" con "820,00 € · 80%"
+- **THEN** il titolo è il nome del bucket, e accanto c'è il totale speso nel bucket, per esempio "Essenziali" con "820,00 €"
 
 #### Scenario: Barre proporzionali
 - **WHEN** il grafico è mostrato
@@ -17,7 +17,7 @@ Il sistema SHALL mostrare, per il mese selezionato, un'unica vista con le spese 
 
 #### Scenario: Etichette dirette
 - **WHEN** il grafico è mostrato
-- **THEN** nome, importo e percentuale sono scritti su ogni riga, e non ci sono legenda, asse dei valori, griglia né tooltip
+- **THEN** nome e importo sono scritti su ogni riga, e non ci sono percentuali, legenda, asse dei valori, griglia né tooltip
 
 #### Scenario: Colore
 - **WHEN** il grafico è mostrato

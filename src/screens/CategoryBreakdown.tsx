@@ -33,9 +33,7 @@ export default function CategoryBreakdown({ txs, month }: Props) {
             <h2 id={`breakdown-${s.id}`} className="text-xl font-bold">
               {s.name}
             </h2>
-            <p className="whitespace-nowrap text-text-secondary">
-              {formatCents(s.cents)} · {Math.round((s.cents / spent) * 100)}%
-            </p>
+            <p className="whitespace-nowrap text-text-secondary">{formatCents(s.cents)}</p>
           </div>
 
           {s.rows.length === 0 ? (
@@ -47,9 +45,7 @@ export default function CategoryBreakdown({ txs, month }: Props) {
                 <li key={r.categoryId} className="flex flex-col gap-1">
                   <div className="flex flex-wrap justify-between gap-x-4">
                     <span>{CATEGORY_NAME.get(r.categoryId)}</span>
-                    <span className="whitespace-nowrap">
-                      {formatCents(r.cents)} · {r.pct}%
-                    </span>
+                    <span className="whitespace-nowrap">{formatCents(r.cents)}</span>
                   </div>
                   {/* Barra decorativa: scala fissa, 100% = spese totali del mese */}
                   <div aria-hidden="true">

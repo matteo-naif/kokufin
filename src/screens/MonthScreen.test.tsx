@@ -166,7 +166,7 @@ describe('MonthScreen', () => {
     await user.click(screen.getByRole('tab', { name: 'Categorie' }))
 
     const pleasure = await screen.findByRole('region', { name: 'Piacere' })
-    await vi.waitFor(() => expect(within(pleasure).getByRole('listitem').textContent).toBe('Ristoranti25,00\u00a0€ · 100%'))
+    await vi.waitFor(() => expect(within(pleasure).getByRole('listitem').textContent).toBe('Ristoranti25,00\u00a0€'))
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Ottobre 2026')
     expect(screen.getByRole('button', { name: 'Aggiungi transazione' })).toBeTruthy()
 

@@ -24,7 +24,7 @@ Il sistema SHALL presentare testo, controlli e grafici in modo percepibile senza
 
 #### Scenario: Grafico per chi non lo vede
 - **WHEN** viene mostrato il grafico di ripartizione
-- **THEN** ogni riga è un elemento di un elenco `ul` con categoria, importo e percentuale in testo, letto dallo screen reader, e la barra è decorativa e nascosta alle tecnologie assistive
+- **THEN** ogni riga è un elemento di un elenco `ul` con categoria e importo in testo, letto dallo screen reader, e la barra è decorativa e nascosta alle tecnologie assistive
 
 #### Scenario: Testo ingrandito
 - **WHEN** la dimensione del carattere del telefono è al 200% o la larghezza è 320 px

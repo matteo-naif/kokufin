@@ -23,7 +23,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [x] 3.8 Freccia indietro nell'intestazione delle viste secondarie al posto dei pulsanti Annulla (`specs/navigation`)
 - [x] 3.9 Icone Phosphor al posto degli SVG disegnati a mano, secondo "Icone" di `design.md`
 - [x] 3.10 FAB esteso "Aggiungi" in basso a destra nella schermata del mese, che si stringe scorrendo verso il basso, al posto del "+" nell'intestazione (`specs/navigation`, "Linee guida di interfaccia" di `design.md`)
-- [x] 3.11 Ripartizione per categoria in una vista unica con le sezioni Essenziali e Piacere, una sola scala sulle spese del mese e senza la frase con la categoria più alta (`specs/category-breakdown`, "Regole per i grafici" di `design.md`)
+- [x] 3.11 Ripartizione per categoria in una vista unica con le sezioni Essenziali e Piacere, una sola scala sulle spese del mese, senza la frase con la categoria più alta e senza percentuali (`specs/category-breakdown`, "Regole per i grafici" di `design.md`)
 
 ## 4. Android
 

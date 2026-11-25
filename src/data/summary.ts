@@ -71,21 +71,17 @@ export function monthTotals(txs: Transaction[]): MonthTotals {
 export interface CategoryTotal {
   categoryId: string
   cents: number
-  pct: number // quota intera sulle spese totali del mese
 }
 
-/** Categorie del bucket con spese, dalla più alta. Le percentuali sono sulle spese totali del mese. */
+/** Categorie del bucket con spese, dalla più alta. */
 export function categoryTotals(txs: Transaction[], bucket: SpendingBucket): CategoryTotal[] {
   const sums = new Map<string, number>()
-  let total = 0
   for (const t of txs) {
-    if (t.kind !== 'expense') continue
-    total += t.amountCents
-    if (BUCKET_OF.get(t.categoryId) === bucket) {
+    if (t.kind === 'expense' && BUCKET_OF.get(t.categoryId) === bucket) {
       sums.set(t.categoryId, (sums.get(t.categoryId) ?? 0) + t.amountCents)
     }
   }
   return [...sums]
-    .map(([categoryId, cents]) => ({ categoryId, cents, pct: Math.round((cents / total) * 100) }))
+    .map(([categoryId, cents]) => ({ categoryId, cents }))
     .sort((a, b) => b.cents - a.cents)
 }

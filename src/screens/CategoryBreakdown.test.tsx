@@ -46,9 +46,9 @@ describe('CategoryBreakdown', () => {
     expect(rows('Essenziali').map((li) => li.querySelector('span')!.textContent)).toEqual(['Casa (affitto/mutuo)'])
   })
 
-  it('accanto al titolo: totale del bucket e quota sulle spese del mese', () => {
+  it('accanto al titolo: totale speso nel bucket', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    expect(within(section('Piacere')).getByText('100,00 € · 50%')).toBeTruthy()
+    expect(within(section('Piacere')).getByText('100,00 €')).toBeTruthy()
   })
 
   it('barre da zero, larghezza = quota sulle spese totali del mese, uguale in tutte le sezioni', () => {
@@ -57,9 +57,9 @@ describe('CategoryBreakdown', () => {
     expect(bars('Essenziali').map((b) => b.style.width)).toEqual(['50%'])
   })
 
-  it('etichette dirette: nome, importo e percentuale sul mese su ogni riga, barra nascosta allo screen reader', () => {
+  it('etichette dirette: nome e importo su ogni riga, senza percentuali, barra nascosta allo screen reader', () => {
     render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    expect(rows('Piacere')[1].textContent).toBe('Viaggi40,00\u00a0€ · 20%')
+    expect(rows('Piacere')[1].textContent).toBe('Viaggi40,00\u00a0€')
     for (const li of [...rows('Essenziali'), ...rows('Piacere')]) expect(li.querySelector('[aria-hidden="true"]')).toBeTruthy()
   })
 
@@ -72,7 +72,7 @@ describe('CategoryBreakdown', () => {
   it('sezione senza spese: resta con titolo e "Nessuna spesa."', () => {
     render(<CategoryBreakdown txs={[tx(500, 'gifts')]} month="2026-11" />)
     expect(within(section('Essenziali')).getByText('Nessuna spesa.')).toBeTruthy()
-    expect(within(section('Essenziali')).getByText('0,00 € · 0%')).toBeTruthy()
+    expect(within(section('Essenziali')).getByText('0,00 €')).toBeTruthy()
     expect(rows('Piacere')).toHaveLength(1)
   })
 
@@ -85,7 +85,7 @@ describe('CategoryBreakdown', () => {
   it('si aggiorna quando cambiano mese e transazioni', () => {
     const { rerender } = render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
     rerender(<CategoryBreakdown txs={[tx(500, 'gifts')]} month="2026-10" />)
-    expect(rows('Piacere')[0].textContent).toBe('Regali5,00\u00a0€ · 100%')
+    expect(rows('Piacere')[0].textContent).toBe('Regali5,00\u00a0€')
     rerender(<CategoryBreakdown txs={[]} month="2026-09" />)
     expect(screen.getByText('Nessuna spesa a Settembre 2026.')).toBeTruthy()
   })
