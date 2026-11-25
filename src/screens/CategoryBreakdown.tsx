@@ -1,8 +1,11 @@
 import { useState } from 'react'
-import { type Bucket, BUCKETS, CATEGORY_NAME } from '@/config/categories'
+import { BUCKETS, CATEGORY_NAME, type SpendingBucket } from '@/config/categories'
 import type { Transaction } from '@/data/db'
 import { formatCents } from '@/data/money'
 import { categoryTotals, monthLabel } from '@/data/summary'
+
+// Risparmi non ha categorie: si calcola dalle entrate
+const SPENDING_BUCKETS = BUCKETS.filter((b): b is { id: SpendingBucket; name: string } => b.id !== 'savings')
 
 interface Props {
   txs: Transaction[] // transazioni del mese
@@ -11,8 +14,8 @@ interface Props {
 
 /** Ripartizione per categoria: segue le "Regole per i grafici" di design.md. */
 export default function CategoryBreakdown({ txs, month }: Props) {
-  const [bucket, setBucket] = useState<Bucket>('essentials')
-  const bucketName = BUCKETS.find((b) => b.id === bucket)!.name
+  const [bucket, setBucket] = useState<SpendingBucket>('essentials')
+  const bucketName = SPENDING_BUCKETS.find((b) => b.id === bucket)!.name
   const rows = categoryTotals(txs, bucket)
   const total = rows.reduce((sum, r) => sum + r.cents, 0)
 
@@ -21,7 +24,7 @@ export default function CategoryBreakdown({ txs, month }: Props) {
       <fieldset>
         <legend className="mb-2 font-semibold">Bucket</legend>
         <div className="flex flex-wrap gap-x-6">
-          {BUCKETS.map((b) => (
+          {SPENDING_BUCKETS.map((b) => (
             <label key={b.id} className="flex min-h-11 items-center gap-2">
               <input
                 type="radio"

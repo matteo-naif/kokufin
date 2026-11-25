@@ -68,10 +68,14 @@ describe('CategoryBreakdown', () => {
   })
 
   it('bucket senza spese: stato vuoto al posto del grafico', async () => {
-    render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
-    await choose('Risparmi')
+    render(<CategoryBreakdown txs={[tx(500, 'gifts')]} month="2026-11" />)
     expect(screen.queryByRole('list')).toBeNull()
-    expect(screen.getByText('Nessuna spesa in Risparmi a Novembre 2026.')).toBeTruthy()
+    expect(screen.getByText('Nessuna spesa in Essenziali a Novembre 2026.')).toBeTruthy()
+  })
+
+  it('offre solo i bucket di spesa: Risparmi non ha categorie', () => {
+    render(<CategoryBreakdown txs={NOVEMBER} month="2026-11" />)
+    expect(screen.getAllByRole('radio').map((r) => r.closest('label')!.textContent)).toEqual(['Essenziali', 'Piacere'])
   })
 
   it('si aggiorna quando cambiano mese e transazioni', async () => {

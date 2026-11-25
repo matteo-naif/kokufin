@@ -3,6 +3,9 @@
 
 export type Bucket = 'essentials' | 'pleasure' | 'savings'
 
+/** Bucket a cui appartengono le categorie di spesa. Risparmi non si registra: si calcola. */
+export type SpendingBucket = Exclude<Bucket, 'savings'>
+
 /** Bucket nell'ordine in cui compaiono, con il nome mostrato all'utente. */
 export const BUCKETS: { id: Bucket; name: string }[] = [
   { id: 'essentials', name: 'Essenziali' },
@@ -16,7 +19,7 @@ export interface Category {
 }
 
 export interface ExpenseCategory extends Category {
-  bucket: Bucket
+  bucket: SpendingBucket
 }
 
 export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
@@ -34,10 +37,6 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   { id: 'clothing', name: 'Abbigliamento', bucket: 'pleasure' },
   { id: 'subscriptions', name: 'Abbonamenti', bucket: 'pleasure' },
   { id: 'gifts', name: 'Regali', bucket: 'pleasure' },
-
-  { id: 'emergency-fund', name: 'Fondo emergenza', bucket: 'savings' },
-  { id: 'investments', name: 'Investimenti', bucket: 'savings' },
-  { id: 'pension', name: 'Pensione', bucket: 'savings' },
 ]
 
 export const INCOME_CATEGORIES: Category[] = [

@@ -7,8 +7,8 @@ describe('categorie', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('coprono tutti e tre i bucket', () => {
+  it('di spesa appartengono solo a Essenziali e Piacere, mai a Risparmi', () => {
     const buckets = new Set(EXPENSE_CATEGORIES.map((c) => c.bucket))
-    expect([...buckets].sort()).toEqual(['essentials', 'pleasure', 'savings'])
+    expect([...buckets].sort()).toEqual(['essentials', 'pleasure'])
   })
 })

@@ -80,19 +80,31 @@ describe('idealCents e bucketStatus', () => {
 })
 
 describe('monthTotals', () => {
-  it('somma entrate e spese per bucket', () => {
+  it('somma entrate e spese; Risparmi = entrate − Essenziali − Piacere', () => {
     const totals = monthTotals([
       tx('2026-11-01', 200000, 'salary', 'income'),
       tx('2026-11-02', 5000, 'extra', 'income'),
       tx('2026-11-03', 60000, 'housing'),
       tx('2026-11-04', 4550, 'groceries'),
       tx('2026-11-05', 3000, 'restaurants'),
-      tx('2026-11-06', 50000, 'investments'),
     ])
     expect(totals).toEqual({
       income: 205000,
-      buckets: { essentials: 64550, pleasure: 3000, savings: 50000 },
+      buckets: { essentials: 64550, pleasure: 3000, savings: 137450 },
     })
+  })
+
+  it('esempio della spec: 1800 − 200 − 23 = 1577', () => {
+    const totals = monthTotals([
+      tx('2026-11-25', 180000, 'salary', 'income'),
+      tx('2026-11-25', 20000, 'utilities'),
+      tx('2026-11-25', 2300, 'gifts'),
+    ])
+    expect(totals.buckets.savings).toBe(157700)
+  })
+
+  it('il risparmio è negativo se le spese superano le entrate', () => {
+    expect(monthTotals([tx('2026-11-01', 10000, 'salary', 'income'), tx('2026-11-02', 12000, 'housing')]).buckets.savings).toBe(-2000)
   })
 
   it('con nessuna transazione restituisce zeri', () => {
@@ -127,6 +139,6 @@ describe('categoryTotals', () => {
   })
 
   it('bucket senza spese → elenco vuoto', () => {
-    expect(categoryTotals(txs, 'savings')).toEqual([])
+    expect(categoryTotals([tx('2026-11-01', 100, 'gifts')], 'essentials')).toEqual([])
   })
 })

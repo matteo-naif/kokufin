@@ -1,4 +1,4 @@
-import { type Bucket, EXPENSE_CATEGORIES } from '@/config/categories'
+import { type Bucket, EXPENSE_CATEGORIES, type SpendingBucket } from '@/config/categories'
 import type { Transaction } from '@/data/db'
 
 const BUCKET_OF = new Map(EXPENSE_CATEGORIES.map((c) => [c.id, c.bucket]))
@@ -41,10 +41,10 @@ export function idealCents(pct: number, incomeCents: number): number {
 
 export type BucketStatus = 'onTrack' | 'overCap' | 'goalReached' | 'belowGoal'
 
-/** Essenziali e Piacere hanno un tetto; Risparmi un obiettivo. */
-export function bucketStatus(bucket: Bucket, spent: number, ideal: number): BucketStatus {
-  if (bucket === 'savings') return spent >= ideal ? 'goalReached' : 'belowGoal'
-  return spent <= ideal ? 'onTrack' : 'overCap'
+/** Essenziali e Piacere hanno un tetto sullo speso; Risparmi un obiettivo sul risparmiato. */
+export function bucketStatus(bucket: Bucket, amount: number, ideal: number): BucketStatus {
+  if (bucket === 'savings') return amount >= ideal ? 'goalReached' : 'belowGoal'
+  return amount <= ideal ? 'onTrack' : 'overCap'
 }
 
 export function inMonth(txs: Transaction[], month: string): Transaction[] {
@@ -53,17 +53,19 @@ export function inMonth(txs: Transaction[], month: string): Transaction[] {
 
 export interface MonthTotals {
   income: number
+  /** Essenziali e Piacere: speso. Risparmi: entrate − speso, può essere negativo. */
   buckets: Record<Bucket, number>
 }
 
-/** Totali in centesimi: entrate e spese per bucket. */
+/** Totali del mese in centesimi. */
 export function monthTotals(txs: Transaction[]): MonthTotals {
-  const totals: MonthTotals = { income: 0, buckets: { essentials: 0, pleasure: 0, savings: 0 } }
+  const spent: Record<SpendingBucket, number> = { essentials: 0, pleasure: 0 }
+  let income = 0
   for (const t of txs) {
-    if (t.kind === 'income') totals.income += t.amountCents
-    else totals.buckets[BUCKET_OF.get(t.categoryId)!] += t.amountCents
+    if (t.kind === 'income') income += t.amountCents
+    else spent[BUCKET_OF.get(t.categoryId)!] += t.amountCents
   }
-  return totals
+  return { income, buckets: { ...spent, savings: income - spent.essentials - spent.pleasure } }
 }
 
 export interface CategoryTotal {
@@ -73,7 +75,7 @@ export interface CategoryTotal {
 }
 
 /** Categorie del bucket con spese, dalla più alta. */
-export function categoryTotals(txs: Transaction[], bucket: Bucket): CategoryTotal[] {
+export function categoryTotals(txs: Transaction[], bucket: SpendingBucket): CategoryTotal[] {
   const sums = new Map<string, number>()
   for (const t of txs) {
     if (t.kind === 'expense' && BUCKET_OF.get(t.categoryId) === bucket) {

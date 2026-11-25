@@ -100,13 +100,34 @@ describe('MonthScreen', () => {
     expect(item.querySelector('svg[aria-hidden="true"]')).toBeTruthy()
   })
 
+  it('Risparmi calcolato: entrate − Essenziali − Piacere (esempio della spec)', async () => {
+    await add('2026-11-25', 180000, 'salary', 'income')
+    await add('2026-11-25', 20000, 'utilities')
+    await add('2026-11-25', 2300, 'gifts')
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('1577,00\u00a0€ risparmiati su 900,00\u00a0€ ideali'))
+    expect(bucket('Risparmi').textContent).toContain('Obiettivo raggiunto')
+    expect(bucket('Essenziali').textContent).toContain('200,00\u00a0€ spesi')
+  })
+
   it('Risparmi sotto l\'obiettivo', async () => {
     await add('2026-11-01', 100000, 'salary', 'income') // ideale Risparmi 50% = 500 €
-    await add('2026-11-02', 20000, 'investments')
+    await add('2026-11-02', 60000, 'housing') // risparmio 400 €
     await setup()
 
     await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Sotto l\'obiettivo'))
-    expect(bucket('Piacere').textContent).toContain('In linea')
+    expect(bucket('Risparmi').textContent).toContain('400,00\u00a0€ risparmiati')
+  })
+
+  it('Risparmi negativo: segno meno, barra vuota, sotto l\'obiettivo', async () => {
+    await add('2026-11-01', 10000, 'salary', 'income')
+    await add('2026-11-02', 12000, 'housing')
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('-20,00\u00a0€ risparmiati'))
+    expect(bucket('Risparmi').textContent).toContain('Sotto l\'obiettivo')
+    expect(bucket('Risparmi').querySelector<HTMLElement>('[aria-hidden="true"] > div')!.style.width).toBe('0%')
   })
 
   it('usa le percentuali salvate nelle impostazioni', async () => {

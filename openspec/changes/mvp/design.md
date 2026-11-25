@@ -27,7 +27,8 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - `Transaction`: `id`, `date` (ISO `YYYY-MM-DD`), `amountCents` (intero, sempre positivo), `kind` (`income` | `expense`), `categoryId`, `note?`.
 - `Settings`: `idealPct` con tre valori (`essentials`, `pleasure`, `savings`) la cui somma è 100. Default 30 / 20 / 50.
 - Il mese non è salvato: si ricava dalla data della transazione.
-- I risparmi sono transazioni `expense` con una categoria del bucket `savings`.
+- I risparmi non si registrano: si calcolano. Risparmi del mese = entrate − spese Essenziali − spese Piacere. Il valore può essere negativo, quando le spese superano le entrate.
+- Le categorie di spesa appartengono solo a Essenziali (`essentials`) o Piacere (`pleasure`).
 
 ## Categorie
 
@@ -37,7 +38,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 
 - `ideale = percentuale × entrate del mese`.
 - Essenziali e Piacere: speso ≤ ideale → "In linea", speso > ideale → "Sopra il tetto".
-- Risparmi: speso ≥ ideale → "Obiettivo raggiunto", speso < ideale → "Sotto l'obiettivo".
+- Risparmi: risparmiato ≥ ideale → "Obiettivo raggiunto", risparmiato < ideale → "Sotto l'obiettivo". La barra mostra "X risparmiati su Y ideali"; con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
 - Con entrate pari a zero l'ideale è 0 e la schermata mostra l'invito ad aggiungere un'entrata.
 
 ## Design system

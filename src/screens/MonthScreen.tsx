@@ -117,19 +117,19 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
 
               <ul aria-label="Bucket" className="flex flex-col gap-6">
                 {BUCKETS.map((b) => {
-                  const spent = totals.buckets[b.id]
+                  const amount = totals.buckets[b.id] // Risparmi: entrate − spese, può essere negativo
                   const ideal = idealCents(settings.idealPct[b.id], totals.income)
-                  const share = ideal > 0 ? Math.min(spent / ideal, 1) : spent > 0 ? 1 : 0
+                  const share = amount <= 0 ? 0 : ideal > 0 ? Math.min(amount / ideal, 1) : 1
                   return (
                     <li key={b.id} className="flex flex-col gap-2">
                       <div className="flex flex-wrap items-center justify-between gap-x-4">
                         <span className="font-semibold">{b.name}</span>
-                        <Status status={bucketStatus(b.id, spent, ideal)} />
+                        <Status status={bucketStatus(b.id, amount, ideal)} />
                       </div>
                       <p>
-                        {formatCents(spent)} spesi su {formatCents(ideal)} ideali
+                        {formatCents(amount)} {b.id === 'savings' ? 'risparmiati' : 'spesi'} su {formatCents(ideal)} ideali
                       </p>
-                      {/* Barra decorativa: speso, ideale e stato sono già scritti sopra */}
+                      {/* Barra decorativa: importo, ideale e stato sono già scritti sopra */}
                       <div aria-hidden="true" className="h-3 rounded bg-separator">
                         <div className="h-full rounded bg-primary" style={{ width: `${share * 100}%` }} />
                       </div>
