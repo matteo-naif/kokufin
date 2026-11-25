@@ -64,11 +64,11 @@ describe('MonthScreen', () => {
     await add('2026-10-10', 300000, 'salary', 'income')
     await add('2026-11-10', 100000, 'salary', 'income')
     const user = await setup()
-    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Hai risparmiato 1000,00'))
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('1000,00'))
 
     await user.click(screen.getByRole('button', { name: 'Mese precedente' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Ottobre 2026' })).toBeTruthy()
-    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Hai risparmiato 3000,00'))
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('3000,00'))
 
     for (let i = 0; i < 24; i++) await user.click(screen.getByRole('button', { name: 'Mese precedente' }))
     expect(await screen.findByRole('heading', { level: 1, name: 'Ottobre 2024' })).toBeTruthy()
@@ -96,7 +96,7 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 20000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Hai speso 200,00\u00a0€'))
+    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Essenziali200,00\u00a0€'))
     expect(bucket('Essenziali').textContent).toContain('Hai a disposizione ancora 100,00\u00a0€')
     expect(bucket('Essenziali').querySelector('svg')).toBeNull()
   })
@@ -106,19 +106,18 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 35000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Hai speso 350,00\u00a0€'))
+    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Essenziali350,00\u00a0€'))
     expect(bucket('Essenziali').textContent).toContain('Hai sforato di 50,00\u00a0€')
     expect(bucket('Essenziali').querySelector('svg[aria-hidden="true"]')).toBeTruthy()
   })
 
-  it('Risparmi calcolato: entrate − Essenziali − Piacere, senza tacca né riga sotto', async () => {
+  it('Risparmi calcolato: entrate − Essenziali − Piacere, accanto al nome e senza riga sotto', async () => {
     await add('2026-11-25', 180000, 'salary', 'income')
     await add('2026-11-25', 20000, 'utilities')
     await add('2026-11-25', 2300, 'gifts')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toBe('RisparmiHai risparmiato 1577,00\u00a0€'))
-    expect(bar('Risparmi').ideal).toBeUndefined()
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toBe('Risparmi1577,00\u00a0€'))
     expect(bucket('Risparmi').querySelector('svg')).toBeNull()
   })
 
@@ -127,7 +126,7 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 12000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Hai risparmiato -20,00\u00a0€'))
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Risparmi-20,00\u00a0€'))
     expect(bar('Risparmi').fill.style.width).toBe('0%')
   })
 
@@ -140,6 +139,7 @@ describe('MonthScreen', () => {
     expect(bar('Essenziali').ideal.style.left).toBe('30%')
     expect(bar('Piacere').ideal.style.left).toBe('20%')
     expect(bar('Risparmi').fill.style.width).toBe('75%')
+    expect(bar('Risparmi').ideal.style.left).toBe('50%')
   })
 
   it('spese oltre le entrate: la barra si ferma alla larghezza piena', async () => {

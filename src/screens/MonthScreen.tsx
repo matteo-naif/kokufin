@@ -127,20 +127,19 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                   const share = Math.min(Math.max(amount / totals.income, 0), 1)
                   return (
                     <li key={b.id} className="flex flex-col gap-2">
-                      <span className="font-semibold">{b.name}</span>
-                      <p>
-                        {b.id === 'savings' ? 'Hai risparmiato' : 'Hai speso'} {formatCents(amount)}
-                      </p>
+                      {/* Importo accanto al nome, come il totale accanto al titolo in Categorie */}
+                      <div className="flex flex-wrap justify-between gap-x-4">
+                        <span className="font-semibold">{b.name}</span>
+                        <span className="whitespace-nowrap font-semibold text-text-secondary">{formatCents(amount)}</span>
+                      </div>
                       {/* Barra decorativa: importi e sforamento sono scritti in testo */}
                       <div aria-hidden="true" className="relative h-3 rounded bg-separator">
                         <div className="h-full rounded bg-primary" style={{ width: `${share * 100}%` }} />
                         {/* Tacca dell'ideale: più alta della barra, si vede anche sopra il riempimento */}
-                        {b.id !== 'savings' && (
-                          <div
-                            className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-text"
-                            style={{ left: `${settings.idealPct[b.id]}%` }}
-                          />
-                        )}
+                        <div
+                          className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-text"
+                          style={{ left: `${settings.idealPct[b.id]}%` }}
+                        />
                       </div>
                       {b.id !== 'savings' && <IdealLine spent={amount} ideal={idealCents(settings.idealPct[b.id], totals.income)} />}
                     </li>
