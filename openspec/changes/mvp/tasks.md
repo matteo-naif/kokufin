@@ -22,6 +22,7 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 - [x] 3.7 Impostazioni come indice con le sezioni Preferenze e Backup, ognuna con il proprio indirizzo (`specs/settings`, `specs/navigation`)
 - [x] 3.8 Freccia indietro nell'intestazione delle viste secondarie al posto dei pulsanti Annulla (`specs/navigation`)
 - [x] 3.9 Icone Phosphor al posto degli SVG disegnati a mano, secondo "Icone" di `design.md`
+- [x] 3.10 FAB esteso "Aggiungi" in basso a destra nella schermata del mese, che si stringe scorrendo verso il basso, al posto del "+" nell'intestazione (`specs/navigation`, "Linee guida di interfaccia" di `design.md`)
 
 ## 4. Android
 

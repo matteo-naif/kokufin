@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -172,6 +172,34 @@ describe('MonthScreen', () => {
 
     await user.click(screen.getByRole('button', { name: 'Mese successivo' }))
     expect(await screen.findByText('Nessuna spesa in Piacere a Novembre 2026.')).toBeTruthy()
+  })
+
+  it('il FAB si stringe scorrendo in basso oltre 100 px e torna esteso scorrendo in alto', async () => {
+    await setup()
+    const label = screen.getByTestId('fab-label')
+    const scrollTo = (y: number) => {
+      Object.defineProperty(window, 'scrollY', { value: y, configurable: true })
+      fireEvent.scroll(window)
+    }
+    const extended = () => !label.className.includes('max-w-0')
+
+    expect(label.textContent).toBe('Aggiungi')
+    expect(extended()).toBe(true)
+
+    scrollTo(80) // entro i primi 100 px resta esteso
+    expect(extended()).toBe(true)
+
+    scrollTo(300)
+    expect(extended()).toBe(false)
+    expect(screen.getByRole('button', { name: 'Aggiungi transazione' })).toBeTruthy()
+
+    scrollTo(250)
+    expect(extended()).toBe(true)
+
+    scrollTo(400)
+    scrollTo(50)
+    expect(extended()).toBe(true)
+    scrollTo(0)
   })
 
   it('"+" apre una nuova transazione e un movimento apre la modifica', async () => {

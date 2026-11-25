@@ -30,6 +30,33 @@ Il sistema SHALL riportare alla vista da cui si è arrivati con il tasto Indietr
 - **WHEN** l'utente salva o elimina una transazione, salva le preferenze o conferma il ripristino di un backup
 - **THEN** l'app torna alla schermata del mese, con lo stesso mese e la stessa tab di prima, togliendo dalla cronologia le viste aperte dopo il mese, così un Indietro successivo non le riapre
 
+### Requirement: Pulsante Aggiungi in basso
+Il sistema SHALL mostrare nella schermata del mese, e solo lì, un FAB esteso (Material Design 3) fisso in basso a destra, con l'icona "+" e l'etichetta "Aggiungi", che apre la nuova transazione. Sta in basso perché è l'azione più frequente e deve essere raggiungibile con il pollice. Quando l'utente scorre verso il basso oltre i primi 100 px il FAB si stringe al solo "+"; quando scorre verso l'alto o torna entro i primi 100 px torna esteso. Il FAB non si nasconde mai. Le impostazioni restano nell'intestazione, perché si usano di rado.
+
+#### Scenario: FAB esteso all'apertura
+- **WHEN** l'utente apre la schermata del mese
+- **THEN** in basso a destra c'è il FAB con "+" ed etichetta "Aggiungi", e toccarlo apre la nuova transazione
+
+#### Scenario: Scroll verso il basso
+- **WHEN** l'utente scorre verso il basso oltre i primi 100 px
+- **THEN** il FAB mostra solo il "+", resta nella stessa posizione e continua ad aprire la nuova transazione
+
+#### Scenario: Scroll verso l'alto
+- **WHEN** il FAB è stretto e l'utente scorre verso l'alto
+- **THEN** il FAB torna esteso
+
+#### Scenario: Ultimo movimento visibile
+- **WHEN** l'utente scorre fino in fondo all'elenco dei movimenti
+- **THEN** l'ultimo movimento, importo compreso, non è coperto dal FAB
+
+#### Scenario: Solo nella schermata del mese
+- **WHEN** l'utente apre una vista secondaria
+- **THEN** il FAB non compare
+
+#### Scenario: FAB accessibile
+- **WHEN** viene mostrato il FAB, esteso o stretto
+- **THEN** ha sempre il nome accessibile "Aggiungi transazione", l'icona è nascosta allo screen reader, l'area di tocco è di almeno 56 × 56 px e, con la riduzione del movimento attiva, il cambio di forma avviene senza animazione
+
 ### Requirement: Freccia indietro
 Il sistema SHALL mostrare nell'intestazione di ogni vista secondaria (form della transazione, indice delle impostazioni, Preferenze, Backup) un pulsante con la freccia indietro, accanto al titolo. Il pulsante fa come il tasto Indietro ed è l'unico modo visibile per uscire senza salvare: i form non hanno un pulsante Annulla.
 

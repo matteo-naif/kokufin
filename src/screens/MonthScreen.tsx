@@ -59,31 +59,22 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
   const totals = monthTotals(txs)
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-6 p-4">
+    // pb-24: spazio sotto l'ultimo movimento, così il FAB non copre l'importo
+    <main className="mx-auto flex max-w-md flex-col gap-6 p-4 pb-24">
       <header className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-4">
           {/* aria-live: chi usa lo screen reader sente il nuovo mese dopo le frecce */}
           <h1 aria-live="polite" className="text-2xl font-bold">
             {monthLabel(month)}
           </h1>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              aria-label="Impostazioni"
-              onClick={onSettings}
-              className={`${iconButton} border border-border`}
-            >
-              <GearIcon />
-            </button>
-            <button
-              type="button"
-              aria-label="Aggiungi transazione"
-              onClick={() => onOpen()}
-              className={`${iconButton} bg-primary text-white`}
-            >
-              <PlusIcon />
-            </button>
-          </div>
+          <button
+            type="button"
+            aria-label="Impostazioni"
+            onClick={onSettings}
+            className={`${iconButton} border border-border`}
+          >
+            <GearIcon />
+          </button>
         </div>
         <nav aria-label="Mese" className="flex gap-2">
           <button
@@ -194,7 +185,51 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
           { id: 'categories', label: 'Categorie', panel: <CategoryBreakdown txs={txs} month={month} /> },
         ]}
       />
+
+      <AddFab onClick={() => onOpen()} />
     </main>
+  )
+}
+
+/** Oltre questa distanza dall'inizio della pagina lo scroll verso il basso stringe il FAB. */
+const FAB_COLLAPSE_SCROLL = 100
+
+/**
+ * FAB esteso di Material 3 (spec navigation): si stringe al solo "+" scorrendo verso il basso
+ * oltre FAB_COLLAPSE_SCROLL e torna esteso scorrendo verso l'alto. Non si nasconde mai.
+ */
+function AddFab({ onClick }: { onClick: () => void }) {
+  const [extended, setExtended] = useState(true)
+
+  useEffect(() => {
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      setExtended(y <= FAB_COLLAPSE_SCROLL || y < lastY)
+      lastY = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <button
+      type="button"
+      // Nome fisso: da stretto l'etichetta non si vede, ma il pulsante resta lo stesso
+      aria-label="Aggiungi transazione"
+      onClick={onClick}
+      className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] flex h-14 min-w-14 items-center justify-center rounded-2xl bg-primary px-4 font-semibold text-white shadow-lg"
+    >
+      <PlusIcon />
+      <span
+        data-testid="fab-label"
+        className={`overflow-hidden whitespace-nowrap transition-all duration-200 motion-reduce:transition-none ${
+          extended ? 'ml-3 max-w-32 opacity-100' : 'ml-0 max-w-0 opacity-0'
+        }`}
+      >
+        Aggiungi
+      </span>
+    </button>
   )
 }
 

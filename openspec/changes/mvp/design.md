@@ -61,6 +61,12 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Con una sola tinta non si può affidare lo stato al colore. Lo stato di ogni bucket usa sempre un'etichetta di testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
 
+## Linee guida di interfaccia
+
+- Per i pattern di interazione e i componenti si seguono le linee guida di Material Design 3 (https://m3.material.io/): navigazione, pulsanti, FAB, dialoghi, tab, comportamento allo scroll, misure e spaziature dei componenti. Su Android sono le convenzioni che l'utente già conosce.
+- L'aspetto visivo resta quello del design system di Kokufin: palette, font, icone Phosphor e bersagli di tocco. Dove Material e il design system divergono su colori, tipografia o icone, vale il design system.
+- Quando una scelta si discosta da Material, la spec che la descrive ne spiega il motivo.
+
 ## Icone
 
 - Tutte le icone vengono dalla famiglia Phosphor (https://phosphoricons.com/), tramite `@phosphor-icons/react`. Niente SVG disegnati a mano né icone di altre librerie.
