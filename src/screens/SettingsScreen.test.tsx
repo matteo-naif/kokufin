@@ -3,6 +3,7 @@ import 'fake-indexeddb/auto'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import Toaster from '@/components/Toaster'
 import { db, DEFAULT_SETTINGS, getSettings } from '@/data/db'
 import SettingsScreen from '@/screens/SettingsScreen'
 
@@ -13,7 +14,12 @@ afterEach(cleanup)
 
 async function setup() {
   const onDone = vi.fn()
-  render(<SettingsScreen onDone={onDone} />)
+  render(
+    <>
+      <SettingsScreen onDone={onDone} />
+      <Toaster />
+    </>,
+  )
   await screen.findByRole('group', { name: 'Percentuali ideali' })
   return { user: userEvent.setup(), onDone }
 }
@@ -62,6 +68,7 @@ describe('SettingsScreen', () => {
     // errore associato al gruppo dei campi e focus sul primo campo
     expect(screen.getByRole('group', { name: 'Percentuali ideali' }).getAttribute('aria-describedby')).toContain(error.id)
     expect(document.activeElement).toBe(pct('Essenziali'))
+    expect(screen.queryByText('Impostazioni salvate')).toBeNull()
   })
 
   it.each(['', '2,5', '101'])('blocca il salvataggio con percentuale %j e mostra l\'errore sul campo', async (value) => {
@@ -87,6 +94,7 @@ describe('SettingsScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Salva' }))
 
     expect(onDone).toHaveBeenCalled()
+    expect(await screen.findByText('Impostazioni salvate')).toBeTruthy()
     expect(await getSettings()).toEqual({
       id: 'default',
       idealPct: { essentials: 50, pleasure: 30, savings: 20 },

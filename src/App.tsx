@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Toaster from '@/components/Toaster'
 import type { Transaction } from '@/data/db'
 import { monthOf, today } from '@/data/summary'
 import MonthScreen, { type MonthTab } from '@/screens/MonthScreen'
@@ -14,17 +15,25 @@ function App() {
   const [month, setMonth] = useState(() => monthOf(today()))
   const [tab, setTab] = useState<MonthTab>('summary')
 
-  if (view === 'settings') return <SettingsScreen onDone={() => setView(null)} />
-  if (view) return <TransactionForm transaction={view.form} onDone={() => setView(null)} />
   return (
-    <MonthScreen
-      month={month}
-      onMonthChange={setMonth}
-      tab={tab}
-      onTabChange={setTab}
-      onOpen={(tx) => setView({ form: tx })}
-      onSettings={() => setView('settings')}
-    />
+    <>
+      {view === 'settings' ? (
+        <SettingsScreen onDone={() => setView(null)} />
+      ) : view ? (
+        <TransactionForm transaction={view.form} onDone={() => setView(null)} />
+      ) : (
+        <MonthScreen
+          month={month}
+          onMonthChange={setMonth}
+          tab={tab}
+          onTabChange={setTab}
+          onOpen={(tx) => setView({ form: tx })}
+          onSettings={() => setView('settings')}
+        />
+      )}
+      {/* Fuori dalle schermate: il toast resta visibile quando si torna al mese */}
+      <Toaster />
+    </>
   )
 }
 

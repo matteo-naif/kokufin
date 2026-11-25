@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
 import Field from '@/components/Field'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
 import { type Bucket, BUCKETS } from '@/config/categories'
@@ -65,6 +66,7 @@ function SettingsForm({ settings, onDone }: { settings: Settings; onDone: () => 
       idealPct: { essentials: Number(idealPct.essentials), pleasure: Number(idealPct.pleasure), savings: Number(idealPct.savings) },
       soundsEnabled,
     })
+    toast.success('Impostazioni salvate')
     onDone()
   }
 
