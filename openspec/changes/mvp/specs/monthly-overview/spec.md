@@ -1,0 +1,27 @@
+## ADDED Requirements
+
+### Requirement: Riepilogo del mese
+Il sistema SHALL mostrare, per il mese selezionato, le entrate totali e tre barre (Essenziali, Piacere, Risparmi) con speso, ideale e stato.
+
+#### Scenario: Mese di default
+- **WHEN** l'utente apre l'app
+- **THEN** vede il mese corrente
+
+#### Scenario: Cambio mese
+- **WHEN** l'utente usa le frecce
+- **THEN** la schermata mostra i dati del mese scelto, senza limiti sul passato
+
+#### Scenario: Bucket sopra il tetto
+- **WHEN** lo speso di Essenziali o Piacere supera l'ideale
+- **THEN** la barra mostra l'etichetta "Sopra il tetto" con la sua icona
+
+#### Scenario: Risparmi sotto l'obiettivo
+- **WHEN** lo speso di Risparmi è inferiore all'ideale
+- **THEN** la barra mostra l'etichetta "Sotto l'obiettivo" con la sua icona
+
+### Requirement: Elenco movimenti
+Il sistema SHALL mostrare sotto le barre l'elenco delle transazioni del mese, dalla più recente.
+
+#### Scenario: Ordine dell'elenco
+- **WHEN** il mese ha più transazioni
+- **THEN** l'elenco le mostra dalla più recente alla meno recente

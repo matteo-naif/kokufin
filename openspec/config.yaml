@@ -1,0 +1,8 @@
+schema: spec-driven
+
+context: |
+  Kokufin: app Android di finanza personale, usata da telefono, dati solo locali.
+  Stack: Vite + React + TypeScript + Tailwind, Dexie (IndexedDB), Capacitor (APK installato a mano).
+  Lingua dell'interfaccia e dei documenti: italiano.
+  Accessibilità: WCAG 2.2 livello AA, requisito di ogni schermata.
+  Regole di sviluppo, design system e regole per i grafici: vedi changes/mvp/design.md.

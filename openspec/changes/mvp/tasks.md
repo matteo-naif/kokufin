@@ -1,0 +1,35 @@
+Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come verificarlo, poi si scrive il codice. L'accessibilità si controlla in ogni compito che crea o cambia interfaccia, non solo alla fine.
+
+## 1. Progetto
+
+- [ ] 1.1 Creare il progetto `kokufin` con Vite + React + TypeScript + Tailwind
+- [ ] 1.2 Aggiungere i font (`@fontsource/space-mono`, `@fontsource/work-sans`) e i token del design system
+- [ ] 1.3 Aggiungere `eslint-plugin-jsx-a11y` al lint e `lang="it"` al documento
+
+## 2. Dati
+
+- [ ] 2.1 Livello dati con Dexie, importi in centesimi, funzioni per mese, totali per bucket e per categoria
+- [ ] 2.2 `src/config/categories.ts` con categorie di spesa ed entrata
+
+## 3. Schermate
+
+- [ ] 3.1 Schermata "Aggiungi / modifica transazione" (`specs/transactions`)
+- [ ] 3.2 Schermata mese: barre, stati, elenco movimenti, navigazione tra mesi (`specs/monthly-overview`)
+- [ ] 3.3 Schermata ripartizione per categoria: barre orizzontali ordinate, con etichette dirette e titolo con il messaggio, secondo `specs/category-breakdown` e le "Regole per i grafici" di `design.md`
+- [ ] 3.4 Impostazioni (percentuali) (`specs/settings`)
+- [ ] 3.5 Backup JSON, esporta e importa (`specs/backup`)
+
+## 4. Android
+
+- [ ] 4.1 Aggiungere Capacitor Android con `appName` "Kokufin" e `appId` `it.matteonaif.kokufin`
+- [ ] 4.2 Generare l'APK di debug
+
+## 5. Verifica
+
+- [ ] 5.1 Ogni scenario delle spec passa (test o controllo manuale descritto)
+- [ ] 5.2 Uso con tastiera numerica su telefono
+- [ ] 5.3 Nessuna violazione del lint `jsx-a11y` e della scansione `axe` su ogni schermata
+- [ ] 5.4 Contrasti misurati con uno strumento (testo 4,5:1, componenti e grafici 3:1)
+- [ ] 5.5 Navigazione completa solo con tastiera, con focus visibile
+- [ ] 5.6 Prova manuale con TalkBack su telefono, su tutte le schermate
+- [ ] 5.7 Carattere al 200% e larghezza 320 px senza perdite di contenuto
