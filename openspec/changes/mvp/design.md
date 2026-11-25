@@ -24,9 +24,9 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 ## Modello dati
 
 - `Transaction`: `id`, `date` (ISO `YYYY-MM-DD`), `amountCents` (intero, sempre positivo), `kind` (`income` | `expense`), `categoryId`, `note?`.
-- `Settings`: `idealPct` con tre valori (essenziale, piacere, risparmio) la cui somma è 100. Default 30 / 20 / 50.
+- `Settings`: `idealPct` con tre valori (`essentials`, `pleasure`, `savings`) la cui somma è 100. Default 30 / 20 / 50.
 - Il mese non è salvato: si ricava dalla data della transazione.
-- I risparmi sono transazioni `expense` con una categoria del bucket `risparmio`.
+- I risparmi sono transazioni `expense` con una categoria del bucket `savings`.
 
 ## Categorie
 

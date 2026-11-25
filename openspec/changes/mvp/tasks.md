@@ -8,8 +8,8 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 
 ## 2. Dati
 
-- [ ] 2.1 Livello dati con Dexie, importi in centesimi, funzioni per mese, totali per bucket e per categoria
-- [ ] 2.2 `src/config/categories.ts` con categorie di spesa ed entrata
+- [x] 2.1 Livello dati con Dexie, importi in centesimi, funzioni per mese, totali per bucket e per categoria
+- [x] 2.2 `src/config/categories.ts` con categorie di spesa ed entrata
 
 ## 3. Schermate
 
