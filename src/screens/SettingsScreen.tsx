@@ -144,10 +144,12 @@ function BackupSection({ onDone }: { onDone: () => void }) {
     if (navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({ files: [file] })
+        return
       } catch (e) {
-        if ((e as Error).name !== 'AbortError') throw e // AbortError: condivisione annullata dall'utente
+        if ((e as Error).name === 'AbortError') return // condivisione annullata dall'utente
+        // Altri errori (per esempio NotAllowedError: il browser rifiuta il file anche se canShare
+        // lo accetta, o l'attivazione utente è scaduta durante l'await): si scarica il file
       }
-      return
     }
     const url = URL.createObjectURL(file)
     const link = document.createElement('a')

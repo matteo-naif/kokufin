@@ -187,6 +187,32 @@ describe('SettingsScreen, backup', () => {
     expect(link.href).toBe('blob:backup')
   })
 
+  // Bug: con NotAllowedError da navigator.share l'esportazione falliva senza file
+  it('Esporta scarica il file se la condivisione viene rifiutata', async () => {
+    const share = vi.fn().mockRejectedValue(new DOMException('Permission denied', 'NotAllowedError'))
+    vi.stubGlobal('navigator', { ...navigator, canShare: () => true, share })
+    URL.createObjectURL = vi.fn(() => 'blob:backup')
+    URL.revokeObjectURL = vi.fn()
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    await vi.waitFor(() => expect(click).toHaveBeenCalled())
+    expect(share).toHaveBeenCalled()
+    expect((click.mock.contexts[0] as HTMLAnchorElement).download).toMatch(/^kokufin-backup-.*\.json$/)
+  })
+
+  it('Esporta non scarica il file se l\'utente annulla la condivisione', async () => {
+    const share = vi.fn().mockRejectedValue(new DOMException('Share canceled', 'AbortError'))
+    vi.stubGlobal('navigator', { ...navigator, canShare: () => true, share })
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    await vi.waitFor(() => expect(share).toHaveBeenCalled())
+    expect(click).not.toHaveBeenCalled()
+  })
+
   // Spec backup, scenario "Ripristino"
   it('con un backup valido e la conferma sostituisce i dati attuali', async () => {
     await db.transactions.add(OLD_TX)
