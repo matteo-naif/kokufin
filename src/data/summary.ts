@@ -3,6 +3,12 @@ import type { Transaction } from './db'
 
 const BUCKET_OF = new Map(EXPENSE_CATEGORIES.map((c) => [c.id, c.bucket]))
 
+/** Data locale di oggi in formato `YYYY-MM-DD`. */
+export function today(now = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
+
 /** `YYYY-MM-DD` → `YYYY-MM`. */
 export function monthOf(date: string): string {
   return date.slice(0, 7)

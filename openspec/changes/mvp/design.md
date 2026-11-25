@@ -17,6 +17,7 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 
 - Vite + React + TypeScript + Tailwind.
 - Dexie (IndexedDB) per i dati locali.
+- react-hook-form per la gestione dei form.
 - Barre orizzontali in HTML e CSS per il grafico di ripartizione, con la stessa tecnica delle barre dei bucket. Nessuna libreria di grafici: Recharts non serve più.
 - Capacitor per generare un APK da installare a mano, senza pubblicare online.
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.

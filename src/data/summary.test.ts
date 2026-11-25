@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import type { Transaction } from './db'
-import { categoryTotals, inMonth, monthOf, monthTotals, shiftMonth } from './summary'
+import { categoryTotals, inMonth, monthOf, monthTotals, shiftMonth, today } from './summary'
 
 let nextId = 1
 function tx(date: string, amountCents: number, categoryId: string, kind: Transaction['kind'] = 'expense'): Transaction {
   return { id: nextId++, date, amountCents, kind, categoryId }
 }
+
+describe('today', () => {
+  it('usa la data locale, non UTC', () => {
+    expect(today(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05')
+  })
+})
 
 describe('mese', () => {
   it('si ricava dalla data', () => {

@@ -10,7 +10,12 @@ export function parseAmount(input: string): number | null {
   return cents > 0 ? cents : null
 }
 
-const EUR = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', useGrouping: false })
+/** Centesimi → testo per il campo importo, es. 500 → "5,00". */
+export function centsToInput(cents: number): string {
+  return (cents / 100).toFixed(2).replace('.', ',')
+}
+
+const EUR =new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', useGrouping: false })
 
 export function formatCents(cents: number): string {
   return EUR.format(cents / 100)

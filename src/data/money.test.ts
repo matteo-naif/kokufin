@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatCents, parseAmount } from './money'
+import { centsToInput, formatCents, parseAmount } from './money'
 
 describe('parseAmount', () => {
   it.each([
@@ -19,6 +19,14 @@ describe('parseAmount', () => {
       expect(parseAmount(input)).toBeNull()
     },
   )
+})
+
+describe('centsToInput', () => {
+  it('produce un testo che parseAmount rilegge uguale', () => {
+    expect(centsToInput(500)).toBe('5,00')
+    expect(centsToInput(1)).toBe('0,01')
+    expect(parseAmount(centsToInput(123456))).toBe(123456)
+  })
 })
 
 describe('formatCents', () => {
