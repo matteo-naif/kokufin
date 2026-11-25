@@ -1,5 +1,10 @@
 Prima di scrivere codice leggi `openspec/changes/mvp/design.md` e segui le regole di sviluppo.
 
+## Lingua del codice
+
+- Tutti gli identificatori del codice sono in inglese: nomi di tipi, campi e chiavi dei modelli, valori delle union, `id` di categorie e bucket, nomi di tabelle e funzioni. Nessun modello mescola chiavi italiane e inglesi.
+- In italiano restano solo i testi mostrati all'utente (per esempio i `name` delle categorie e le etichette dell'interfaccia) , i commenti nel codice, le descrizioni dei test e la documentazione.
+
 ## Flusso di lavoro Git
 
 Il repository usa git flow (`git flow`, già inizializzato). Usa sempre i suoi comandi per branch, merge, release e hotfix, mai `git merge` a mano.
