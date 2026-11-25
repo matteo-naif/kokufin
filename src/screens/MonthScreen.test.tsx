@@ -28,7 +28,7 @@ function add(date: string, amountCents: number, categoryId: string, kind: Transa
 function Harness({ onOpen = () => {} }: { onOpen?: (tx?: Transaction) => void }) {
   const [month, setMonth] = useState('2026-11')
   const [tab, setTab] = useState<MonthTab>('summary')
-  return <MonthScreen month={month} onMonthChange={setMonth} tab={tab} onTabChange={setTab} onOpen={onOpen} />
+  return <MonthScreen month={month} onMonthChange={setMonth} tab={tab} onTabChange={setTab} onOpen={onOpen} onSettings={() => {}} />
 }
 
 async function setup(onOpen?: (tx?: Transaction) => void) {
@@ -131,7 +131,7 @@ describe('MonthScreen', () => {
   })
 
   it('usa le percentuali salvate nelle impostazioni', async () => {
-    await db.settings.put({ id: 'default', idealPct: { essentials: 50, pleasure: 30, savings: 20 } })
+    await db.settings.put({ id: 'default', idealPct: { essentials: 50, pleasure: 30, savings: 20 }, soundsEnabled: true })
     await add('2026-11-01', 100000, 'salary', 'income')
     await setup()
     await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('su 500,00 € ideali'))

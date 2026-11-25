@@ -24,11 +24,12 @@ interface Props {
   tab: MonthTab
   onTabChange: (tab: MonthTab) => void
   onOpen: (tx?: Transaction) => void // senza argomento = nuova transazione
+  onSettings: () => void
 }
 
 const iconButton = 'flex size-11 items-center justify-center rounded'
 
-export default function MonthScreen({ month, onMonthChange, tab, onTabChange, onOpen }: Props) {
+export default function MonthScreen({ month, onMonthChange, tab, onTabChange, onOpen, onSettings }: Props) {
   const [data, setData] = useState<{ month: string; txs: Transaction[]; settings: Settings } | null>(null)
   const prevRef = useRef<HTMLButtonElement>(null)
   const currentMonth = monthOf(today())
@@ -55,14 +56,24 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
           <h1 aria-live="polite" className="text-2xl font-bold">
             {monthLabel(month)}
           </h1>
-          <button
-            type="button"
-            aria-label="Aggiungi transazione"
-            onClick={() => onOpen()}
-            className={`${iconButton} bg-primary text-white`}
-          >
-            <Icon path="M12 5v14M5 12h14" />
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              aria-label="Impostazioni"
+              onClick={onSettings}
+              className={`${iconButton} border border-border`}
+            >
+              <Icon path="M4 7h4M14 7h6M8 7a3 3 0 1 0 6 0a3 3 0 1 0-6 0M4 17h6M16 17h4M10 17a3 3 0 1 0 6 0a3 3 0 1 0-6 0" />
+            </button>
+            <button
+              type="button"
+              aria-label="Aggiungi transazione"
+              onClick={() => onOpen()}
+              className={`${iconButton} bg-primary text-white`}
+            >
+              <Icon path="M12 5v14M5 12h14" />
+            </button>
+          </div>
         </div>
         <nav aria-label="Mese" className="flex gap-2">
           <button
