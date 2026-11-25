@@ -4,6 +4,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { toast } from 'sonner'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import IconProvider from '@/components/IconProvider'
 import Toaster from '@/components/Toaster'
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
@@ -39,6 +40,7 @@ function setup(transaction?: Transaction) {
       <TransactionForm transaction={transaction} onDone={onDone} onBack={onBack} />
       <Toaster />
     </>,
+    { wrapper: IconProvider },
   )
   return { user: userEvent.setup(), onDone, onBack }
 }

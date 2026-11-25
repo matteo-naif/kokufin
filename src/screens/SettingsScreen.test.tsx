@@ -2,6 +2,7 @@
 import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import IconProvider from '@/components/IconProvider'
 import SettingsScreen from '@/screens/SettingsScreen'
 
 afterEach(cleanup)
@@ -9,7 +10,7 @@ afterEach(cleanup)
 function setup() {
   const onOpen = vi.fn()
   const onBack = vi.fn()
-  render(<SettingsScreen onOpen={onOpen} onBack={onBack} />)
+  render(<SettingsScreen onOpen={onOpen} onBack={onBack} />, { wrapper: IconProvider })
   return { user: userEvent.setup(), onOpen, onBack }
 }
 

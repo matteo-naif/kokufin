@@ -1,3 +1,5 @@
+import { ArrowLeftIcon } from '@phosphor-icons/react'
+
 interface Props {
   title: string
   onBack: () => void
@@ -13,18 +15,7 @@ export default function ScreenHeader({ title, onBack }: Props) {
         onClick={onBack}
         className="flex size-11 shrink-0 items-center justify-center rounded border border-border"
       >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="size-5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
+        <ArrowLeftIcon />
       </button>
       <h1 className="text-2xl font-bold">{title}</h1>
     </header>

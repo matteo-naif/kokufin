@@ -4,6 +4,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import IconProvider from '@/components/IconProvider'
 import { db, type Transaction } from '@/data/db'
 import MonthScreen, { type MonthTab } from '@/screens/MonthScreen'
 
@@ -32,7 +33,7 @@ function Harness({ onOpen = () => {} }: { onOpen?: (tx?: Transaction) => void })
 }
 
 async function setup(onOpen?: (tx?: Transaction) => void) {
-  render(<Harness onOpen={onOpen} />)
+  render(<Harness onOpen={onOpen} />, { wrapper: IconProvider })
   await screen.findByRole('list', { name: 'Bucket' })
   return userEvent.setup()
 }

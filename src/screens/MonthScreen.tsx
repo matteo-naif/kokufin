@@ -1,3 +1,13 @@
+import {
+  ArrowDownIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+  CheckIcon,
+  GearIcon,
+  type Icon as PhosphorIcon,
+  PlusIcon,
+  WarningIcon,
+} from '@phosphor-icons/react'
 import { useEffect, useRef, useState } from 'react'
 import Tabs from '@/components/Tabs'
 import { BUCKETS, CATEGORY_NAME } from '@/config/categories'
@@ -63,7 +73,7 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
               onClick={onSettings}
               className={`${iconButton} border border-border`}
             >
-              <Icon path="M4 7h4M14 7h6M8 7a3 3 0 1 0 6 0a3 3 0 1 0-6 0M4 17h6M16 17h4M10 17a3 3 0 1 0 6 0a3 3 0 1 0-6 0" />
+              <GearIcon />
             </button>
             <button
               type="button"
@@ -71,7 +81,7 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
               onClick={() => onOpen()}
               className={`${iconButton} bg-primary text-white`}
             >
-              <Icon path="M12 5v14M5 12h14" />
+              <PlusIcon />
             </button>
           </div>
         </div>
@@ -83,7 +93,7 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
             onClick={() => onMonthChange(shiftMonth(month, -1))}
             className={`${iconButton} border border-border`}
           >
-            <Icon path="M15 6l-6 6 6 6" />
+            <CaretLeftIcon />
           </button>
           <button
             type="button"
@@ -91,7 +101,7 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
             onClick={() => onMonthChange(shiftMonth(month, 1))}
             className={`${iconButton} border border-border`}
           >
-            <Icon path="M9 6l6 6-6 6" />
+            <CaretRightIcon />
           </button>
           {month !== currentMonth && (
             <button
@@ -188,40 +198,24 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
   )
 }
 
-const STATUS: Record<BucketStatus, { label: string; icon: string }> = {
-  onTrack: { label: 'In linea', icon: 'M5 12l5 5 9-10' },
-  goalReached: { label: 'Obiettivo raggiunto', icon: 'M5 12l5 5 9-10' },
-  overCap: { label: 'Sopra il tetto', icon: 'M12 4l9 16H3zM12 10v4M12 17v.5' },
-  belowGoal: { label: "Sotto l'obiettivo", icon: 'M12 5v14M6 13l6 6 6-6' },
+const STATUS: Record<BucketStatus, { label: string; Icon: PhosphorIcon }> = {
+  onTrack: { label: 'In linea', Icon: CheckIcon },
+  goalReached: { label: 'Obiettivo raggiunto', Icon: CheckIcon },
+  overCap: { label: 'Sopra il tetto', Icon: WarningIcon },
+  belowGoal: { label: "Sotto l'obiettivo", Icon: ArrowDownIcon },
 }
 
 /** Stato del bucket: sempre etichetta di testo più icona, mai solo colore. */
 function Status({ status }: { status: BucketStatus }) {
-  const { label, icon } = STATUS[status]
+  const { label, Icon } = STATUS[status]
   return (
     <span className="flex items-center gap-1">
-      <Icon path={icon} />
+      <Icon />
       {label}
     </span>
   )
 }
 
-function Icon({ path }: { path: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d={path} />
-    </svg>
-  )
-}
 
 /** "2026-11-03" → "3 nov". */
 function shortDate(date: string): string {

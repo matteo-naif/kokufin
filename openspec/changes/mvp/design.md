@@ -23,6 +23,7 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Barre orizzontali in HTML e CSS per il grafico di ripartizione, con la stessa tecnica delle barre dei bucket. Nessuna libreria di grafici: Recharts non serve più.
 - Capacitor per generare un APK da installare a mano, senza pubblicare online.
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.
+- Icone dal pacchetto `@phosphor-icons/react`: nel bundle entrano solo le icone importate, quindi funzionano offline.
 
 ## Modello dati
 
@@ -59,6 +60,14 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Titoli in Space Mono, testi in Work Sans.
 - Con una sola tinta non si può affidare lo stato al colore. Lo stato di ogni bucket usa sempre un'etichetta di testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
+
+## Icone
+
+- Tutte le icone vengono dalla famiglia Phosphor (https://phosphoricons.com/), tramite `@phosphor-icons/react`. Niente SVG disegnati a mano né icone di altre librerie.
+- Si importano i nomi con il suffisso `Icon` (per esempio `GearIcon`): quelli senza suffisso sono deprecati.
+- Peso `bold`, dimensione `1.25rem`, colore del testo (`currentColor`). Questi valori e `aria-hidden` sono fissati una volta sola da `IconProvider` (`src/components/IconProvider.tsx`), usato in `App`: le singole icone non li ripetono.
+- L'icona non porta mai da sola un significato: il nome accessibile lo dà il pulsante (`aria-label`) o il testo accanto, come per gli stati dei bucket.
+- Icone in uso: `GearIcon` (impostazioni), `PlusIcon` (aggiungi transazione), `CaretLeftIcon` e `CaretRightIcon` (mese precedente e successivo, voci dell'indice impostazioni), `ArrowLeftIcon` (indietro), `CheckIcon` (In linea, Obiettivo raggiunto), `WarningIcon` (Sopra il tetto), `ArrowDownIcon` (Sotto l'obiettivo).
 
 ## Regole per i grafici
 

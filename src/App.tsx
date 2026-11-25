@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Redirect, Route, Router, Switch, useLocation, useParams } from 'wouter'
 import { useHashLocation } from 'wouter/use-hash-location'
+import IconProvider from '@/components/IconProvider'
 import Toaster from '@/components/Toaster'
 import { db, type Transaction } from '@/data/db'
 import { monthOf, today } from '@/data/summary'
@@ -13,11 +14,13 @@ import TransactionForm from '@/screens/TransactionForm'
 // Indirizzi con # (useHashLocation): l'APK carica l'app da file locali, senza server
 function App() {
   return (
-    <Router hook={useHashLocation}>
-      <Views />
-      {/* Fuori dalle viste: il toast resta visibile quando si torna al mese */}
-      <Toaster />
-    </Router>
+    <IconProvider>
+      <Router hook={useHashLocation}>
+        <Views />
+        {/* Fuori dalle viste: il toast resta visibile quando si torna al mese */}
+        <Toaster />
+      </Router>
+    </IconProvider>
   )
 }
 

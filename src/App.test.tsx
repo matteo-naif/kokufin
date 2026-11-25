@@ -166,4 +166,16 @@ describe('App: navigazione', () => {
     await waitFor(() => expect(h1()).toBe(parentH1))
     expect(location.hash).toBe(parentHash)
   })
+
+  // design.md, "Icone": peso, dimensione e aria-hidden fissati da IconProvider
+  it('le icone sono nascoste allo screen reader e hanno la dimensione comune', async () => {
+    await start()
+    await screen.findByRole('list', { name: 'Bucket' })
+    const icons = [...document.querySelectorAll('svg')]
+    expect(icons.length).toBeGreaterThan(0)
+    for (const icon of icons) {
+      expect(icon.getAttribute('aria-hidden')).toBe('true')
+      expect(icon.getAttribute('width')).toBe('1.25rem')
+    }
+  })
 })
