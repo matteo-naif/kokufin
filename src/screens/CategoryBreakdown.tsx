@@ -29,7 +29,8 @@ export default function CategoryBreakdown({ txs, month }: Props) {
     <div className="flex flex-col gap-8">
       {sections.map((s) => (
         <section key={s.id} aria-labelledby={`breakdown-${s.id}`} className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+          {/* Linea sotto la riga del titolo: guida l'occhio dal nome del bucket al totale */}
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 border-b border-separator pb-2">
             <h2 id={`breakdown-${s.id}`} className="text-xl font-bold">
               {s.name}
             </h2>
