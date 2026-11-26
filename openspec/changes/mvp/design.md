@@ -61,6 +61,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
   - Avviso `#92400E` su `#FFFBEB` (6,84:1; 7,09:1 su bianco).
   - Informazione `#1E40AF` su `#EFF6FF` (8,01:1; 8,72:1 su bianco).
   Come per gli stati dei bucket, il significato non è affidato al colore: ogni messaggio ha testo e icona.
+- Il verde Successo `#166534` (7,13:1 su bianco) colora anche gli importi delle entrate nell'elenco movimenti. Le uscite restano nel colore del testo: il rosso farebbe sembrare ogni spesa un errore e toglierebbe forza all'unico avviso vero, lo sforamento di un bucket. Il significato non dipende dal colore, perché ogni importo ha il segno "+" o "−".
 - Titoli in Space Mono, testi in Work Sans.
 - Con una sola tinta non si può affidare lo stato al colore. Lo sforamento di un bucket usa sempre un testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.

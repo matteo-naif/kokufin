@@ -166,25 +166,40 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                 {data && txs.length === 0 ? (
                   <p className="text-text-secondary">Nessun movimento in questo mese.</p>
                 ) : (
-                  <ul aria-label="Movimenti" className="flex flex-col divide-y divide-separator">
-                    {newestFirst(txs).map((t) => (
-                      <li key={t.id}>
-                        <button
-                          type="button"
-                          onClick={() => onOpen(t)}
-                          className="flex min-h-11 w-full items-center justify-between gap-4 py-2 text-left"
-                        >
-                          <span className="flex flex-col">
-                            <span>
-                              {CATEGORY_NAME.get(t.categoryId)} · {shortDate(t.date)}
-                            </span>
-                            {t.note && <span className="text-text-secondary">{t.note}</span>}
-                          </span>
-                          <span className="whitespace-nowrap font-semibold">
-                            {t.kind === 'income' ? '+' : '−'}
-                            {formatCents(t.amountCents)}
-                          </span>
-                        </button>
+                  // Raggruppati per giorno: il mese è già nel titolo, la data si scrive una volta per giorno
+                  <ul aria-label="Movimenti" className="flex flex-col gap-4">
+                    {byDay(newestFirst(txs)).map(([date, dayTxs]) => (
+                      <li key={date} className="flex flex-col">
+                        <h3 id={`day-${date}`} className="text-sm font-bold text-text-secondary">
+                          {dayLabel(date)}
+                        </h3>
+                        <ul aria-labelledby={`day-${date}`} className="flex flex-col divide-y divide-separator">
+                          {dayTxs.map((t) => (
+                            <li key={t.id}>
+                              <button
+                                type="button"
+                                onClick={() => onOpen(t)}
+                                className="flex min-h-11 w-full items-center justify-between gap-4 py-2 text-left"
+                              >
+                                {/* min-w-0: senza, una parola lunga nella nota allarga la riga oltre lo schermo */}
+                                <span className="flex min-w-0 flex-col">
+                                  <span>{CATEGORY_NAME.get(t.categoryId)}</span>
+                                  {/* Nota intera nella modifica: qui serve solo a riconoscere il movimento */}
+                                  {t.note && (
+                                    <span className="line-clamp-2 text-sm wrap-break-word text-text-secondary">{t.note}</span>
+                                  )}
+                                </span>
+                                {/* Entrate in verde, uscite neutre: nessun allarme; il segno porta il significato */}
+                                <span
+                                  className={`whitespace-nowrap font-semibold ${t.kind === 'income' ? 'text-success' : ''}`}
+                                >
+                                  {t.kind === 'income' ? '+' : '−'}
+                                  {formatCents(t.amountCents)}
+                                </span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
                       </li>
                     ))}
                   </ul>
@@ -263,8 +278,20 @@ function IdealLine({ spent, ideal, moneyLeft }: { spent: number; ideal: number; 
   return <p>Puoi spendere ancora {formatCents(Math.min(ideal - spent, moneyLeft))}</p>
 }
 
-/** "2026-11-03" → "3 nov". */
-function shortDate(date: string): string {
+/** Transazioni già ordinate → gruppi consecutivi con la stessa data, nello stesso ordine. */
+function byDay(txs: Transaction[]): [string, Transaction[]][] {
+  const groups: [string, Transaction[]][] = []
+  for (const t of txs) {
+    const last = groups.at(-1)
+    if (last?.[0] === t.date) last[1].push(t)
+    else groups.push([t.date, [t]])
+  }
+  return groups
+}
+
+/** "2026-11-03" → "Martedì 3". */
+function dayLabel(date: string): string {
   const [y, m, d] = date.split('-').map(Number)
-  return new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' }).format(new Date(y, m - 1, d))
+  const label = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric' }).format(new Date(y, m - 1, d))
+  return label[0].toUpperCase() + label.slice(1)
 }

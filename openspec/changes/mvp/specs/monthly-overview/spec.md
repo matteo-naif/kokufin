@@ -71,8 +71,20 @@ Il sistema SHALL mostrare sotto l'intestazione del mese due tab: "Riepilogo", co
 - **THEN** si attiva il tab successivo o precedente, secondo il pattern ARIA dei tab
 
 ### Requirement: Elenco movimenti
-Il sistema SHALL mostrare sotto le barre l'elenco delle transazioni del mese, dalla più recente.
+Il sistema SHALL mostrare sotto le barre l'elenco delle transazioni del mese, dalla più recente, raggruppate per giorno. Ogni giorno ha un'intestazione con giorno della settimana e numero (per esempio "Martedì 3"), senza mese né anno: il mese è già nel titolo. Ogni riga mostra la categoria, la nota se c'è e l'importo. La nota è in corpo più piccolo e si ferma a due righe: intera si legge nella modifica. L'importo delle entrate è verde con il segno "+"; quello delle uscite ha il colore del testo con il segno meno tipografico (−, U+2212), senza rosso, perché una spesa non è un avviso.
 
 #### Scenario: Ordine dell'elenco
 - **WHEN** il mese ha più transazioni
 - **THEN** l'elenco le mostra dalla più recente alla meno recente
+
+#### Scenario: Movimenti dello stesso giorno
+- **WHEN** più transazioni hanno la stessa data
+- **THEN** compaiono sotto una sola intestazione del giorno, dall'ultima inserita
+
+#### Scenario: Entrate e uscite
+- **WHEN** il mese ha entrate e uscite
+- **THEN** l'importo delle entrate è verde con "+" e quello delle uscite ha il colore del testo con "−"
+
+#### Scenario: Nota lunga
+- **WHEN** una transazione ha una nota più lunga di due righe, anche con una parola senza spazi
+- **THEN** la riga mostra le prime due righe della nota e non si allarga oltre lo schermo

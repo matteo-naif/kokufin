@@ -214,13 +214,39 @@ describe('MonthScreen', () => {
     await add('2026-10-31', 4000, 'gifts')
     await setup()
 
-    const list = await screen.findByRole('list', { name: 'Movimenti' })
-    await vi.waitFor(() => expect(within(list).getAllByRole('listitem')).toHaveLength(3))
-    expect(within(list).getAllByRole('listitem').map((li) => li.textContent!.split('·')[0].trim())).toEqual([
-      'Ristoranti',
-      'Viaggi',
-      'Spesa alimentare',
+    await screen.findByRole('list', { name: 'Movimenti' })
+    await vi.waitFor(() => expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3))
+    expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
+      'Venerdì 20',
+      'Martedì 10',
+      'Martedì 3',
     ])
+    expect(screen.getByRole('list', { name: 'Venerdì 20' }).textContent).toContain('Ristoranti')
+    expect(screen.getByRole('list', { name: 'Martedì 3' }).textContent).toContain('Spesa alimentare')
+  })
+
+  it('raggruppa i movimenti dello stesso giorno sotto una sola data, dall\'ultimo inserito', async () => {
+    await add('2026-11-03', 1000, 'groceries')
+    await add('2026-11-03', 2000, 'restaurants')
+    await setup()
+
+    await vi.waitFor(() => expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1))
+    const day = screen.getByRole('list', { name: 'Martedì 3' })
+    expect(within(day).getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Ristoranti−20,00 €',
+      'Spesa alimentare−10,00 €',
+    ])
+  })
+
+  it('le entrate hanno importo verde con "+", le uscite colore neutro con "−"', async () => {
+    await add('2026-11-03', 100000, 'salary', 'income')
+    await add('2026-11-03', 1000, 'groceries')
+    await setup()
+
+    const income = await screen.findByText(/^\+1000,00/)
+    const expense = await screen.findByText(/^−10,00/)
+    expect(income.className).toContain('text-success')
+    expect(expense.className).not.toContain('text-success')
   })
 
   it('il tab Categorie mostra la ripartizione dello stesso mese, con intestazione e frecce visibili', async () => {
