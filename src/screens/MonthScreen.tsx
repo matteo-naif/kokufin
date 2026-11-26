@@ -244,7 +244,7 @@ function AddFab({ onClick }: { onClick: () => void }) {
       // Nome fisso: da stretto l'etichetta non si vede, ma il pulsante resta lo stesso
       aria-label="Aggiungi transazione"
       onClick={onClick}
-      className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] flex h-14 min-w-14 items-center justify-center rounded-2xl bg-primary px-4 font-semibold text-white shadow-lg"
+      className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] flex h-14 min-w-14 items-center justify-center rounded bg-primary px-4 font-semibold text-white shadow-lg"
     >
       <PlusIcon />
       <span

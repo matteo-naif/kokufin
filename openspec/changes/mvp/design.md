@@ -37,6 +37,10 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 
 Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. Gli `id` non si cambiano mai, così le transazioni salvate restano valide quando si rinomina una categoria. Le categorie delle entrate sono in `INCOME_CATEGORIES` nello stesso file.
 
+Nel form della transazione le categorie sono chip (i *filter chip* di Material 3) su più righe, alti almeno 44 px. Un elenco di radio in colonna occupava più di metà schermo con le 13 categorie di spesa. I chip le mostrano tutte in poco spazio, si scelgono con un tocco e restano radio nascosti alla vista, quindi tastiera e screen reader funzionano come prima. Le spese sono divise in due gruppi con il nome del bucket, così chi registra vede dove va la spesa. Il chip scelto ha sfondo primario e `CheckIcon`, come in Material: il colore non è l'unico segnale. Un `<select>` sarebbe più compatto, ma nasconde le opzioni e chiede un tocco in più.
+
+Il tipo (Spesa o Entrata) si sceglie con un *segmented button* di Material 3: due segmenti a tutta larghezza, ciascuno largo metà riga, quindi facili da toccare. Come i chip, sono radio nascosti alla vista, e il segmento scelto ha sfondo primario e `CheckIcon`: nel form "scelto" ha un solo aspetto. Le tab non vanno bene, perché in Material passano da una vista all'altra e non scelgono un valore. Lo switch nemmeno, perché è fatto per acceso/spento e non per due valori con un nome.
+
 ## Calcolo ideale e stato dei bucket
 
 - `ideale = percentuale × entrate del mese`.
@@ -65,6 +69,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Titoli in Space Mono, testi in Work Sans.
 - Con una sola tinta non si può affidare lo stato al colore. Lo sforamento di un bucket usa sempre un testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
+- Un solo raggio per gli angoli: 0,25rem (`rounded`), per campi, pulsanti, FAB, chip, segmented button, dialog, toast e barre. Angoli più tondi o a pillola davano a ogni componente una forma diversa, e un elemento a tutta larghezza diventava un "pillolone". Unica eccezione lo switch, che resta tondo: lo stato si legge dalla posizione del cerchio, e con angoli squadrati sembrerebbe una casella. Anche il FAB ha 0,25rem e non gli angoli da 16 dp di Material: sull'aspetto vale il design system, come dicono le linee guida di interfaccia.
 
 ## Linee guida di interfaccia
 
