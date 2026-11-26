@@ -103,20 +103,27 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
 
       {/* Il focus sul primo campo non valido lo sposta react-hook-form (shouldFocusError) */}
       <form onSubmit={handleSubmit(save)} noValidate className="flex flex-col gap-6">
-        <fieldset className="flex gap-6">
+        {/* Segmented button di Material 3: radio nascosti, come i chip delle categorie */}
+        <fieldset>
           <legend className="mb-2 font-semibold">Tipo</legend>
-          {KINDS.map((k) => (
-            <label key={k.value} className="flex min-h-11 items-center gap-2">
-              <input
-                type="radio"
-                value={k.value}
-                // le categorie di spesa ed entrata sono diverse
-                {...register('kind', { onChange: () => setValue('categoryId', '') })}
-                className="size-5 accent-primary"
-              />
-              {k.label}
-            </label>
-          ))}
+          <div className="flex">
+            {KINDS.map((k) => (
+              <label
+                key={k.value}
+                className="relative flex min-h-11 flex-1 items-center justify-center gap-2 border border-border px-4 first:rounded-l-full last:rounded-r-full not-first:-ml-px has-checked:border-primary has-checked:bg-primary has-checked:text-white has-focus-visible:z-10 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
+              >
+                <input
+                  type="radio"
+                  value={k.value}
+                  // le categorie di spesa ed entrata sono diverse
+                  {...register('kind', { onChange: () => setValue('categoryId', '') })}
+                  className="sr-only"
+                />
+                {kind === k.value && <CheckIcon />}
+                {k.label}
+              </label>
+            ))}
+          </div>
         </fieldset>
 
         <Field id="amount" label="Importo (€)" error={errors.amount?.message}>
