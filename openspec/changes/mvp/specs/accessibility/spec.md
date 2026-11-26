@@ -20,7 +20,7 @@ Il sistema SHALL presentare testo, controlli e grafici in modo percepibile senza
 
 #### Scenario: Informazione non affidata al colore
 - **WHEN** Essenziali o Piacere superano l'ideale
-- **THEN** lo sforamento è comunicato da un testo ("Hai sforato di X") e da un'icona, non dal colore
+- **THEN** lo sforamento è comunicato da un testo ("Hai speso X in più") e da un'icona, non dal colore
 
 #### Scenario: Grafico per chi non lo vede
 - **WHEN** viene mostrato il grafico di ripartizione

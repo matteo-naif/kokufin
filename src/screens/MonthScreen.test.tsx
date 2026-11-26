@@ -36,13 +36,13 @@ async function setup(onOpen?: (tx?: Transaction) => void) {
   render(<Harness onOpen={onOpen} />, { wrapper: IconProvider })
   // Dati caricati: con entrate compaiono i bucket, senza entrate solo l'invito
   await vi.waitFor(() =>
-    expect(screen.queryByRole('list', { name: 'Bucket' }) ?? screen.queryByText(/Aggiungi un'entrata/)).toBeTruthy(),
+    expect(screen.queryByRole('list', { name: 'Ripartizione delle entrate' }) ?? screen.queryByText(/Aggiungi le entrate del mese/)).toBeTruthy(),
   )
   return userEvent.setup()
 }
 
 function bucket(name: string) {
-  const list = screen.getByRole('list', { name: 'Bucket' })
+  const list = screen.getByRole('list', { name: 'Ripartizione delle entrate' })
   return within(list).getAllByRole('listitem').find((li) => li.textContent!.startsWith(name))!
 }
 
@@ -96,9 +96,9 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 20000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Essenziali200,00\u00a0€'))
-    expect(bucket('Essenziali').textContent).toContain('Hai a disposizione ancora 100,00\u00a0€')
-    expect(bucket('Essenziali').querySelector('svg')).toBeNull()
+    await vi.waitFor(() => expect(bucket('Spese essenziali').textContent).toContain('Spese essenziali200,00\u00a0€'))
+    expect(bucket('Spese essenziali').textContent).toContain('Puoi spendere ancora 100,00\u00a0€')
+    expect(bucket('Spese essenziali').querySelector('svg')).toBeNull()
   })
 
   it('Essenziali oltre l\'ideale: speso, sforamento e icona di avviso', async () => {
@@ -106,9 +106,9 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 35000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Essenziali350,00\u00a0€'))
-    expect(bucket('Essenziali').textContent).toContain('Hai sforato di 50,00\u00a0€')
-    expect(bucket('Essenziali').querySelector('svg[aria-hidden="true"]')).toBeTruthy()
+    await vi.waitFor(() => expect(bucket('Spese essenziali').textContent).toContain('Spese essenziali350,00\u00a0€'))
+    expect(bucket('Spese essenziali').textContent).toContain('Hai speso 50,00\u00a0€ in più')
+    expect(bucket('Spese essenziali').querySelector('svg[aria-hidden="true"]')).toBeTruthy()
   })
 
   it('Risparmi calcolato: entrate − Essenziali − Piacere, accanto al nome e senza riga sotto', async () => {
@@ -121,12 +121,30 @@ describe('MonthScreen', () => {
     expect(bucket('Risparmi').querySelector('svg')).toBeNull()
   })
 
-  it('Risparmi negativo: segno meno e barra vuota', async () => {
+  it('Essenziali al limite: nessun residuo da spendere, nessuna icona', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income') // ideale Essenziali 30% = 300 €
+    await add('2026-11-02', 30000, 'housing')
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Spese essenziali').textContent).toContain('Hai raggiunto il limite'))
+    expect(bucket('Spese essenziali').querySelector('svg')).toBeNull()
+  })
+
+  it('Risparmi sotto la percentuale: quanto manca, senza icona', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income') // Risparmi 50% = 500 €
+    await add('2026-11-02', 65000, 'housing') // risparmio 350 €
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Ti mancano 150,00\u00a0€ per il 50%'))
+    expect(bucket('Risparmi').querySelector('svg')).toBeNull()
+  })
+
+  it('Risparmi negativo: segno meno tipografico e barra vuota', async () => {
     await add('2026-11-01', 10000, 'salary', 'income')
     await add('2026-11-02', 12000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Risparmi-20,00\u00a0€'))
+    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Risparmi\u221220,00\u00a0€'))
     expect(bar('Risparmi').fill.style.width).toBe('0%')
   })
 
@@ -135,9 +153,9 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 25000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bar('Essenziali').fill.style.width).toBe('25%'))
-    expect(bar('Essenziali').ideal.style.left).toBe('30%')
-    expect(bar('Piacere').ideal.style.left).toBe('20%')
+    await vi.waitFor(() => expect(bar('Spese essenziali').fill.style.width).toBe('25%'))
+    expect(bar('Spese essenziali').ideal.style.left).toBe('30%')
+    expect(bar('Spese di piacere').ideal.style.left).toBe('20%')
     expect(bar('Risparmi').fill.style.width).toBe('75%')
     expect(bar('Risparmi').ideal.style.left).toBe('50%')
   })
@@ -147,29 +165,29 @@ describe('MonthScreen', () => {
     await add('2026-11-02', 15000, 'housing')
     await setup()
 
-    await vi.waitFor(() => expect(bar('Essenziali').fill.style.width).toBe('100%'))
-    expect(bucket('Essenziali').textContent).toContain('Hai sforato di 120,00\u00a0€')
+    await vi.waitFor(() => expect(bar('Spese essenziali').fill.style.width).toBe('100%'))
+    expect(bucket('Spese essenziali').textContent).toContain('Hai speso 120,00\u00a0€ in più')
   })
 
   it('usa le percentuali salvate nelle impostazioni', async () => {
     await db.settings.put({ id: 'default', idealPct: { essentials: 50, pleasure: 30, savings: 20 }, soundsEnabled: true })
     await add('2026-11-01', 100000, 'salary', 'income')
     await setup()
-    await vi.waitFor(() => expect(bucket('Essenziali').textContent).toContain('Hai a disposizione ancora 500,00\u00a0€'))
-    expect(bar('Essenziali').ideal.style.left).toBe('50%')
+    await vi.waitFor(() => expect(bucket('Spese essenziali').textContent).toContain('Puoi spendere ancora 500,00\u00a0€'))
+    expect(bar('Spese essenziali').ideal.style.left).toBe('50%')
   })
 
   it('senza entrate mostra solo l\'invito ad aggiungerne una, senza bucket', async () => {
     await setup()
-    expect(screen.getByText(/Aggiungi un'entrata/)).toBeTruthy()
-    expect(screen.queryByRole('list', { name: 'Bucket' })).toBeNull()
+    expect(screen.getByText(/Aggiungi le entrate del mese/)).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Ripartizione delle entrate' })).toBeNull()
   })
 
   it('senza entrate ma con spese nasconde i bucket e lascia le spese nei movimenti', async () => {
     await add('2026-11-03', 20000, 'groceries')
     await setup()
-    expect(screen.getByText(/Aggiungi un'entrata/)).toBeTruthy()
-    expect(screen.queryByRole('list', { name: 'Bucket' })).toBeNull()
+    expect(screen.getByText(/Aggiungi le entrate del mese/)).toBeTruthy()
+    expect(screen.queryByRole('list', { name: 'Ripartizione delle entrate' })).toBeNull()
     expect(screen.getByRole('list', { name: 'Movimenti' }).textContent).toContain('200,00')
   })
 
@@ -195,7 +213,7 @@ describe('MonthScreen', () => {
     await user.click(screen.getByRole('button', { name: 'Mese precedente' }))
     await user.click(screen.getByRole('tab', { name: 'Categorie' }))
 
-    const pleasure = await screen.findByRole('region', { name: 'Piacere' })
+    const pleasure = await screen.findByRole('region', { name: 'Spese di piacere' })
     await vi.waitFor(() => expect(within(pleasure).getByRole('listitem').textContent).toBe('Ristoranti25,00\u00a0€'))
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Ottobre 2026')
     expect(screen.getByRole('button', { name: 'Aggiungi transazione' })).toBeTruthy()

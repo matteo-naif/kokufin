@@ -41,11 +41,12 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 
 - `ideale = percentuale × entrate del mese`.
 - Accanto al nome di ogni bucket, sulla stessa riga e allineato a destra, c'è l'importo del mese, con lo stile del totale accanto al titolo nella vista Categorie (Work Sans 600, `#5A5148`).
-- Essenziali e Piacere: sotto la barra, il significato della tacca: "Hai a disposizione ancora Z" se speso ≤ ideale, "Hai sforato di Z" con `WarningIcon` se speso > ideale. Non c'è un'etichetta di stato quando va tutto bene: un "In linea" ripetuto su ogni barra non aggiunge informazione, e l'avviso si nota di più se è l'unico.
-- Risparmi: l'importo è ciò che resta delle entrate dopo le spese. La tacca segna la percentuale Risparmi delle impostazioni, senza riga sotto la barra. Con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
+- Nei testi visibili i bucket di spesa si chiamano "Spese essenziali" e "Spese di piacere" (`name` in `BUCKETS`): stessa parola "spesa" del form e della vista Categorie, così è chiaro che sono soldi usciti e che Risparmi è ciò che resta.
+- Essenziali e Piacere: sotto la barra, il significato della tacca: "Puoi spendere ancora Z" se speso < ideale, "Hai raggiunto il limite" se speso = ideale, "Hai speso Z in più" con `WarningIcon` se speso > ideale. Le due frasi con l'importo usano lo stesso verbo, così si confrontano a colpo d'occhio. Non c'è un'etichetta di stato quando va tutto bene: un "In linea" ripetuto su ogni barra non aggiunge informazione, e l'avviso si nota di più se è l'unico.
+- Risparmi: l'importo è ciò che resta delle entrate dopo le spese. La tacca segna la percentuale Risparmi delle impostazioni. Sotto la percentuale la riga "Ti mancano Z per il N%" dice il significato della tacca, senza icona: cita la percentuale e non un obiettivo. Sopra la percentuale non c'è riga. Con risparmio negativo il valore è scritto con il segno meno tipografico (−, U+2212, lo stesso dell'elenco movimenti) e la barra è vuota.
 - Barre dei bucket: una sola scala per le tre barre, 100% della larghezza = entrate del mese (regola 2 dei grafici). La lunghezza è l'importo diviso le entrate, tra 0 e 100%: oltre le entrate la barra si ferma al bordo e lo sforamento lo dice il testo. Su ogni barra una tacca verticale segna l'ideale, alla posizione della sua percentuale. La tacca è `#1F1A16`, larga 2 px e più alta della barra, così si vede sopra e sotto anche quando cade sul riempimento (17,25:1 su bianco).
 - Le entrate non hanno un blocco a parte nel Riepilogo: sono la scala delle barre e compaiono nell'elenco movimenti.
-- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito ad aggiungere un'entrata. Barre e tacche su una scala nulla sarebbero fuorvianti.
+- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito "Aggiungi le entrate del mese per vedere quanto puoi spendere." Barre e tacche su una scala nulla sarebbero fuorvianti.
 
 ## Design system
 

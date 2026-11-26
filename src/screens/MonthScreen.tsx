@@ -115,12 +115,12 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
             panel: (
               <div className="flex flex-col gap-6">
               {data && totals.income === 0 && (
-                <p className="text-text-secondary">Aggiungi un'entrata per calcolare gli importi ideali dei bucket.</p>
+                <p className="text-text-secondary">Aggiungi le entrate del mese per vedere quanto puoi spendere.</p>
               )}
 
               {/* Senza entrate la scala è nulla: niente barre */}
               {data && totals.income > 0 && (
-              <ul aria-label="Bucket" className="flex flex-col gap-6">
+              <ul aria-label="Ripartizione delle entrate" className="flex flex-col gap-6">
                 {BUCKETS.map((b) => {
                   const amount = totals.buckets[b.id] // Risparmi: entrate − spese, può essere negativo
                   // Scala unica per i tre bucket: 100% = entrate del mese
@@ -141,7 +141,11 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                           style={{ left: `${settings.idealPct[b.id]}%` }}
                         />
                       </div>
-                      {b.id !== 'savings' && <IdealLine spent={amount} ideal={idealCents(settings.idealPct[b.id], totals.income)} />}
+                      {b.id === 'savings' ? (
+                        <SavingsLine saved={amount} pct={settings.idealPct.savings} income={totals.income} />
+                      ) : (
+                        <IdealLine spent={amount} ideal={idealCents(settings.idealPct[b.id], totals.income)} />
+                      )}
                     </li>
                   )
                 })}
@@ -233,12 +237,24 @@ function AddFab({ onClick }: { onClick: () => void }) {
 
 /** Significato della tacca: quanto resta prima dell'ideale o di quanto lo si è superato. */
 function IdealLine({ spent, ideal }: { spent: number; ideal: number }) {
-  if (spent <= ideal) return <p>Hai a disposizione ancora {formatCents(ideal - spent)}</p>
+  if (spent < ideal) return <p>Puoi spendere ancora {formatCents(ideal - spent)}</p>
+  if (spent === ideal) return <p>Hai raggiunto il limite</p>
   // Lo sforamento è l'unico avviso: testo più icona, mai solo colore
   return (
     <p className="flex items-center gap-1">
       <WarningIcon />
-      Hai sforato di {formatCents(spent - ideal)}
+      Hai speso {formatCents(spent - ideal)} in più
+    </p>
+  )
+}
+
+/** Significato della tacca di Risparmi: cita la percentuale, non un obiettivo. Nessuna riga se raggiunta. */
+function SavingsLine({ saved, pct, income }: { saved: number; pct: number; income: number }) {
+  const target = idealCents(pct, income)
+  if (saved >= target) return null
+  return (
+    <p>
+      Ti mancano {formatCents(target - saved)} per il {pct}%
     </p>
   )
 }
