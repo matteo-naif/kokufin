@@ -19,8 +19,8 @@ Il sistema SHALL presentare testo, controlli e grafici in modo percepibile senza
 - **THEN** il suo contrasto con lo sfondo adiacente è almeno 3:1
 
 #### Scenario: Informazione non affidata al colore
-- **WHEN** un bucket è sopra il tetto, in linea, sotto l'obiettivo o raggiunto
-- **THEN** lo stato è comunicato anche da un'etichetta di testo e da un'icona
+- **WHEN** Essenziali o Piacere superano l'ideale
+- **THEN** lo sforamento è comunicato da un testo ("Hai speso X in più") e da un'icona, non dal colore
 
 #### Scenario: Grafico per chi non lo vede
 - **WHEN** viene mostrato il grafico di ripartizione
@@ -69,7 +69,7 @@ Il sistema SHALL esporre nome, ruolo e valore di ogni componente a screen reader
 
 #### Scenario: Barre dei bucket
 - **WHEN** viene mostrata una barra di bucket
-- **THEN** speso, ideale e stato sono disponibili come testo per lo screen reader, non solo come lunghezza della barra
+- **THEN** l'importo del bucket e, per Essenziali e Piacere, quanto resta o lo sforamento sono disponibili come testo per lo screen reader, non solo come lunghezza della barra o posizione della tacca
 
 #### Scenario: Struttura della pagina
 - **WHEN** viene mostrata una schermata

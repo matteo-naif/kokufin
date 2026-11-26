@@ -43,7 +43,7 @@ async function back(expectedH1: string) {
 describe('App: navigazione', () => {
   it('apre le impostazioni a #/settings e torna al mese con Indietro', async () => {
     const user = await start()
-    await screen.findByText(/Aggiungi un'entrata/) // mese caricato, DB vuoto
+    await screen.findByText(/Aggiungi le entrate del mese/) // mese caricato, DB vuoto
     await user.click(screen.getByRole('button', { name: 'Impostazioni' }))
 
     expect(location.hash).toBe('#/settings')
@@ -170,7 +170,7 @@ describe('App: navigazione', () => {
   // design.md, "Icone": peso, dimensione e aria-hidden fissati da IconProvider
   it('le icone sono nascoste allo screen reader e hanno la dimensione comune', async () => {
     await start()
-    await screen.findByText(/Aggiungi un'entrata/) // mese caricato, DB vuoto
+    await screen.findByText(/Aggiungi le entrate del mese/) // mese caricato, DB vuoto
     const icons = [...document.querySelectorAll('svg')]
     expect(icons.length).toBeGreaterThan(0)
     for (const icon of icons) {

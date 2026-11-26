@@ -40,9 +40,13 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 ## Calcolo ideale e stato dei bucket
 
 - `ideale = percentuale × entrate del mese`.
-- Essenziali e Piacere: speso ≤ ideale → "In linea", speso > ideale → "Sopra il tetto".
-- Risparmi: risparmiato ≥ ideale → "Obiettivo raggiunto", risparmiato < ideale → "Sotto l'obiettivo". La barra mostra "X risparmiati su Y ideali"; con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
-- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito ad aggiungere un'entrata. Uno stato calcolato su un ideale nullo sarebbe fuorviante (per esempio "Obiettivo raggiunto" con 0 risparmiati su 0 ideali).
+- Accanto al nome di ogni bucket, sulla stessa riga e allineato a destra, c'è l'importo del mese, con lo stile del totale accanto al titolo nella vista Categorie (Work Sans 600, `#5A5148`).
+- Nei testi visibili i bucket di spesa si chiamano "Spese essenziali" e "Spese di piacere" (`name` in `BUCKETS`): stessa parola "spesa" del form e della vista Categorie, così è chiaro che sono soldi usciti e che Risparmi è ciò che resta.
+- Essenziali e Piacere: sotto la barra, in quest'ordine: "Hai speso Z in più" con `WarningIcon` se speso > ideale; "Hai raggiunto il limite" se speso = ideale; "Le entrate del mese sono finite", senza icona, se il bucket ha ancora budget ma entrate − tutte le spese ≤ 0; altrimenti "Puoi spendere ancora Z", con Z = il minore tra ideale − speso e entrate − tutte le spese. Le entrate sono una sola: lo sforamento di un bucket consuma i soldi degli altri, e il testo dice ciò che si può fare davvero. La tacca invece resta sul piano (la percentuale): può capitare che tacca e testo non coincidano, ed è voluto. Le due frasi con l'importo usano lo stesso verbo, così si confrontano a colpo d'occhio. Non c'è un'etichetta di stato quando va tutto bene: un "In linea" ripetuto su ogni barra non aggiunge informazione, e l'avviso si nota di più se è l'unico.
+- Risparmi: l'importo è ciò che resta delle entrate dopo le spese. La tacca segna la percentuale Risparmi delle impostazioni. Sotto la barra non c'è riga: quanto manca alla percentuale è la somma algebrica delle righe di Essenziali e Piacere, e non suggerisce nessuna azione. Con risparmio negativo il valore è scritto con il segno meno tipografico (−, U+2212, lo stesso dell'elenco movimenti) e la barra è vuota.
+- Barre dei bucket: una sola scala per le tre barre, 100% della larghezza = entrate del mese (regola 2 dei grafici). La lunghezza è l'importo diviso le entrate, tra 0 e 100%: oltre le entrate la barra si ferma al bordo e lo sforamento lo dice il testo. Su ogni barra una tacca verticale segna l'ideale, alla posizione della sua percentuale. La tacca è `#1F1A16`, larga 2 px e più alta della barra, così si vede sopra e sotto anche quando cade sul riempimento (17,25:1 su bianco).
+- Le entrate sono una riga sopra le barre, con lo stile dei titoli dei bucket e senza barra: dicono quanto vale il 100% delle barre. Non sono un titolo grande, perché sono il punto di partenza e non il risultato.
+- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito "Aggiungi le entrate del mese per vedere quanto puoi spendere." Barre e tacche su una scala nulla sarebbero fuorvianti.
 
 ## Design system
 
@@ -58,7 +62,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
   - Informazione `#1E40AF` su `#EFF6FF` (8,01:1; 8,72:1 su bianco).
   Come per gli stati dei bucket, il significato non è affidato al colore: ogni messaggio ha testo e icona.
 - Titoli in Space Mono, testi in Work Sans.
-- Con una sola tinta non si può affidare lo stato al colore. Lo stato di ogni bucket usa sempre un'etichetta di testo e un'icona, oltre alla barra.
+- Con una sola tinta non si può affidare lo stato al colore. Lo sforamento di un bucket usa sempre un testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
 
 ## Linee guida di interfaccia
@@ -73,7 +77,7 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Si importano i nomi con il suffisso `Icon` (per esempio `GearIcon`): quelli senza suffisso sono deprecati.
 - Peso `bold`, dimensione `1.25rem`, colore del testo (`currentColor`). Questi valori e `aria-hidden` sono fissati una volta sola da `IconProvider` (`src/components/IconProvider.tsx`), usato in `App`: le singole icone non li ripetono.
 - L'icona non porta mai da sola un significato: il nome accessibile lo dà il pulsante (`aria-label`) o il testo accanto, come per gli stati dei bucket.
-- Icone in uso: `GearIcon` (impostazioni), `PlusIcon` (aggiungi transazione), `CaretLeftIcon` e `CaretRightIcon` (mese precedente e successivo, voci dell'indice impostazioni), `ArrowLeftIcon` (indietro), `CheckIcon` (In linea, Obiettivo raggiunto), `WarningIcon` (Sopra il tetto), `ArrowDownIcon` (Sotto l'obiettivo).
+- Icone in uso: `GearIcon` (impostazioni), `PlusIcon` (aggiungi transazione), `CaretLeftIcon` e `CaretRightIcon` (mese precedente e successivo, voci dell'indice impostazioni), `ArrowLeftIcon` (indietro), `WarningIcon` (sforamento dell'ideale di un bucket).
 
 ## Regole per i grafici
 
@@ -84,7 +88,7 @@ Sintesi dei principi di *Data storytelling* (Cole Nussbaumer Knaflic, Apogeo, 20
 3. **Etichette dirette, niente legenda.** Il nome della categoria è scritto sopra la sua barra, l'importo a destra sulla stessa riga. Niente percentuali: con una sola scala ripeterebbero la lunghezza della barra e aggiungerebbero un secondo numero da leggere per ogni riga. Non servono legenda, asse dei valori né griglia, perché i numeri sono già scritti. Il lettore non deve spostare lo sguardo tra grafico e legenda. I valori sono sempre visibili, non stanno in un tooltip, perché sul telefono non esiste il passaggio del mouse.
 4. **Il colore guida l'attenzione.** Si usa una sola tinta, in due intensità. La barra della categoria più alta della vista è `#5C3A21`. Le altre sono `#B07C52`. Il colore non distingue le categorie, perché lo fanno già posizione ed etichetta, e nessun significato dipende solo dal colore.
 5. **Il titolo dice ciò che il grafico non mostra.** Un titolo con il messaggio serve solo se aggiunge un'informazione che il grafico non rende già evidente. Una frase che ripete la barra più lunga (per esempio "In Piacere pesa di più Ristoranti: 42%") è ridondante: ordine e colore lo dicono già. Nella ripartizione per categoria ogni sezione ha come titolo il nome del bucket, e accanto il totale speso, che altrimenti andrebbe sommato a mente.
-6. **Meno disordine.** Niente bordi, ombre, sfondi colorati, effetti o animazioni decorative, e nessun elemento che non porti informazione. Tutto è allineato a sinistra su un unico asse. Unica linea ammessa: quella sottile (`#E6DFD6`) sotto la riga del titolo di sezione, che collega il nome del bucket a sinistra al totale a destra. Lo spazio bianco tra una riga e l'altra è maggiore dello spazio tra il testo e la sua barra, così ogni etichetta si legge insieme alla propria barra (principio di prossimità). Lo spazio tra le barre è minore del loro spessore. Il testo è sempre orizzontale, e le barre orizzontali permettono nomi lunghi senza ruotarli.
+6. **Meno disordine.** Niente bordi, ombre, sfondi colorati, effetti o animazioni decorative, e nessun elemento che non porti informazione. Tutto è allineato a sinistra su un unico asse. Uniche linee ammesse: quella sottile (`#E6DFD6`) sotto la riga del titolo di sezione, che collega il nome del bucket a sinistra al totale a destra, e la tacca dell'ideale nelle barre dei bucket, che porta un'informazione. Lo spazio bianco tra una riga e l'altra è maggiore dello spazio tra il testo e la sua barra, così ogni etichetta si legge insieme alla propria barra (principio di prossimità). Lo spazio tra le barre è minore del loro spessore. Il testo è sempre orizzontale, e le barre orizzontali permettono nomi lunghi senza ruotarli.
 7. **Gerarchia del testo.** Il titolo della sezione è il testo più grande (Space Mono). Nome della categoria e valori hanno lo stesso corpo, in `#1F1A16`. Il totale del bucket accanto al titolo è in `#5A5148` e in grassetto (Work Sans 600), per distinguerlo dagli importi delle categorie. Le dimensioni sono in `rem`.
 
 ## Accessibilità

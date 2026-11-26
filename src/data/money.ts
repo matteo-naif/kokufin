@@ -18,5 +18,6 @@ export function centsToInput(cents: number): string {
 const EUR =new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', useGrouping: false })
 
 export function formatCents(cents: number): string {
-  return EUR.format(cents / 100)
+  // Segno meno tipografico (U+2212), lo stesso dell'elenco movimenti
+  return EUR.format(cents / 100).replace('-', '−')
 }

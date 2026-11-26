@@ -8,8 +8,8 @@ export type SpendingBucket = Exclude<Bucket, 'savings'>
 
 /** Bucket nell'ordine in cui compaiono, con il nome mostrato all'utente. */
 export const BUCKETS: { id: Bucket; name: string }[] = [
-  { id: 'essentials', name: 'Essenziali' },
-  { id: 'pleasure', name: 'Piacere' },
+  { id: 'essentials', name: 'Spese essenziali' },
+  { id: 'pleasure', name: 'Spese di piacere' },
   { id: 'savings', name: 'Risparmi' },
 ]
 

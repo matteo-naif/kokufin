@@ -34,4 +34,8 @@ describe('formatCents', () => {
     expect(formatCents(123456)).toBe('1234,56 €')
     expect(formatCents(5)).toBe('0,05 €')
   })
+
+  it('i negativi usano il segno meno tipografico (U+2212), come l\'elenco movimenti', () => {
+    expect(formatCents(-2000)).toBe('\u221220,00\u00a0€')
+  })
 })

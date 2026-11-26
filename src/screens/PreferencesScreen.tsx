@@ -29,7 +29,7 @@ export default function PreferencesScreen(props: Props) {
     <main className="mx-auto flex max-w-md flex-col gap-6 p-4">
       <ScreenHeader title="Preferenze" onBack={props.onBack} />
       <p>
-        Scegli quanta parte delle entrate di ogni mese destinare a Essenziali, Piacere e Risparmi: la somma deve fare
+        Scegli quanta parte delle entrate di ogni mese destinare alle spese essenziali, alle spese di piacere e ai risparmi: la somma deve fare
         100%. Puoi anche attivare o disattivare i suoni dei pulsanti.
       </p>
       {settings && <SettingsForm settings={settings} onSaved={props.onSaved} />}
