@@ -19,6 +19,11 @@ Il sistema SHALL permettere di registrare entrate e spese con importo, categoria
 - **WHEN** l'utente imposta il tipo su "Entrata"
 - **THEN** l'elenco delle categorie mostra solo quelle delle entrate
 
+#### Scenario: Scelta della categoria
+- **WHEN** l'utente apre il form di una nuova transazione con tipo "Spesa"
+- **THEN** le categorie sono chip su più righe, divise in due gruppi con il nome del bucket ("Spese essenziali", "Spese di piacere"), tutte visibili e selezionabili con un tocco
+- **AND** il chip scelto ha sfondo primario e un'icona di spunta, così la scelta non dipende solo dal colore
+
 ### Requirement: Modificare ed eliminare
 Il sistema SHALL permettere di modificare ed eliminare una transazione dall'elenco del mese.
 

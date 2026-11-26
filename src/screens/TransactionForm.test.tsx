@@ -118,6 +118,18 @@ describe('TransactionForm', () => {
     expect(within(group).getAllByRole('radio')).toHaveLength(EXPENSE_CATEGORIES.length)
   })
 
+  it('raggruppa le categorie di spesa per bucket', () => {
+    setup()
+    for (const [bucket, name] of [
+      ['essentials', 'Spese essenziali'],
+      ['pleasure', 'Spese di piacere'],
+    ]) {
+      const group = screen.getByRole('group', { name })
+      const names = within(group).getAllByRole('radio').map((r) => r.closest('label')!.textContent)
+      expect(names).toEqual(EXPENSE_CATEGORIES.filter((c) => c.bucket === bucket).map((c) => c.name))
+    }
+  })
+
   it('modifica una transazione esistente', async () => {
     const id = await db.transactions.add({ date: '2026-11-03', amountCents: 500, kind: 'expense', categoryId: 'groceries' })
     const tx = (await db.transactions.get(id))!

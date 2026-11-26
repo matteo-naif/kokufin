@@ -1,3 +1,4 @@
+import { CheckIcon } from '@phosphor-icons/react'
 import { useRef, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -5,7 +6,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import Field from '@/components/Field'
 import ScreenHeader from '@/components/ScreenHeader'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
+import { BUCKETS, type Category, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
 import { centsToInput, parseAmount } from '@/data/money'
 import { today } from '@/data/summary'
@@ -48,7 +49,39 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
   const [confirming, setConfirming] = useState(false)
   const deleteRef = useRef<HTMLButtonElement>(null)
 
-  const categories = useWatch({ control, name: 'kind' }) === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
+  const kind = useWatch({ control, name: 'kind' })
+  const selectedCategory = useWatch({ control, name: 'categoryId' })
+  // Le spese sono divise per bucket, così si vede dove va la spesa; le entrate sono un solo gruppo
+  const categoryGroups: { name?: string; categories: Category[] }[] =
+    kind === 'expense'
+      ? BUCKETS.filter((b) => b.id !== 'savings').map((b) => ({
+          name: b.name,
+          categories: EXPENSE_CATEGORIES.filter((c) => c.bucket === b.id),
+        }))
+      : [{ categories: INCOME_CATEGORIES }]
+
+  // Chip: radio nascosto alla vista ma non allo screen reader; la scelta è segnata da colore e spunta
+  function chips(categories: Category[]) {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {categories.map((c) => (
+          <label
+            key={c.id}
+            className="flex min-h-11 items-center gap-2 rounded-full border border-border px-4 has-checked:border-primary has-checked:bg-primary has-checked:text-white has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
+          >
+            <input
+              type="radio"
+              value={c.id}
+              {...register('categoryId', { required: 'Scegli una categoria.' })}
+              className="sr-only"
+            />
+            {selectedCategory === c.id && <CheckIcon />}
+            {c.name}
+          </label>
+        ))}
+      </div>
+    )
+  }
 
   async function save({ kind, amount, categoryId, date, note }: FormValues) {
     const data = { date, amountCents: parseAmount(amount)!, kind, categoryId, ...(note.trim() && { note: note.trim() }) }
@@ -107,18 +140,17 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
               {errors.categoryId.message}
             </p>
           )}
-          <div className="flex flex-col">
-            {categories.map((c) => (
-              <label key={c.id} className="flex min-h-11 items-center gap-3">
-                <input
-                  type="radio"
-                  value={c.id}
-                  {...register('categoryId', { required: 'Scegli una categoria.' })}
-                  className="size-5 accent-primary"
-                />
-                {c.name}
-              </label>
-            ))}
+          <div className="flex flex-col gap-4">
+            {categoryGroups.map((g) =>
+              g.name ? (
+                <fieldset key={g.name}>
+                  <legend className="mb-2 text-sm text-text-secondary">{g.name}</legend>
+                  {chips(g.categories)}
+                </fieldset>
+              ) : (
+                <div key="income">{chips(g.categories)}</div>
+              ),
+            )}
           </div>
         </fieldset>
 

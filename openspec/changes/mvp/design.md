@@ -37,6 +37,8 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 
 Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. Gli `id` non si cambiano mai, così le transazioni salvate restano valide quando si rinomina una categoria. Le categorie delle entrate sono in `INCOME_CATEGORIES` nello stesso file.
 
+Nel form della transazione le categorie sono chip (i *filter chip* di Material 3) su più righe, alti almeno 44 px. Un elenco di radio in colonna occupava più di metà schermo con le 13 categorie di spesa. I chip le mostrano tutte in poco spazio, si scelgono con un tocco e restano radio nascosti alla vista, quindi tastiera e screen reader funzionano come prima. Le spese sono divise in due gruppi con il nome del bucket, così chi registra vede dove va la spesa. Il chip scelto ha sfondo primario e `CheckIcon`, come in Material: il colore non è l'unico segnale. Un `<select>` sarebbe più compatto, ma nasconde le opzioni e chiede un tocco in più.
+
 ## Calcolo ideale e stato dei bucket
 
 - `ideale = percentuale × entrate del mese`.
