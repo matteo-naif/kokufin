@@ -45,3 +45,5 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 
 - [ ] 6.1 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
 - [ ] 6.2 Da decidere: data di default di una transazione nuova. Oggi "Aggiungi" usa sempre la data odierna (`specs/transactions`, scenario "Spesa con i valori di default"), anche quando la schermata mostra un mese passato o futuro. Capire se l'utente si aspetta invece una data nel mese visualizzato (per esempio il primo giorno, o lo stesso giorno del mese) e, se sì, aggiornare spec e codice
+- [ ] 6.3 Da valutare: ordine dei campi in "Aggiungi / modifica transazione" (`specs/transactions`). Mettere prima i campi più usati e tenere vicino a ogni campo quelli la cui visibilità dipende da lui
+- [ ] 6.4 Terminologia: la schermata del mese dice "Movimenti" ("Nessun movimento in questo mese.") mentre il form e i messaggi dicono "transazione" ("Nuova transazione", "Transazione salvata", "Aggiungi transazione"). Scegliere un termine solo e usarlo in tutti i testi, spec comprese
