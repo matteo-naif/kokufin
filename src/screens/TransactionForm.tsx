@@ -67,7 +67,7 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
         {categories.map((c) => (
           <label
             key={c.id}
-            className="flex min-h-11 items-center gap-2 rounded-full border border-border px-4 has-checked:border-primary has-checked:bg-primary has-checked:text-white has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
+            className="flex min-h-11 items-center gap-2 rounded border border-border px-4 has-checked:border-primary has-checked:bg-primary has-checked:text-white has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
           >
             <input
               type="radio"
@@ -110,7 +110,7 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
             {KINDS.map((k) => (
               <label
                 key={k.value}
-                className="relative flex min-h-11 flex-1 items-center justify-center gap-2 border border-border px-4 first:rounded-l-full last:rounded-r-full not-first:-ml-px has-checked:border-primary has-checked:bg-primary has-checked:text-white has-focus-visible:z-10 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
+                className="relative flex min-h-11 flex-1 items-center justify-center gap-2 border border-border px-4 first:rounded-l last:rounded-r not-first:-ml-px has-checked:border-primary has-checked:bg-primary has-checked:text-white has-focus-visible:z-10 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
               >
                 <input
                   type="radio"

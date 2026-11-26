@@ -69,6 +69,7 @@ Il tipo (Spesa o Entrata) si sceglie con un *segmented button* di Material 3: du
 - Titoli in Space Mono, testi in Work Sans.
 - Con una sola tinta non si può affidare lo stato al colore. Lo sforamento di un bucket usa sempre un testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
+- Un solo raggio per gli angoli: 0,25rem (`rounded`), per campi, pulsanti, FAB, chip, segmented button, dialog, toast e barre. Angoli più tondi o a pillola davano a ogni componente una forma diversa, e un elemento a tutta larghezza diventava un "pillolone". Unica eccezione lo switch, che resta tondo: lo stato si legge dalla posizione del cerchio, e con angoli squadrati sembrerebbe una casella. Anche il FAB ha 0,25rem e non gli angoli da 16 dp di Material: sull'aspetto vale il design system, come dicono le linee guida di interfaccia.
 
 ## Linee guida di interfaccia
 

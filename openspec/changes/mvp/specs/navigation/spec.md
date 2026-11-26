@@ -31,7 +31,7 @@ Il sistema SHALL riportare alla vista da cui si è arrivati con il tasto Indietr
 - **THEN** l'app torna alla schermata del mese, con lo stesso mese e la stessa tab di prima, togliendo dalla cronologia le viste aperte dopo il mese, così un Indietro successivo non le riapre
 
 ### Requirement: Pulsante Aggiungi in basso
-Il sistema SHALL mostrare nella schermata del mese, e solo lì, un FAB esteso (Material Design 3) fisso in basso a destra, con l'icona "+" e l'etichetta "Aggiungi", che apre la nuova transazione. Sta in basso perché è l'azione più frequente e deve essere raggiungibile con il pollice. Quando l'utente scorre verso il basso oltre i primi 100 px il FAB si stringe al solo "+"; quando scorre verso l'alto o torna entro i primi 100 px torna esteso. Il FAB non si nasconde mai. Le impostazioni restano nell'intestazione, perché si usano di rado.
+Il sistema SHALL mostrare nella schermata del mese, e solo lì, un FAB esteso (Material Design 3) fisso in basso a destra, con l'icona "+" e l'etichetta "Aggiungi", che apre la nuova transazione. Sta in basso perché è l'azione più frequente e deve essere raggiungibile con il pollice. Quando l'utente scorre verso il basso oltre i primi 100 px il FAB si stringe al solo "+"; quando scorre verso l'alto o torna entro i primi 100 px torna esteso. Il FAB non si nasconde mai. Le impostazioni restano nell'intestazione, perché si usano di rado. Gli angoli del FAB hanno il raggio unico del design system (0,25rem), non i 16 dp di Material: tutti i componenti di Kokufin hanno la stessa forma.
 
 #### Scenario: FAB esteso all'apertura
 - **WHEN** l'utente apre la schermata del mese
