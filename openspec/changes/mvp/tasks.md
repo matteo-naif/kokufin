@@ -44,3 +44,4 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 ## 6. Minori
 
 - [ ] 6.1 Suoni dei pulsanti di azione da https://buttons.joshwcomeau.com/: verificare la licenza dei suoni, includere i file nell'app per l'uso offline, riprodurli al tocco solo se attivi (`specs/sounds`)
+- [ ] 6.2 Da decidere: data di default di una transazione nuova. Oggi "Aggiungi" usa sempre la data odierna (`specs/transactions`, scenario "Spesa con i valori di default"), anche quando la schermata mostra un mese passato o futuro. Capire se l'utente si aspetta invece una data nel mese visualizzato (per esempio il primo giorno, o lo stesso giorno del mese) e, se sì, aggiornare spec e codice
