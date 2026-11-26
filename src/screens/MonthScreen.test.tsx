@@ -130,13 +130,29 @@ describe('MonthScreen', () => {
     expect(bucket('Spese essenziali').querySelector('svg')).toBeNull()
   })
 
-  it('Risparmi sotto la percentuale: quanto manca, senza icona', async () => {
-    await add('2026-11-01', 100000, 'salary', 'income') // Risparmi 50% = 500 €
-    await add('2026-11-02', 65000, 'housing') // risparmio 350 €
+  it('mostra le entrate del mese in una riga sopra le barre', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income')
     await setup()
 
-    await vi.waitFor(() => expect(bucket('Risparmi').textContent).toContain('Ti mancano 150,00\u00a0€ per il 50%'))
-    expect(bucket('Risparmi').querySelector('svg')).toBeNull()
+    await vi.waitFor(() => expect(screen.getByText('Entrate').parentElement!.textContent).toBe('Entrate1000,00\u00a0€'))
+  })
+
+  it('il residuo è limitato dai soldi rimasti nel mese', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income') // ideale Piacere 20% = 200 €
+    await add('2026-11-02', 85000, 'housing') // restano 150 €
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Spese di piacere').textContent).toContain('Puoi spendere ancora 150,00\u00a0€'))
+  })
+
+  it('entrate finite: il bucket con budget lo dice, senza icona; Risparmi non ha riga', async () => {
+    await add('2026-11-01', 10000, 'salary', 'income')
+    await add('2026-11-02', 10000, 'utilities')
+    await setup()
+
+    await vi.waitFor(() => expect(bucket('Spese di piacere').textContent).toContain('Le entrate del mese sono finite'))
+    expect(bucket('Spese di piacere').querySelector('svg')).toBeNull()
+    expect(bucket('Risparmi').textContent).toBe('Risparmi0,00\u00a0€')
   })
 
   it('Risparmi negativo: segno meno tipografico e barra vuota', async () => {

@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Riepilogo del mese
-Il sistema SHALL mostrare, per il mese selezionato, tre barre: Essenziali, Piacere e Risparmi. Accanto al nome di ogni bucket, sulla stessa riga, c'è l'importo del mese, come il totale accanto al titolo nella vista "Categorie": lo speso per Essenziali e Piacere, il risparmio per Risparmi, cioè entrate − spese Essenziali − spese Piacere. Le tre barre hanno una sola scala: il 100% della larghezza sono le entrate del mese. Ogni barra ha una tacca nel punto della percentuale delle impostazioni. Sotto ogni barra una riga dice il significato della tacca. Per Essenziali e Piacere: quanto si può ancora spendere, che si è raggiunto il limite, o quanto si è speso in più; solo quest'ultimo caso ha l'icona di avviso. Per Risparmi la riga compare solo sotto la percentuale e dice quanto manca per raggiungerla, senza icona: il risparmio non è un obiettivo. Nei titoli Essenziali e Piacere si chiamano "Spese essenziali" e "Spese di piacere", con la stessa parola "spesa" usata nel resto dell'app; il nome vale ovunque compaia il bucket. Gli importi negativi usano il segno meno tipografico (−, U+2212), come l'elenco movimenti. L'importo delle entrate non è mostrato a parte: è la scala delle barre e compare nell'elenco movimenti.
+Il sistema SHALL mostrare, per il mese selezionato, una riga con le entrate del mese e sotto tre barre: Essenziali, Piacere e Risparmi. La riga delle entrate ha lo stile dei titoli dei bucket (nome a sinistra, importo a destra), senza barra: dice quanto vale il 100% delle barre. Accanto al nome di ogni bucket, sulla stessa riga, c'è l'importo del mese, come il totale accanto al titolo nella vista "Categorie": lo speso per Essenziali e Piacere, il risparmio per Risparmi, cioè entrate − spese Essenziali − spese Piacere. Le tre barre hanno una sola scala: il 100% della larghezza sono le entrate del mese. Ogni barra ha una tacca nel punto della percentuale delle impostazioni. Sotto le barre di Essenziali e Piacere una riga dice quanto si può ancora spendere, che si è raggiunto il limite, che le entrate sono finite, o quanto si è speso in più; solo quest'ultimo caso ha l'icona di avviso. Quanto si può ancora spendere è il minore tra il budget rimasto nel bucket (ideale − speso) e i soldi rimasti nel mese (entrate − tutte le spese): il testo non dà un permesso che le entrate non coprono. Sotto la barra Risparmi non c'è nessuna riga: il risparmio non è un obiettivo, e quanto manca alla percentuale è già la somma delle righe sopra. Nei titoli Essenziali e Piacere si chiamano "Spese essenziali" e "Spese di piacere", con la stessa parola "spesa" usata nel resto dell'app; il nome vale ovunque compaia il bucket. Gli importi negativi usano il segno meno tipografico (−, U+2212), come l'elenco movimenti.
 
 #### Scenario: Mese di default
 - **WHEN** l'utente apre l'app
@@ -29,11 +29,19 @@ Il sistema SHALL mostrare, per il mese selezionato, tre barre: Essenziali, Piace
 
 #### Scenario: Risparmio calcolato
 - **WHEN** il mese ha 1800 € di entrate, 200 € di spese Essenziali e 23 € di spese Piacere
-- **THEN** accanto a "Risparmi" c'è "1577,00 €", e sotto la barra non c'è nessuna riga perché il risparmio supera il 50% delle entrate
+- **THEN** accanto a "Risparmi" c'è "1577,00 €", e sotto la barra non c'è nessuna riga
 
-#### Scenario: Risparmio sotto la percentuale
-- **WHEN** il mese ha 1000 € di entrate, 650 € di spese e percentuale Risparmi al 50%
-- **THEN** sotto la barra Risparmi c'è "Ti mancano 150,00 € per il 50%", senza icona
+#### Scenario: Entrate del mese
+- **WHEN** il mese ha 1000 € di entrate
+- **THEN** sopra le barre c'è la riga "Entrate" con "1000,00 €" a destra
+
+#### Scenario: Residuo limitato dai soldi rimasti
+- **WHEN** il mese ha 1000 € di entrate, 850 € di spese Essenziali, 0 € di spese Piacere e ideale Piacere al 20%
+- **THEN** sotto la barra Piacere c'è "Puoi spendere ancora 150,00 €" e non 200,00 €, perché restano 150 € di entrate
+
+#### Scenario: Entrate finite
+- **WHEN** il mese ha 100 € di entrate e 100 € di spese Essenziali, e Piacere ha ancora budget
+- **THEN** sotto la barra Piacere c'è "Le entrate del mese sono finite", senza icona
 
 #### Scenario: Risparmio negativo
 - **WHEN** le spese Essenziali e Piacere superano le entrate del mese

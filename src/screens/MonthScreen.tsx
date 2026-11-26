@@ -120,6 +120,12 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
 
               {/* Senza entrate la scala è nulla: niente barre */}
               {data && totals.income > 0 && (
+              <>
+              {/* Entrate: il 100% delle barre. Stile dei titoli dei bucket, non un titolo grande */}
+              <p className="flex flex-wrap justify-between gap-x-4">
+                <span className="font-semibold">Entrate</span>
+                <span className="whitespace-nowrap font-semibold text-text-secondary">{formatCents(totals.income)}</span>
+              </p>
               <ul aria-label="Ripartizione delle entrate" className="flex flex-col gap-6">
                 {BUCKETS.map((b) => {
                   const amount = totals.buckets[b.id] // Risparmi: entrate − spese, può essere negativo
@@ -141,15 +147,18 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
                           style={{ left: `${settings.idealPct[b.id]}%` }}
                         />
                       </div>
-                      {b.id === 'savings' ? (
-                        <SavingsLine saved={amount} pct={settings.idealPct.savings} income={totals.income} />
-                      ) : (
-                        <IdealLine spent={amount} ideal={idealCents(settings.idealPct[b.id], totals.income)} />
+                      {b.id !== 'savings' && (
+                        <IdealLine
+                          spent={amount}
+                          ideal={idealCents(settings.idealPct[b.id], totals.income)}
+                          moneyLeft={totals.buckets.savings}
+                        />
                       )}
                     </li>
                   )
                 })}
               </ul>
+              </>
               )}
 
               <section className="flex flex-col gap-2">
@@ -235,28 +244,23 @@ function AddFab({ onClick }: { onClick: () => void }) {
   )
 }
 
-/** Significato della tacca: quanto resta prima dell'ideale o di quanto lo si è superato. */
-function IdealLine({ spent, ideal }: { spent: number; ideal: number }) {
-  if (spent < ideal) return <p>Puoi spendere ancora {formatCents(ideal - spent)}</p>
+/**
+ * Cosa si può ancora fare nel bucket. Le entrate sono una sola: il residuo è il minore tra
+ * il budget del bucket e i soldi rimasti nel mese (moneyLeft = entrate − tutte le spese).
+ */
+function IdealLine({ spent, ideal, moneyLeft }: { spent: number; ideal: number; moneyLeft: number }) {
+  if (spent > ideal) {
+    // Lo sforamento è l'unico avviso: testo più icona, mai solo colore
+    return (
+      <p className="flex items-center gap-1">
+        <WarningIcon />
+        Hai speso {formatCents(spent - ideal)} in più
+      </p>
+    )
+  }
   if (spent === ideal) return <p>Hai raggiunto il limite</p>
-  // Lo sforamento è l'unico avviso: testo più icona, mai solo colore
-  return (
-    <p className="flex items-center gap-1">
-      <WarningIcon />
-      Hai speso {formatCents(spent - ideal)} in più
-    </p>
-  )
-}
-
-/** Significato della tacca di Risparmi: cita la percentuale, non un obiettivo. Nessuna riga se raggiunta. */
-function SavingsLine({ saved, pct, income }: { saved: number; pct: number; income: number }) {
-  const target = idealCents(pct, income)
-  if (saved >= target) return null
-  return (
-    <p>
-      Ti mancano {formatCents(target - saved)} per il {pct}%
-    </p>
-  )
+  if (moneyLeft <= 0) return <p>Le entrate del mese sono finite</p>
+  return <p>Puoi spendere ancora {formatCents(Math.min(ideal - spent, moneyLeft))}</p>
 }
 
 /** "2026-11-03" → "3 nov". */
