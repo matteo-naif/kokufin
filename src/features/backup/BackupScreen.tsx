@@ -1,12 +1,11 @@
 import { Capacitor } from '@capacitor/core'
-import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
-import { Share } from '@capacitor/share'
 import { type ChangeEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ScreenHeader from '@/components/ScreenHeader'
 import { secondaryButtonClass } from '@/components/styles'
 import { type Backup, createBackup, parseBackup, restoreBackup } from '@/features/backup/backup'
+import { SaveFile } from '@/features/backup/saveFile'
 import { today } from '@/lib/dates'
 
 interface Props {
@@ -32,19 +31,13 @@ export default function BackupScreen({ onRestored, onBack }: Props) {
     }
     const name = `kokufin-backup-${today()}.json`
     // Nell'APK la WebView non supporta navigator.share con file né <a download>:
-    // il file si scrive nella cache dell'app e si passa al foglio di condivisione di Android
+    // si apre la finestra di sistema "Salva con nome" (plugin locale SaveFile)
     if (Capacitor.isNativePlatform()) {
       try {
-        const { uri } = await Filesystem.writeFile({
-          path: name,
-          data: text,
-          directory: Directory.Cache,
-          encoding: Encoding.UTF8,
-        })
-        await Share.share({ files: [uri] })
-      } catch (e) {
-        // "Share canceled": foglio di condivisione chiuso dall'utente
-        if ((e as Error).message !== 'Share canceled') toast.error('Esportazione non riuscita. Riprova.')
+        const { saved } = await SaveFile.save({ name, data: text })
+        if (saved) toast.success('Backup salvato') // se l'utente chiude la finestra non serve nessun messaggio
+      } catch {
+        toast.error('Esportazione non riuscita. Riprova.')
       }
       return
     }
