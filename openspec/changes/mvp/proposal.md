@@ -22,6 +22,7 @@ L'Excel mensile somma solo i totali di entrate, essenziali, piacere e risparmi. 
 - `backup`: esportazione e ripristino dei dati in JSON
 - `accessibility`: conformità WCAG 2.2 AA
 - `sounds`: suoni al tocco dei pulsanti di azione, disattivabili dalle impostazioni
+- `navigation`: un indirizzo per ogni vista e ritorno al mese con il tasto Indietro
 
 ## Fuori dalla v1
 

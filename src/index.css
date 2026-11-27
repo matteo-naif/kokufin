@@ -19,6 +19,16 @@
   --color-border: #857768;
   --color-text: #1f1a16;
   --color-text-secondary: #5a5148;
+
+  /* Colori semantici (tinte 800 e 50 di Tailwind), solo per i messaggi come i toast */
+  --color-success: #166534;
+  --color-success-surface: #f0fdf4;
+  --color-error: #991b1b;
+  --color-error-surface: #fef2f2;
+  --color-warning: #92400e;
+  --color-warning-surface: #fffbeb;
+  --color-info: #1e40af;
+  --color-info-surface: #eff6ff;
 }
 
 @layer base {

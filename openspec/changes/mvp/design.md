@@ -18,9 +18,58 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Vite + React + TypeScript + Tailwind.
 - Dexie (IndexedDB) per i dati locali.
 - react-hook-form per la gestione dei form.
+- wouter per il routing, con indirizzi nella forma `#/` (`useHashLocation`): l'APK carica l'app da file locali, senza un server che risponda agli altri percorsi. Serve soprattutto al tasto Indietro di Android, che in Capacitor segue la cronologia della WebView.
+- sonner per i toast di conferma, con lo stile del design system (classi Tailwind, testi in `rem`). Gli errori di validazione non vanno nei toast: restano scritti accanto ai campi.
 - Barre orizzontali in HTML e CSS per il grafico di ripartizione, con la stessa tecnica delle barre dei bucket. Nessuna libreria di grafici: Recharts non serve più.
 - Capacitor per generare un APK da installare a mano, senza pubblicare online.
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.
+- Icone dal pacchetto `@phosphor-icons/react`: nel bundle entrano solo le icone importate, quindi funzionano offline.
+
+## Plugin nativi
+
+Nell'APK la WebView non supporta `navigator.share` con file né `<a download>`, quindi "Esporta" non può usare il percorso del browser.
+
+- "Esporta" apre la finestra di sistema "Salva con nome" (Storage Access Framework, `ACTION_CREATE_DOCUMENT`) con il nome del file già compilato. L'utente sceglie la cartella (Download, Documenti, Drive…) e ritrova il file. Non servono permessi di memoria.
+- Il foglio di condivisione (`@capacitor/share`) è stato scartato: serve a mandare il file a un'altra app, e il salvataggio sul telefono compare solo se un'app lo offre. Scrivere in automatico in Download con `@capacitor/filesystem` neppure: da Android 11 la memoria condivisa ha regole più strette e l'utente non sa dove finisce il file.
+- Nessun plugin ufficiale di Capacitor apre questa finestra, quindi c'è un plugin locale: `SaveFilePlugin.java` in `android/app/src/main/java/it/matteonaif/kokufin/`, registrato in `MainActivity`. Il metodo `save({ name, data })` scrive il testo nel file scelto e risponde `{ saved: true }`, oppure `{ saved: false }` se l'utente chiude la finestra. Il lato TypeScript è `src/features/backup/saveFile.ts`.
+
+## Generazione dell'APK
+
+`npm run apk` esegue la build web, sincronizza il progetto Android (`cap sync android`), compila l'APK di debug con Gradle e lo copia in `apk/kokufin-<versione>-debug.apk` (per esempio `apk/kokufin-0.1.0-debug.apk`), nella root del progetto. La cartella `apk/` è esclusa da git.
+
+La versione ha una sola fonte, `version` in `package.json`. `android/app/build.gradle` la legge da lì: `versionName` è la versione stessa, `versionCode` è major×10000 + minor×100 + patch (0.1.0 diventa 100). Android rifiuta di installare un APK con `versionCode` più basso di quello installato: così cresce da solo a ogni release, senza toccare Gradle. Tra una release e l'altra gli APK hanno la stessa versione e si sovrascrivono.
+
+Requisiti, installati con Homebrew su macOS:
+
+- JDK 21: `brew install openjdk@21`. Capacitor 8 richiede Java 21.
+- Android SDK: `brew install --cask android-commandlinetools`, poi `sdkmanager --licenses` e `sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"`. La versione della piattaforma è il `compileSdkVersion` di `android/variables.gradle`: se cambia, va installata quella nuova.
+- Variabili d'ambiente, per esempio in `~/.zshrc`:
+
+  ```sh
+  export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
+  export PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH
+  export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
+  ```
+
+In alternativa basta Android Studio, che include JDK e SDK: in quel caso `JAVA_HOME` è `/Applications/Android Studio.app/Contents/jbr/Contents/Home` e `ANDROID_HOME` è `~/Library/Android/sdk`.
+
+## Struttura del codice
+
+Il codice è organizzato per feature. Ogni feature ha una cartella in `src/features/` con le sue schermate, la logica che usa solo lei e i test accanto ai file:
+
+- `month/`: vista del mese (`MonthScreen`), ripartizione per categoria (`CategoryBreakdown`) e calcoli del mese (`summary.ts`).
+- `transactions/`: form di inserimento e modifica (`TransactionForm`).
+- `backup/`: esportazione e ripristino (`BackupScreen`, `backup.ts`, `saveFile.ts`).
+- `settings/`: indice delle impostazioni (`SettingsScreen`) e preferenze (`PreferencesScreen`).
+
+Il codice usato da più feature resta fuori da `features/`:
+
+- `src/components/`: componenti di interfaccia generici, anche se oggi li usa una sola feature.
+- `src/data/`: database (`db.ts`): modelli, tabelle e query.
+- `src/lib/`: funzioni pure senza accesso ai dati: importi (`money.ts`), date e mesi (`dates.ts`).
+- `src/config/`: categorie e bucket.
+
+`App.tsx` collega le feature alle rotte.
 
 ## Modello dati
 
@@ -34,12 +83,20 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 
 Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. Gli `id` non si cambiano mai, così le transazioni salvate restano valide quando si rinomina una categoria. Le categorie delle entrate sono in `INCOME_CATEGORIES` nello stesso file.
 
+Nel form della transazione le categorie sono chip (i *filter chip* di Material 3) su più righe, alti almeno 44 px. Un elenco di radio in colonna occupava più di metà schermo con le 13 categorie di spesa. I chip le mostrano tutte in poco spazio, si scelgono con un tocco e restano radio nascosti alla vista, quindi tastiera e screen reader funzionano come prima. Le spese sono divise in due gruppi con il nome del bucket, così chi registra vede dove va la spesa. Il chip scelto ha sfondo primario e `CheckIcon`, come in Material: il colore non è l'unico segnale. Un `<select>` sarebbe più compatto, ma nasconde le opzioni e chiede un tocco in più.
+
+Il tipo (Spesa o Entrata) si sceglie con un *segmented button* di Material 3: due segmenti a tutta larghezza, ciascuno largo metà riga, quindi facili da toccare. Come i chip, sono radio nascosti alla vista, e il segmento scelto ha sfondo primario e `CheckIcon`: nel form "scelto" ha un solo aspetto. Le tab non vanno bene, perché in Material passano da una vista all'altra e non scelgono un valore. Lo switch nemmeno, perché è fatto per acceso/spento e non per due valori con un nome.
+
 ## Calcolo ideale e stato dei bucket
 
 - `ideale = percentuale × entrate del mese`.
-- Essenziali e Piacere: speso ≤ ideale → "In linea", speso > ideale → "Sopra il tetto".
-- Risparmi: risparmiato ≥ ideale → "Obiettivo raggiunto", risparmiato < ideale → "Sotto l'obiettivo". La barra mostra "X risparmiati su Y ideali"; con risparmio negativo il valore è scritto con il segno meno e la barra è vuota.
-- Con entrate pari a zero l'ideale è 0 e la schermata mostra l'invito ad aggiungere un'entrata.
+- Accanto al nome di ogni bucket, sulla stessa riga e allineato a destra, c'è l'importo del mese, con lo stile del totale accanto al titolo nella vista Categorie (Work Sans 600, `#5A5148`).
+- Nei testi visibili i bucket di spesa si chiamano "Spese essenziali" e "Spese di piacere" (`name` in `BUCKETS`): stessa parola "spesa" del form e della vista Categorie, così è chiaro che sono soldi usciti e che Risparmi è ciò che resta.
+- Essenziali e Piacere: sotto la barra, in quest'ordine: "Hai speso Z in più" con `WarningIcon` se speso > ideale; "Hai raggiunto il limite" se speso = ideale; "Le entrate del mese sono finite", senza icona, se il bucket ha ancora budget ma entrate − tutte le spese ≤ 0; altrimenti "Puoi spendere ancora Z", con Z = il minore tra ideale − speso e entrate − tutte le spese. Le entrate sono una sola: lo sforamento di un bucket consuma i soldi degli altri, e il testo dice ciò che si può fare davvero. La tacca invece resta sul piano (la percentuale): può capitare che tacca e testo non coincidano, ed è voluto. Le due frasi con l'importo usano lo stesso verbo, così si confrontano a colpo d'occhio. Non c'è un'etichetta di stato quando va tutto bene: un "In linea" ripetuto su ogni barra non aggiunge informazione, e l'avviso si nota di più se è l'unico.
+- Risparmi: l'importo è ciò che resta delle entrate dopo le spese. La tacca segna la percentuale Risparmi delle impostazioni. Sotto la barra non c'è riga: quanto manca alla percentuale è la somma algebrica delle righe di Essenziali e Piacere, e non suggerisce nessuna azione. Con risparmio negativo il valore è scritto con il segno meno tipografico (−, U+2212, lo stesso dell'elenco movimenti) e la barra è vuota.
+- Barre dei bucket: una sola scala per le tre barre, 100% della larghezza = entrate del mese (regola 2 dei grafici). La lunghezza è l'importo diviso le entrate, tra 0 e 100%: oltre le entrate la barra si ferma al bordo e lo sforamento lo dice il testo. Su ogni barra una tacca verticale segna l'ideale, alla posizione della sua percentuale. La tacca è `#1F1A16`, larga 2 px e più alta della barra, così si vede sopra e sotto anche quando cade sul riempimento (17,25:1 su bianco).
+- Le entrate sono una riga sopra le barre, con lo stile dei titoli dei bucket e senza barra: dicono quanto vale il 100% delle barre. Non sono un titolo grande, perché sono il punto di partenza e non il risultato.
+- Con entrate pari a zero l'ideale è 0: la schermata non mostra le barre dei bucket, ma solo l'invito "Aggiungi le entrate del mese per vedere quanto puoi spendere." Barre e tacche su una scala nulla sarebbero fuorvianti.
 
 ## Design system
 
@@ -48,22 +105,43 @@ Definite in `src/config/categories.ts`, con `id` stabili e `name` modificabili. 
 - Tinte del marrone per i grafici: `#5C3A21` (10,09:1 su bianco) e `#B07C52` (3,59:1). Entrambe superano il 3:1 su bianco richiesto per i grafici. Il loro uso è descritto in "Regole per i grafici".
 - Neutri: `#FFFFFF` (sfondo), `#F7F3EE` (superfici), `#E6DFD6` (separatori e fondo delle barre), `#5A5148` (testo secondario: 7,76:1 su bianco, 7,03:1 su `#F7F3EE`, 5,87:1 su `#E6DFD6`), `#1F1A16` (testo principale: 17,25:1 su bianco).
 - `#857768` per i bordi dei campi e dei componenti: 4,34:1 su bianco, 3,93:1 su `#F7F3EE`, 3,29:1 su `#E6DFD6`, quindi supera il 3:1 su tutti gli sfondi della palette. Non si usa per il testo, perché 4,34:1 non raggiunge 4,5:1.
+- Colori semantici, presi dalla palette di Tailwind, per i messaggi all'utente come i toast. Sono l'unica eccezione alla palette monocromatica e non si usano per bucket e grafici. Per ogni significato una tinta 800 per testo, icona e bordo e una tinta 50 per lo sfondo:
+  - Successo `#166534` su `#F0FDF4` (6,81:1; 7,13:1 su bianco).
+  - Errore `#991B1B` su `#FEF2F2` (7,60:1; 8,31:1 su bianco).
+  - Avviso `#92400E` su `#FFFBEB` (6,84:1; 7,09:1 su bianco).
+  - Informazione `#1E40AF` su `#EFF6FF` (8,01:1; 8,72:1 su bianco).
+  Come per gli stati dei bucket, il significato non è affidato al colore: ogni messaggio ha testo e icona.
+- Il verde Successo `#166534` (7,13:1 su bianco) colora anche gli importi delle entrate nell'elenco movimenti. Le uscite restano nel colore del testo: il rosso farebbe sembrare ogni spesa un errore e toglierebbe forza all'unico avviso vero, lo sforamento di un bucket. Il significato non dipende dal colore, perché ogni importo ha il segno "+" o "−".
 - Titoli in Space Mono, testi in Work Sans.
-- Con una sola tinta non si può affidare lo stato al colore. Lo stato di ogni bucket usa sempre un'etichetta di testo e un'icona, oltre alla barra.
+- Con una sola tinta non si può affidare lo stato al colore. Lo sforamento di un bucket usa sempre un testo e un'icona, oltre alla barra.
 - Layout pensato per il telefono: una colonna, bersagli di tocco di almeno 44 px.
+- Un solo raggio per gli angoli: 0,25rem (`rounded`), per campi, pulsanti, FAB, chip, segmented button, dialog, toast e barre. Angoli più tondi o a pillola davano a ogni componente una forma diversa, e un elemento a tutta larghezza diventava un "pillolone". Unica eccezione lo switch, che resta tondo: lo stato si legge dalla posizione del cerchio, e con angoli squadrati sembrerebbe una casella. Anche il FAB ha 0,25rem e non gli angoli da 16 dp di Material: sull'aspetto vale il design system, come dicono le linee guida di interfaccia.
+
+## Linee guida di interfaccia
+
+- Per i pattern di interazione e i componenti si seguono le linee guida di Material Design 3 (https://m3.material.io/): navigazione, pulsanti, FAB, dialoghi, tab, comportamento allo scroll, misure e spaziature dei componenti. Su Android sono le convenzioni che l'utente già conosce.
+- L'aspetto visivo resta quello del design system di Kokufin: palette, font, icone Phosphor e bersagli di tocco. Dove Material e il design system divergono su colori, tipografia o icone, vale il design system.
+- Quando una scelta si discosta da Material, la spec che la descrive ne spiega il motivo.
+
+## Icone
+
+- Tutte le icone vengono dalla famiglia Phosphor (https://phosphoricons.com/), tramite `@phosphor-icons/react`. Niente SVG disegnati a mano né icone di altre librerie.
+- Si importano i nomi con il suffisso `Icon` (per esempio `GearIcon`): quelli senza suffisso sono deprecati.
+- Peso `bold`, dimensione `1.25rem`, colore del testo (`currentColor`). Questi valori e `aria-hidden` sono fissati una volta sola da `IconProvider` (`src/components/IconProvider.tsx`), usato in `App`: le singole icone non li ripetono.
+- L'icona non porta mai da sola un significato: il nome accessibile lo dà il pulsante (`aria-label`) o il testo accanto, come per gli stati dei bucket.
+- Icone in uso: `GearIcon` (impostazioni), `PlusIcon` (aggiungi transazione), `CaretLeftIcon` e `CaretRightIcon` (mese precedente e successivo, voci dell'indice impostazioni), `ArrowLeftIcon` (indietro), `WarningIcon` (sforamento dell'ideale di un bucket).
 
 ## Regole per i grafici
 
 Sintesi dei principi di *Data storytelling* (Cole Nussbaumer Knaflic, Apogeo, 2016). Valgono per ogni grafico di Kokufin. La v1 ne ha uno solo, la ripartizione per categoria. Le statistiche rimandate a dopo la v1 (andamento nel tempo, confronto tra mesi) si progettano con le stesse regole.
 
 1. **La forma segue il confronto.** Per confrontare le quote delle categorie si usano barre orizzontali. L'occhio confronta bene lunghezze che partono dalla stessa linea di base e male angoli e aree, quindi niente grafici a torta né a ciambella, che hanno lo stesso difetto. Niente effetti 3D e niente secondo asse verticale. Con una sola informazione basta il numero scritto in grande. Per gli andamenti nel tempo, in futuro, si userà una linea.
-2. **Barre oneste.** Ogni barra parte da zero e la sua lunghezza è proporzionale al valore. La scala è fissa: 100% della larghezza è il totale del bucket, quindi la lunghezza è la quota e resta confrontabile tra bucket e tra mesi. Le barre sono ordinate dal valore più alto al più basso, perché l'ordine dice già qual è la categoria che pesa di più. Le categorie senza spese nel mese non compaiono.
-3. **Etichette dirette, niente legenda.** Il nome della categoria è scritto sopra la sua barra, importo e percentuale a destra sulla stessa riga. Non servono legenda, asse dei valori né griglia, perché i numeri sono già scritti. Il lettore non deve spostare lo sguardo tra grafico e legenda. I valori sono sempre visibili, non stanno in un tooltip, perché sul telefono non esiste il passaggio del mouse.
-4. **Il colore guida l'attenzione.** Si usa una sola tinta, in due intensità. La prima barra dell'elenco, la categoria più alta, è `#5C3A21`. Le altre sono `#B07C52`. Il colore non distingue le categorie, perché lo fanno già posizione ed etichetta, e nessun significato dipende solo dal colore.
-5. **Il titolo dice il messaggio.** Sopra il grafico c'è una frase che riporta la conclusione, non l'argomento. Modello: "In {bucket} pesa di più {categoria}: {percentuale}%", per esempio "In Piacere pesa di più Ristoranti: 42%". La frase si compone con i dati, senza IA. Sotto, in testo secondario, il nome del bucket e il mese.
-6. **Meno disordine.** Niente bordi, ombre, sfondi colorati, effetti o animazioni decorative, e nessun elemento che non porti informazione. Tutto è allineato a sinistra su un unico asse. Lo spazio bianco tra una riga e l'altra è maggiore dello spazio tra il testo e la sua barra, così ogni etichetta si legge insieme alla propria barra (principio di prossimità). Lo spazio tra le barre è minore del loro spessore. Il testo è sempre orizzontale, e le barre orizzontali permettono nomi lunghi senza ruotarli.
-7. **Gerarchia del testo.** Il titolo è il testo più grande (Space Mono). Nome della categoria e valori hanno lo stesso corpo, in `#1F1A16`. Bucket e mese sono in `#5A5148`. Le dimensioni sono in `rem`.
-8. **Percentuali arrotondate.** Le percentuali sono mostrate come interi. Per questo la loro somma può differire di 1 dal 100% e non si corregge.
+2. **Barre oneste.** Ogni barra parte da zero e la sua lunghezza è proporzionale al valore. La scala è fissa e unica per tutta la vista: 100% della larghezza sono le spese totali del mese, quindi la lunghezza è la quota sulle spese del mese. Due barre della stessa lunghezza valgono lo stesso importo anche se stanno in sezioni diverse: con una scala per sezione l'occhio confronterebbe lunghezze che non si possono confrontare. Le barre sono ordinate dal valore più alto al più basso, perché l'ordine dice già qual è la categoria che pesa di più. Le categorie senza spese nel mese non compaiono.
+3. **Etichette dirette, niente legenda.** Il nome della categoria è scritto sopra la sua barra, l'importo a destra sulla stessa riga. Niente percentuali: con una sola scala ripeterebbero la lunghezza della barra e aggiungerebbero un secondo numero da leggere per ogni riga. Non servono legenda, asse dei valori né griglia, perché i numeri sono già scritti. Il lettore non deve spostare lo sguardo tra grafico e legenda. I valori sono sempre visibili, non stanno in un tooltip, perché sul telefono non esiste il passaggio del mouse.
+4. **Il colore guida l'attenzione.** Si usa una sola tinta, in due intensità. La barra della categoria più alta della vista è `#5C3A21`. Le altre sono `#B07C52`. Il colore non distingue le categorie, perché lo fanno già posizione ed etichetta, e nessun significato dipende solo dal colore.
+5. **Il titolo dice ciò che il grafico non mostra.** Un titolo con il messaggio serve solo se aggiunge un'informazione che il grafico non rende già evidente. Una frase che ripete la barra più lunga (per esempio "In Piacere pesa di più Ristoranti: 42%") è ridondante: ordine e colore lo dicono già. Nella ripartizione per categoria ogni sezione ha come titolo il nome del bucket, e accanto il totale speso, che altrimenti andrebbe sommato a mente.
+6. **Meno disordine.** Niente bordi, ombre, sfondi colorati, effetti o animazioni decorative, e nessun elemento che non porti informazione. Tutto è allineato a sinistra su un unico asse. Uniche linee ammesse: quella sottile (`#E6DFD6`) sotto la riga del titolo di sezione, che collega il nome del bucket a sinistra al totale a destra, e la tacca dell'ideale nelle barre dei bucket, che porta un'informazione. Lo spazio bianco tra una riga e l'altra è maggiore dello spazio tra il testo e la sua barra, così ogni etichetta si legge insieme alla propria barra (principio di prossimità). Lo spazio tra le barre è minore del loro spessore. Il testo è sempre orizzontale, e le barre orizzontali permettono nomi lunghi senza ruotarli.
+7. **Gerarchia del testo.** Il titolo della sezione è il testo più grande (Space Mono). Nome della categoria e valori hanno lo stesso corpo, in `#1F1A16`. Il totale del bucket accanto al titolo è in `#5A5148` e in grassetto (Work Sans 600), per distinguerlo dagli importi delle categorie. Le dimensioni sono in `rem`.
 
 ## Accessibilità
 
@@ -72,5 +150,5 @@ L'accessibilità non è una rifinitura finale: è un requisito di ogni schermata
 - Standard di riferimento: WCAG 2.2 livello AA. Assunzione: è il livello da rispettare, e le WCAG si applicano al contenuto web dentro la WebView di Capacitor. Il comportamento con TalkBack si verifica a mano su telefono.
 - Si usa HTML semantico prima di ARIA: `button`, `label`, `input`, `h1`–`h3`, `ul`, `dialog`. ARIA solo dove l'HTML nativo non basta.
 - Le dimensioni dei testi sono in `rem`, così seguono le impostazioni di carattere del telefono.
-- Contrasti della palette: i valori indicati nel design system sono calcolati con la formula WCAG. Nel grafico il significato non dipende dal colore: categoria, importo e percentuale sono scritti in testo.
+- Contrasti della palette: i valori indicati nel design system sono calcolati con la formula WCAG. Nel grafico il significato non dipende dal colore: categoria e importo sono scritti in testo.
 - I rapporti di contrasto si misurano di nuovo con uno strumento sui colori effettivamente usati, non si stimano a occhio.
