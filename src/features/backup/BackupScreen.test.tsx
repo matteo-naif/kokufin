@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import Toaster from '@/components/Toaster'
 import { db, DEFAULT_SETTINGS, getSettings, type Transaction } from '@/data/db'
-import BackupScreen from '@/screens/BackupScreen'
+import BackupScreen from '@/features/backup/BackupScreen'
 
 // jsdom non implementa <dialog>: stub minimo
 beforeAll(() => {

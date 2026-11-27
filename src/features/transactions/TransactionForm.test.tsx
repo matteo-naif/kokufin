@@ -7,9 +7,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import IconProvider from '@/components/IconProvider'
 import Toaster from '@/components/Toaster'
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
+import { today } from '@/data/dates'
 import { db, type Transaction } from '@/data/db'
-import { today } from '@/data/summary'
-import TransactionForm from '@/screens/TransactionForm'
+import TransactionForm from '@/features/transactions/TransactionForm'
 
 // jsdom non implementa <dialog>: stub minimo
 beforeAll(() => {

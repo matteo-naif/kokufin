@@ -7,9 +7,9 @@ import Field from '@/components/Field'
 import ScreenHeader from '@/components/ScreenHeader'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
 import { type Category, EXPENSE_CATEGORIES, INCOME_CATEGORIES, SPENDING_BUCKETS } from '@/config/categories'
+import { today } from '@/data/dates'
 import { db, type Transaction } from '@/data/db'
 import { centsToInput, parseAmount } from '@/data/money'
-import { today } from '@/data/summary'
 
 interface Props {
   transaction?: Transaction // assente = nuova transazione

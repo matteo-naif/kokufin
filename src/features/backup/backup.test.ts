@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createBackup, parseBackup, restoreBackup } from '@/data/backup'
+import { createBackup, parseBackup, restoreBackup } from '@/features/backup/backup'
 import { db, DEFAULT_SETTINGS, getSettings, type Transaction } from '@/data/db'
 
 const TX: Transaction[] = [

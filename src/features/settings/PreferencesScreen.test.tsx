@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Toaster from '@/components/Toaster'
 import { db, DEFAULT_SETTINGS, getSettings } from '@/data/db'
-import PreferencesScreen from '@/screens/PreferencesScreen'
+import PreferencesScreen from '@/features/settings/PreferencesScreen'
 
 beforeEach(async () => {
   await db.settings.clear()
