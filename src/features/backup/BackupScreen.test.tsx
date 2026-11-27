@@ -8,6 +8,14 @@ import Toaster from '@/components/Toaster'
 import { db, DEFAULT_SETTINGS, getSettings, type Transaction } from '@/data/db'
 import BackupScreen from '@/features/backup/BackupScreen'
 
+// Capacitor e plugin SaveFile simulati: di default l'app gira nel browser
+const native = vi.hoisted(() => ({
+  isNativePlatform: vi.fn(() => false),
+  save: vi.fn(),
+}))
+vi.mock('@capacitor/core', () => ({ Capacitor: { isNativePlatform: native.isNativePlatform } }))
+vi.mock('@/features/backup/saveFile', () => ({ SaveFile: { save: native.save } }))
+
 // jsdom non implementa <dialog>: stub minimo
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal = function () {
@@ -29,6 +37,8 @@ afterEach(() => {
   toast.dismiss()
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
+  native.isNativePlatform.mockReset().mockReturnValue(false)
+  native.save.mockReset()
 })
 
 async function setup() {
@@ -136,6 +146,46 @@ describe('BackupScreen', () => {
 
     await vi.waitFor(() => expect(share).toHaveBeenCalled())
     expect(click).not.toHaveBeenCalled()
+  })
+
+  // Spec backup, scenario "Esportazione nell'app Android": la WebView non ha navigator.share con file né <a download>
+  it('nell\'app Android Esporta salva il file nella cartella scelta e conferma con un toast', async () => {
+    await db.transactions.add(TX)
+    native.isNativePlatform.mockReturnValue(true)
+    native.save.mockResolvedValue({ saved: true })
+    const webShare = vi.fn()
+    vi.stubGlobal('navigator', { ...navigator, canShare: () => true, share: webShare })
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    expect(await screen.findByText('Backup salvato')).toBeTruthy()
+    const { name, data } = native.save.mock.calls[0][0]
+    expect(name).toMatch(/^kokufin-backup-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(JSON.parse(data).transactions).toEqual([TX])
+    expect(webShare).not.toHaveBeenCalled()
+    expect(click).not.toHaveBeenCalled()
+  })
+
+  it('nell\'app Android chiudere la finestra senza salvare non mostra messaggi', async () => {
+    native.isNativePlatform.mockReturnValue(true)
+    native.save.mockResolvedValue({ saved: false })
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    await vi.waitFor(() => expect(native.save).toHaveBeenCalled())
+    await new Promise((r) => setTimeout(r, 50))
+    expect(screen.queryByText('Backup salvato')).toBeNull()
+    expect(screen.queryByText('Esportazione non riuscita. Riprova.')).toBeNull()
+  })
+
+  it('nell\'app Android se il file non si scrive mostra un errore', async () => {
+    native.isNativePlatform.mockReturnValue(true)
+    native.save.mockRejectedValue(new Error('Write failed'))
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    expect(await screen.findByText('Esportazione non riuscita. Riprova.')).toBeTruthy()
   })
 
   // Spec backup, scenario "Ripristino"

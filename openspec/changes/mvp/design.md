@@ -25,6 +25,14 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.
 - Icone dal pacchetto `@phosphor-icons/react`: nel bundle entrano solo le icone importate, quindi funzionano offline.
 
+## Plugin nativi
+
+Nell'APK la WebView non supporta `navigator.share` con file né `<a download>`, quindi "Esporta" non può usare il percorso del browser.
+
+- "Esporta" apre la finestra di sistema "Salva con nome" (Storage Access Framework, `ACTION_CREATE_DOCUMENT`) con il nome del file già compilato. L'utente sceglie la cartella (Download, Documenti, Drive…) e ritrova il file. Non servono permessi di memoria.
+- Il foglio di condivisione (`@capacitor/share`) è stato scartato: serve a mandare il file a un'altra app, e il salvataggio sul telefono compare solo se un'app lo offre. Scrivere in automatico in Download con `@capacitor/filesystem` neppure: da Android 11 la memoria condivisa ha regole più strette e l'utente non sa dove finisce il file.
+- Nessun plugin ufficiale di Capacitor apre questa finestra, quindi c'è un plugin locale: `SaveFilePlugin.java` in `android/app/src/main/java/it/matteonaif/kokufin/`, registrato in `MainActivity`. Il metodo `save({ name, data })` scrive il testo nel file scelto e risponde `{ saved: true }`, oppure `{ saved: false }` se l'utente chiude la finestra. Il lato TypeScript è `src/features/backup/saveFile.ts`.
+
 ## Generazione dell'APK
 
 `npm run apk` esegue la build web, sincronizza il progetto Android (`cap sync android`), compila l'APK di debug con Gradle e lo copia in `apk/kokufin-<versione>-debug.apk` (per esempio `apk/kokufin-0.1.0-debug.apk`), nella root del progetto. La cartella `apk/` è esclusa da git.
@@ -51,7 +59,7 @@ Il codice è organizzato per feature. Ogni feature ha una cartella in `src/featu
 
 - `month/`: vista del mese (`MonthScreen`), ripartizione per categoria (`CategoryBreakdown`) e calcoli del mese (`summary.ts`).
 - `transactions/`: form di inserimento e modifica (`TransactionForm`).
-- `backup/`: esportazione e ripristino (`BackupScreen`, `backup.ts`).
+- `backup/`: esportazione e ripristino (`BackupScreen`, `backup.ts`, `saveFile.ts`).
 - `settings/`: indice delle impostazioni (`SettingsScreen`) e preferenze (`PreferencesScreen`).
 
 Il codice usato da più feature resta fuori da `features/`:
