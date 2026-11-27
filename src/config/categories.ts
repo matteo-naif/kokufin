@@ -13,6 +13,9 @@ export const BUCKETS: { id: Bucket; name: string }[] = [
   { id: 'savings', name: 'Risparmi' },
 ]
 
+/** Bucket delle spese, senza Risparmi: Risparmi non ha categorie, si calcola dalle entrate. */
+export const SPENDING_BUCKETS = BUCKETS.filter((b): b is { id: SpendingBucket; name: string } => b.id !== 'savings')
+
 export interface Category {
   id: string
   name: string

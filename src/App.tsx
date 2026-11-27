@@ -104,7 +104,8 @@ function EditTransaction(props: { onDone: () => void; onBack: () => void }) {
   }, [id])
 
   if (tx === null) return <Redirect to="/" replace />
-  return tx ? <TransactionForm transaction={tx} {...props} /> : null
+  // key: passando a un'altra transazione il form riparte dai suoi valori (defaultValues vale solo al montaggio)
+  return tx ? <TransactionForm key={tx.id} transaction={tx} {...props} /> : null
 }
 
 export default App

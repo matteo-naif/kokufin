@@ -178,4 +178,17 @@ describe('App: navigazione', () => {
       expect(icon.getAttribute('width')).toBe('1.25rem')
     }
   })
+
+  // Bug: passando da una transazione all'altra il form teneva i valori della prima
+  it('passando da #/transactions/1 a #/transactions/2 mostra i dati della seconda', async () => {
+    await db.transactions.bulkAdd([
+      { id: 1, date: '2026-11-03', amountCents: 500, kind: 'expense', categoryId: 'groceries' },
+      { id: 2, date: '2026-11-04', amountCents: 900, kind: 'expense', categoryId: 'restaurants' },
+    ])
+    await start('#/transactions/1')
+    await waitFor(() => expect((screen.getByLabelText('Importo (€)') as HTMLInputElement).value).toBe('5,00'))
+
+    location.hash = '#/transactions/2'
+    await waitFor(() => expect((screen.getByLabelText('Importo (€)') as HTMLInputElement).value).toBe('9,00'))
+  })
 })

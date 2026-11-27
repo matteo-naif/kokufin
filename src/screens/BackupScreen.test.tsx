@@ -182,4 +182,48 @@ describe('BackupScreen', () => {
     expect(onRestored).not.toHaveBeenCalled()
     expect(await db.transactions.toArray()).toEqual([OLD_TX])
   })
+
+  // Bug: un doppio tocco su Ripristina ripristinava due volte e tornava indietro due volte
+  it('un doppio tocco su Ripristina ripristina una volta sola', async () => {
+    const { user, onRestored } = await setup()
+    await user.upload(fileInput(), jsonFile(JSON.stringify(BACKUP)))
+    await user.dblClick(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Ripristina' }))
+
+    await vi.waitFor(() => expect(onRestored).toHaveBeenCalled())
+    expect(onRestored).toHaveBeenCalledTimes(1)
+  })
+
+  it('se il ripristino fallisce mostra un errore e non torna al mese', async () => {
+    vi.spyOn(db.transactions, 'bulkAdd').mockRejectedValue(new Error('QuotaExceededError'))
+    await db.transactions.add(OLD_TX)
+    const { user, onRestored } = await setup()
+    await user.upload(fileInput(), jsonFile(JSON.stringify(BACKUP)))
+    await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Ripristina' }))
+
+    expect(await screen.findByText('Ripristino non riuscito. I dati non sono stati modificati.')).toBeTruthy()
+    expect(onRestored).not.toHaveBeenCalled()
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Importa' }))
+    expect(await db.transactions.toArray()).toEqual([OLD_TX])
+  })
+
+  it('se l\'esportazione fallisce mostra un errore', async () => {
+    vi.spyOn(db.transactions, 'toArray').mockRejectedValue(new Error('UnknownError'))
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    expect(await screen.findByText('Esportazione non riuscita. Riprova.')).toBeTruthy()
+  })
+
+  // Bug: revocare l'indirizzo subito dopo il click poteva annullare il download
+  it('Esporta non revoca l\'indirizzo del file subito dopo il download', async () => {
+    URL.createObjectURL = vi.fn(() => 'blob:backup')
+    URL.revokeObjectURL = vi.fn()
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    await vi.waitFor(() => expect(click).toHaveBeenCalled())
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+  })
 })

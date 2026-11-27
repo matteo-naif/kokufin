@@ -73,3 +73,32 @@ describe('restoreBackup', () => {
     expect(await getSettings()).toEqual({ id: 'default', ...SETTINGS })
   })
 })
+
+describe('review: dati del backup', () => {
+  // Bug: un id nelle impostazioni del file spostava le impostazioni su un altro record
+  it('restoreBackup salva le impostazioni nel record default anche se il file ha un id', async () => {
+    await restoreBackup(parseBackup(backupText({ settings: { ...SETTINGS, id: 'x' } }))!)
+    expect(await db.settings.toArray()).toEqual([{ id: 'default', ...SETTINGS }])
+  })
+
+  // Bug: un record salvato prima dei suoni non aveva soundsEnabled e il backup veniva rifiutato
+  it('getSettings completa un record senza soundsEnabled con il default', async () => {
+    await db.settings.put({ id: 'default', idealPct: SETTINGS.idealPct } as never)
+    expect(await getSettings()).toEqual({ id: 'default', idealPct: SETTINGS.idealPct, soundsEnabled: true })
+    expect(parseBackup(await createBackup())).not.toBeNull()
+  })
+
+  it.each([
+    ['mese inesistente', { date: '2026-13-01' }],
+    ['giorno inesistente', { date: '2026-02-30' }],
+    ['mese zero', { date: '2026-00-10' }],
+    ['id zero', { id: 0 }],
+    ['id negativo', { id: -1 }],
+  ])('parseBackup rifiuta: %s', (_, override) => {
+    expect(parseBackup(backupText({ transactions: [{ ...TX[0], ...override }] }))).toBeNull()
+  })
+
+  it('parseBackup accetta il 29 febbraio di un anno bisestile', () => {
+    expect(parseBackup(backupText({ transactions: [{ ...TX[0], date: '2028-02-29' }] }))).not.toBeNull()
+  })
+})

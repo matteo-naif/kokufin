@@ -172,4 +172,26 @@ describe('TransactionForm', () => {
     setup()
     expect(screen.queryByRole('button', { name: 'Elimina' })).toBeNull()
   })
+
+  // Bug: un doppio tocco su Salva aggiungeva due transazioni
+  it('un doppio tocco su Salva aggiunge una sola transazione', async () => {
+    const { user, onDone } = setup()
+    await user.type(screen.getByLabelText('Importo (€)'), '12,50')
+    await user.click(screen.getByRole('radio', { name: 'Ristoranti' }))
+    await user.dblClick(screen.getByRole('button', { name: 'Salva' }))
+
+    await vi.waitFor(() => expect(onDone).toHaveBeenCalled())
+    expect(onDone).toHaveBeenCalledTimes(1)
+    expect(await db.transactions.count()).toBe(1)
+  })
+
+  it('un doppio tocco su Elimina nella conferma elimina una volta sola', async () => {
+    const id = await db.transactions.add({ date: '2026-11-03', amountCents: 500, kind: 'expense', categoryId: 'groceries' })
+    const { user, onDone } = setup((await db.transactions.get(id))!)
+    await user.click(screen.getByRole('button', { name: 'Elimina' }))
+    await user.dblClick(within(screen.getByRole('dialog')).getByRole('button', { name: 'Elimina' }))
+
+    await vi.waitFor(() => expect(onDone).toHaveBeenCalled())
+    expect(onDone).toHaveBeenCalledTimes(1)
+  })
 })

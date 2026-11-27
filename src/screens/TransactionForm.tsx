@@ -6,7 +6,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import Field from '@/components/Field'
 import ScreenHeader from '@/components/ScreenHeader'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
-import { BUCKETS, type Category, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
+import { type Category, EXPENSE_CATEGORIES, INCOME_CATEGORIES, SPENDING_BUCKETS } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
 import { centsToInput, parseAmount } from '@/data/money'
 import { today } from '@/data/summary'
@@ -36,7 +36,7 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
     handleSubmit,
     setValue,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<FormValues>({
     defaultValues: {
       kind: transaction?.kind ?? 'expense',
@@ -54,7 +54,7 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
   // Le spese sono divise per bucket, così si vede dove va la spesa; le entrate sono un solo gruppo
   const categoryGroups: { name?: string; categories: Category[] }[] =
     kind === 'expense'
-      ? BUCKETS.filter((b) => b.id !== 'savings').map((b) => ({
+      ? SPENDING_BUCKETS.map((b) => ({
           name: b.name,
           categories: EXPENSE_CATEGORIES.filter((c) => c.bucket === b.id),
         }))
@@ -178,7 +178,8 @@ export default function TransactionForm({ transaction, onDone, onBack }: Props) 
         </Field>
 
         <div className="flex flex-wrap gap-3">
-          <button type="submit" className={primaryButtonClass}>
+          {/* Disattivato dal salvataggio fino al cambio di vista: un doppio tocco non aggiunge due transazioni */}
+          <button type="submit" disabled={isSubmitting || isSubmitSuccessful} className={primaryButtonClass}>
             Salva
           </button>
           {transaction && (

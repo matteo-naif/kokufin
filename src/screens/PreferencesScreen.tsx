@@ -44,7 +44,7 @@ function SettingsForm({ settings, onSaved }: { settings: Settings; onSaved: () =
     control,
     setError,
     setFocus,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
       idealPct: {
@@ -121,7 +121,8 @@ function SettingsForm({ settings, onSaved }: { settings: Settings; onSaved: () =
       </label>
 
       <div className="flex flex-wrap gap-3">
-        <button type="submit" className={primaryButtonClass}>
+        {/* Disattivato durante il salvataggio: un doppio tocco tornerebbe indietro due volte */}
+        <button type="submit" disabled={isSubmitting} className={primaryButtonClass}>
           Salva
         </button>
       </div>

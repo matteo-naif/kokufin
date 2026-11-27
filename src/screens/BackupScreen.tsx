@@ -20,7 +20,14 @@ export default function BackupScreen({ onRestored, onBack }: Props) {
   const [invalid, setInvalid] = useState(false)
 
   async function exportData() {
-    const file = new File([await createBackup()], `kokufin-backup-${today()}.json`, { type: 'application/json' })
+    let text: string
+    try {
+      text = await createBackup()
+    } catch {
+      toast.error('Esportazione non riuscita. Riprova.')
+      return
+    }
+    const file = new File([text], `kokufin-backup-${today()}.json`, { type: 'application/json' })
     // Sul telefono il foglio di condivisione permette di salvare il file o di inviarlo
     if (navigator.canShare?.({ files: [file] })) {
       try {
@@ -37,7 +44,8 @@ export default function BackupScreen({ onRestored, onBack }: Props) {
     link.href = url
     link.download = file.name
     link.click()
-    URL.revokeObjectURL(url)
+    // Revocato subito, l'indirizzo può sparire prima che il browser inizi il download
+    setTimeout(() => URL.revokeObjectURL(url), 40_000)
   }
 
   async function chooseFile(e: ChangeEvent<HTMLInputElement>) {
@@ -51,7 +59,14 @@ export default function BackupScreen({ onRestored, onBack }: Props) {
   }
 
   async function restore() {
-    await restoreBackup(pending!)
+    try {
+      await restoreBackup(pending!)
+    } catch {
+      // restoreBackup usa un'unica transazione del database: se fallisce, nulla è cambiato
+      toast.error('Ripristino non riuscito. I dati non sono stati modificati.')
+      setPending(null) // chiude la conferma
+      return
+    }
     toast.success('Dati ripristinati')
     onRestored()
   }

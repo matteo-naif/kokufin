@@ -303,4 +303,17 @@ describe('MonthScreen', () => {
     await user.click(await screen.findByRole('button', { name: /Spesa alimentare/ }))
     expect(onOpen).toHaveBeenLastCalledWith(expect.objectContaining({ id }))
   })
+
+  // Bug: al cambio mese compariva per un attimo l'invito ad aggiungere le entrate
+  it('cambiando mese non mostra l\'invito ad aggiungere le entrate prima di avere i dati', async () => {
+    await add('2026-11-01', 100000, 'salary', 'income')
+    await add('2026-12-01', 100000, 'salary', 'income')
+    await setup()
+    // fireEvent: nessuna attesa dopo il click, i dati del nuovo mese non sono ancora arrivati
+    fireEvent.click(screen.getByRole('button', { name: 'Mese successivo' }))
+
+    expect(screen.queryByText(/Aggiungi le entrate del mese/)).toBeNull()
+    expect(screen.queryByText('Nessun movimento in questo mese.')).toBeNull()
+    expect(await screen.findByRole('list', { name: 'Ripartizione delle entrate' })).toBeTruthy()
+  })
 })

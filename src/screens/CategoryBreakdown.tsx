@@ -1,10 +1,7 @@
-import { BUCKETS, CATEGORY_NAME, type SpendingBucket } from '@/config/categories'
+import { CATEGORY_NAME, SPENDING_BUCKETS } from '@/config/categories'
 import type { Transaction } from '@/data/db'
 import { formatCents } from '@/data/money'
 import { categoryTotals, monthLabel, monthTotals } from '@/data/summary'
-
-// Risparmi non ha categorie: si calcola dalle entrate
-const SPENDING_BUCKETS = BUCKETS.filter((b): b is { id: SpendingBucket; name: string } => b.id !== 'savings')
 
 interface Props {
   txs: Transaction[] // transazioni del mese

@@ -42,7 +42,8 @@ export function restoreBackup({ transactions, settings }: Backup): Promise<void>
   return db.transaction('rw', db.transactions, db.settings, async () => {
     await db.transactions.clear()
     await db.transactions.bulkAdd(transactions)
-    await db.settings.put({ id: 'default', ...settings })
+    // Solo i campi noti: una chiave id nel file sposterebbe le impostazioni su un altro record
+    await db.settings.put({ id: 'default', idealPct: settings.idealPct, soundsEnabled: settings.soundsEnabled })
   })
 }
 
@@ -54,14 +55,22 @@ function isTransaction(t: unknown): t is Transaction {
   return (
     isRecord(t) &&
     Number.isInteger(t.id) &&
+    (t.id as number) > 0 &&
     typeof t.date === 'string' &&
-    /^\d{4}-\d{2}-\d{2}$/.test(t.date) &&
+    isIsoDate(t.date) &&
     Number.isInteger(t.amountCents) &&
     (t.amountCents as number) > 0 &&
     (t.kind === 'income' || t.kind === 'expense') &&
     CATEGORY_IDS[t.kind].has(t.categoryId as string) &&
     (t.note === undefined || typeof t.note === 'string')
   )
+}
+
+/** Data YYYY-MM-DD esistente nel calendario (niente 2026-13-01 o 2026-02-30). */
+function isIsoDate(s: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false
+  const d = new Date(`${s}T00:00:00Z`)
+  return !Number.isNaN(d.getTime()) && d.toISOString().startsWith(s)
 }
 
 function isSettings(s: unknown): s is Backup['settings'] {

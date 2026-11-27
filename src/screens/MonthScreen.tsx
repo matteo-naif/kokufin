@@ -49,7 +49,9 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
     }
   }, [month])
 
-  const txs = data?.month === month ? data.txs : []
+  // Fino all'arrivo dei dati del mese mostrato, data contiene ancora il mese precedente
+  const loaded = data?.month === month
+  const txs = loaded ? data.txs : []
   const settings = data?.settings ?? DEFAULT_SETTINGS
   const totals = monthTotals(txs)
 
@@ -114,12 +116,12 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
             label: 'Riepilogo',
             panel: (
               <div className="flex flex-col gap-6">
-              {data && totals.income === 0 && (
+              {loaded && totals.income === 0 && (
                 <p className="text-text-secondary">Aggiungi le entrate del mese per vedere quanto puoi spendere.</p>
               )}
 
               {/* Senza entrate la scala è nulla: niente barre */}
-              {data && totals.income > 0 && (
+              {loaded && totals.income > 0 && (
               <>
               {/* Entrate: il 100% delle barre. Stile dei titoli dei bucket, non un titolo grande */}
               <p className="flex flex-wrap justify-between gap-x-4">
@@ -163,7 +165,7 @@ export default function MonthScreen({ month, onMonthChange, tab, onTabChange, on
 
               <section className="flex flex-col gap-2">
                 <h2 className="text-xl font-bold">Movimenti</h2>
-                {data && txs.length === 0 ? (
+                {loaded && txs.length === 0 ? (
                   <p className="text-text-secondary">Nessun movimento in questo mese.</p>
                 ) : (
                   // Raggruppati per giorno: il mese è già nel titolo, la data si scrive una volta per giorno
