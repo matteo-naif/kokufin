@@ -36,7 +36,7 @@ Il codice è organizzato per feature. Ogni feature ha una cartella in `src/featu
 
 Il codice usato da più feature resta fuori da `features/`:
 
-- `src/components/`: componenti di interfaccia condivisi.
+- `src/components/`: componenti di interfaccia generici, anche se oggi li usa una sola feature.
 - `src/data/`: database (`db.ts`): modelli, tabelle e query.
 - `src/lib/`: funzioni pure senza accesso ai dati: importi (`money.ts`), date e mesi (`dates.ts`).
 - `src/config/`: categorie e bucket.

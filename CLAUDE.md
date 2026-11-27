@@ -10,7 +10,7 @@ Prima di scrivere codice leggi `openspec/changes/mvp/design.md` e segui le regol
 La struttura è descritta in `design.md`, sezione "Struttura del codice".
 
 - Una feature non importa mai da un'altra feature. Se un modulo serve a più feature, va in `src/components/`, `src/data/`, `src/lib/` o `src/config/`.
-- Un modulo usato da una sola feature sta nella cartella di quella feature.
+- Un modulo usato da una sola feature sta nella cartella di quella feature. Fanno eccezione i componenti di interfaccia generici, che non conoscono il dominio (es. `Tabs`): stanno in `src/components/` anche se oggi li usa una sola feature.
 - Le cartelle delle feature sono piatte: niente sottocartelle e niente file `index.ts` che riesportano.
 
 ## Import
