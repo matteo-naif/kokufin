@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kokufin</string>
+    <string name="title_activity_main">Kokufin</string>
+    <string name="package_name">it.matteonaif.kokufin</string>
+    <string name="custom_url_scheme">it.matteonaif.kokufin</string>
+</resources>

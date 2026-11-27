@@ -25,6 +25,26 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.
 - Icone dal pacchetto `@phosphor-icons/react`: nel bundle entrano solo le icone importate, quindi funzionano offline.
 
+## Generazione dell'APK
+
+`npm run apk` esegue la build web, sincronizza il progetto Android (`cap sync android`), compila l'APK di debug con Gradle e lo copia in `apk/kokufin-<versione>-debug.apk` (per esempio `apk/kokufin-0.1.0-debug.apk`), nella root del progetto. La cartella `apk/` è esclusa da git.
+
+La versione ha una sola fonte, `version` in `package.json`. `android/app/build.gradle` la legge da lì: `versionName` è la versione stessa, `versionCode` è major×10000 + minor×100 + patch (0.1.0 diventa 100). Android rifiuta di installare un APK con `versionCode` più basso di quello installato: così cresce da solo a ogni release, senza toccare Gradle. Tra una release e l'altra gli APK hanno la stessa versione e si sovrascrivono.
+
+Requisiti, installati con Homebrew su macOS:
+
+- JDK 21: `brew install openjdk@21`. Capacitor 8 richiede Java 21.
+- Android SDK: `brew install --cask android-commandlinetools`, poi `sdkmanager --licenses` e `sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"`. La versione della piattaforma è il `compileSdkVersion` di `android/variables.gradle`: se cambia, va installata quella nuova.
+- Variabili d'ambiente, per esempio in `~/.zshrc`:
+
+  ```sh
+  export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
+  export PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH
+  export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
+  ```
+
+In alternativa basta Android Studio, che include JDK e SDK: in quel caso `JAVA_HOME` è `/Applications/Android Studio.app/Contents/jbr/Contents/Home` e `ANDROID_HOME` è `~/Library/Android/sdk`.
+
 ## Struttura del codice
 
 Il codice è organizzato per feature. Ogni feature ha una cartella in `src/features/` con le sue schermate, la logica che usa solo lei e i test accanto ai file:

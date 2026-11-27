@@ -27,9 +27,9 @@ Ogni compito segue le regole di sviluppo di `design.md`: prima si scrive come ve
 
 ## 4. Android
 
-- [ ] 4.1 Aggiungere Capacitor Android con `appName` "Kokufin" e `appId` `it.matteonaif.kokufin`
+- [x] 4.1 Aggiungere Capacitor Android con `appName` "Kokufin" e `appId` `it.matteonaif.kokufin`
 - [ ] 4.2 Backup nell'APK (`specs/backup`): la WebView non supporta `navigator.share` con file né `<a download>`, quindi nell'app nativa (`Capacitor.isNativePlatform()`) "Esporta" scrive il JSON nella cache con `@capacitor/filesystem` e lo passa al foglio di condivisione con `@capacitor/share`. Nel browser resta il comportamento attuale. Verificare sul telefono che "Esporta" proponga di salvare o condividere il file e che "Importa" apra il selettore di file
-- [ ] 4.3 Generare l'APK di debug
+- [x] 4.3 Generare l'APK di debug
 
 ## 5. Verifica
 
