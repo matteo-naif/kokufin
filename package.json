@@ -11,6 +11,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.3",
+    "@capacitor/core": "^8.6.3",
     "@fontsource/space-mono": "^5.3.0",
     "@fontsource/work-sans": "^5.3.0",
     "@phosphor-icons/react": "^2.1.10",
@@ -22,6 +24,7 @@
     "wouter": "^3.13.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.3",
     "@tailwindcss/vite": "^4.3.5",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
