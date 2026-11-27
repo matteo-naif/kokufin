@@ -5,7 +5,12 @@ Il sistema SHALL esportare tutti i dati in un file JSON e ripristinarli da un fi
 
 #### Scenario: Esportazione
 - **WHEN** l'utente tocca "Esporta"
-- **THEN** il telefono propone di salvare o condividere il file con transazioni e impostazioni
+- **THEN** il telefono propone di salvare il file con transazioni e impostazioni in una cartella a scelta, con il nome `kokufin-backup-<data>.json` già compilato
+
+#### Scenario: Esportazione nell'app Android
+- **WHEN** nell'app Android l'utente sceglie la cartella e conferma
+- **THEN** il file è salvato nella cartella scelta e compare il toast "Backup salvato"
+- **AND** se l'utente chiude la finestra senza salvare, non compare nessun messaggio
 
 #### Scenario: Ripristino
 - **WHEN** l'utente sceglie un file di backup valido e conferma
