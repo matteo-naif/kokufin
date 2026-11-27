@@ -27,7 +27,9 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 
 ## Generazione dell'APK
 
-`npm run apk` esegue la build web, sincronizza il progetto Android (`cap sync android`), compila l'APK di debug con Gradle e lo copia in `apk/kokufin-debug.apk`, nella root del progetto. La cartella `apk/` è esclusa da git.
+`npm run apk` esegue la build web, sincronizza il progetto Android (`cap sync android`), compila l'APK di debug con Gradle e lo copia in `apk/kokufin-<versione>-debug.apk` (per esempio `apk/kokufin-0.1.0-debug.apk`), nella root del progetto. La cartella `apk/` è esclusa da git.
+
+La versione ha una sola fonte, `version` in `package.json`. `android/app/build.gradle` la legge da lì: `versionName` è la versione stessa, `versionCode` è major×10000 + minor×100 + patch (0.1.0 diventa 100). Android rifiuta di installare un APK con `versionCode` più basso di quello installato: così cresce da solo a ogni release, senza toccare Gradle. Tra una release e l'altra gli APK hanno la stessa versione e si sovrascrivono.
 
 Requisiti, installati con Homebrew su macOS:
 

@@ -9,7 +9,7 @@
     "lint": "oxlint --deny-warnings",
     "preview": "vite preview",
     "test": "vitest run",
-    "apk": "npm run build && cap sync android && cd android && ./gradlew assembleDebug && mkdir -p ../apk && cp app/build/outputs/apk/debug/app-debug.apk ../apk/kokufin-debug.apk"
+    "apk": "npm run build && cap sync android && cd android && ./gradlew assembleDebug && mkdir -p ../apk && cp app/build/outputs/apk/debug/app-debug.apk ../apk/kokufin-$npm_package_version-debug.apk"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.3",
