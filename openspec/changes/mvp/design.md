@@ -29,7 +29,7 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 
 Il codice è organizzato per feature. Ogni feature ha una cartella in `src/features/` con le sue schermate, la logica che usa solo lei e i test accanto ai file:
 
-- `month/`: vista del mese (`MonthScreen`), ripartizione per categoria (`CategoryBreakdown`) e calcoli del mese (`monthTotals.ts`).
+- `month/`: vista del mese (`MonthScreen`), ripartizione per categoria (`CategoryBreakdown`) e calcoli del mese (`summary.ts`).
 - `transactions/`: form di inserimento e modifica (`TransactionForm`).
 - `backup/`: esportazione e ripristino (`BackupScreen`, `backup.ts`).
 - `settings/`: indice delle impostazioni (`SettingsScreen`) e preferenze (`PreferencesScreen`).
@@ -37,7 +37,8 @@ Il codice è organizzato per feature. Ogni feature ha una cartella in `src/featu
 Il codice usato da più feature resta fuori da `features/`:
 
 - `src/components/`: componenti di interfaccia condivisi.
-- `src/data/`: database (`db.ts`), importi (`money.ts`), date e mesi (`dates.ts`).
+- `src/data/`: database (`db.ts`): modelli, tabelle e query.
+- `src/lib/`: funzioni pure senza accesso ai dati: importi (`money.ts`), date e mesi (`dates.ts`).
 - `src/config/`: categorie e bucket.
 
 `App.tsx` collega le feature alle rotte.

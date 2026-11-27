@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { monthLabel, monthOf, shiftMonth, today } from '@/data/dates'
+import { monthLabel, monthOf, shiftMonth, today } from '@/lib/dates'
 
 describe('today', () => {
   it('usa la data locale, non UTC', () => {

@@ -3,13 +3,13 @@ import { Redirect, Route, Router, Switch, useLocation, useParams } from 'wouter'
 import { useHashLocation } from 'wouter/use-hash-location'
 import IconProvider from '@/components/IconProvider'
 import Toaster from '@/components/Toaster'
-import { monthOf, today } from '@/data/dates'
 import { db, type Transaction } from '@/data/db'
 import BackupScreen from '@/features/backup/BackupScreen'
 import MonthScreen, { type MonthTab } from '@/features/month/MonthScreen'
 import PreferencesScreen from '@/features/settings/PreferencesScreen'
 import SettingsScreen from '@/features/settings/SettingsScreen'
 import TransactionForm from '@/features/transactions/TransactionForm'
+import { monthOf, today } from '@/lib/dates'
 
 // Indirizzi con # (useHashLocation): l'APK carica l'app da file locali, senza server
 function App() {

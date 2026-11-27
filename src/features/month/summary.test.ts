@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
-import { categoryTotals, idealCents, inMonth, monthTotals, newestFirst } from '@/features/month/monthTotals'
+import { categoryTotals, idealCents, inMonth, monthTotals, newestFirst } from '@/features/month/summary'
 
 let nextId = 1
 function tx(date: string, amountCents: number, categoryId: string, kind: Transaction['kind'] = 'expense'): Transaction {

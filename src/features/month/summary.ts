@@ -1,6 +1,6 @@
 import { type Bucket, EXPENSE_CATEGORIES, type SpendingBucket } from '@/config/categories'
-import { monthOf } from '@/data/dates'
 import type { Transaction } from '@/data/db'
+import { monthOf } from '@/lib/dates'
 
 const BUCKET_OF = new Map(EXPENSE_CATEGORIES.map((c) => [c.id, c.bucket]))
 

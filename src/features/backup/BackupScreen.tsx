@@ -3,8 +3,8 @@ import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ScreenHeader from '@/components/ScreenHeader'
 import { secondaryButtonClass } from '@/components/styles'
-import { today } from '@/data/dates'
 import { type Backup, createBackup, parseBackup, restoreBackup } from '@/features/backup/backup'
+import { today } from '@/lib/dates'
 
 interface Props {
   onRestored: () => void
