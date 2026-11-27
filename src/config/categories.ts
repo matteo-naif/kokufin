@@ -21,7 +21,7 @@ export interface Category {
   name: string
 }
 
-export interface ExpenseCategory extends Category {
+interface ExpenseCategory extends Category {
   bucket: SpendingBucket
 }
 

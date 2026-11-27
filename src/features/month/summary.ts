@@ -1,6 +1,5 @@
 import { type Bucket, EXPENSE_CATEGORIES, type SpendingBucket } from '@/config/categories'
 import type { Transaction } from '@/data/db'
-import { monthOf } from '@/lib/dates'
 
 const BUCKET_OF = new Map(EXPENSE_CATEGORIES.map((c) => [c.id, c.bucket]))
 
@@ -14,11 +13,7 @@ export function idealCents(pct: number, incomeCents: number): number {
   return Math.round((pct * incomeCents) / 100)
 }
 
-export function inMonth(txs: Transaction[], month: string): Transaction[] {
-  return txs.filter((t) => monthOf(t.date) === month)
-}
-
-export interface MonthTotals {
+interface MonthTotals {
   income: number
   /** Essenziali e Piacere: speso. Risparmi: entrate − speso, può essere negativo. */
   buckets: Record<Bucket, number>
@@ -35,7 +30,7 @@ export function monthTotals(txs: Transaction[]): MonthTotals {
   return { income, buckets: { ...spent, savings: income - spent.essentials - spent.pleasure } }
 }
 
-export interface CategoryTotal {
+interface CategoryTotal {
   categoryId: string
   cents: number
 }

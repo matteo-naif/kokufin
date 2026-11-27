@@ -1,21 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
-import { categoryTotals, idealCents, inMonth, monthTotals, newestFirst } from '@/features/month/summary'
+import { categoryTotals, idealCents, monthTotals, newestFirst } from '@/features/month/summary'
 
 let nextId = 1
 function tx(date: string, amountCents: number, categoryId: string, kind: Transaction['kind'] = 'expense'): Transaction {
   return { id: nextId++, date, amountCents, kind, categoryId }
 }
-
-describe('inMonth', () => {
-  it('filtra le transazioni del mese', () => {
-    const a = tx('2026-11-01', 100, 'groceries')
-    const b = tx('2026-11-30', 100, 'groceries')
-    const c = tx('2026-10-31', 100, 'groceries')
-    const d = tx('2026-12-01', 100, 'groceries')
-    expect(inMonth([a, b, c, d], '2026-11')).toEqual([a, b])
-  })
-})
 
 describe('newestFirst', () => {
   it('ordina dalla più recente, a parità di data per inserimento', () => {
