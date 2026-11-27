@@ -8,6 +8,20 @@ import Toaster from '@/components/Toaster'
 import { db, DEFAULT_SETTINGS, getSettings, type Transaction } from '@/data/db'
 import BackupScreen from '@/features/backup/BackupScreen'
 
+// Plugin di Capacitor simulati: di default l'app gira nel browser
+const native = vi.hoisted(() => ({
+  isNativePlatform: vi.fn(() => false),
+  writeFile: vi.fn(),
+  share: vi.fn(),
+}))
+vi.mock('@capacitor/core', () => ({ Capacitor: { isNativePlatform: native.isNativePlatform } }))
+vi.mock('@capacitor/filesystem', () => ({
+  Filesystem: { writeFile: native.writeFile },
+  Directory: { Cache: 'CACHE' },
+  Encoding: { UTF8: 'utf8' },
+}))
+vi.mock('@capacitor/share', () => ({ Share: { share: native.share } }))
+
 // jsdom non implementa <dialog>: stub minimo
 beforeAll(() => {
   HTMLDialogElement.prototype.showModal = function () {
@@ -29,6 +43,9 @@ afterEach(() => {
   toast.dismiss()
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
+  native.isNativePlatform.mockReset().mockReturnValue(false)
+  native.writeFile.mockReset()
+  native.share.mockReset()
 })
 
 async function setup() {
@@ -136,6 +153,50 @@ describe('BackupScreen', () => {
 
     await vi.waitFor(() => expect(share).toHaveBeenCalled())
     expect(click).not.toHaveBeenCalled()
+  })
+
+  // Spec backup, scenario "Esportazione" nell'APK: la WebView non ha navigator.share con file né <a download>
+  it('nell\'app Android Esporta scrive il file nella cache e lo passa al foglio di condivisione', async () => {
+    await db.transactions.add(TX)
+    native.isNativePlatform.mockReturnValue(true)
+    native.writeFile.mockResolvedValue({ uri: 'file:///cache/backup.json' })
+    native.share.mockResolvedValue({ activityType: '' })
+    const webShare = vi.fn()
+    vi.stubGlobal('navigator', { ...navigator, canShare: () => true, share: webShare })
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    await vi.waitFor(() => expect(native.share).toHaveBeenCalledWith({ files: ['file:///cache/backup.json'] }))
+    const { path, data, directory, encoding } = native.writeFile.mock.calls[0][0]
+    expect(path).toMatch(/^kokufin-backup-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(directory).toBe('CACHE')
+    expect(encoding).toBe('utf8')
+    expect(JSON.parse(data).transactions).toEqual([TX])
+    expect(webShare).not.toHaveBeenCalled()
+    expect(click).not.toHaveBeenCalled()
+  })
+
+  it('nell\'app Android chiudere il foglio di condivisione non mostra errori', async () => {
+    native.isNativePlatform.mockReturnValue(true)
+    native.writeFile.mockResolvedValue({ uri: 'file:///cache/backup.json' })
+    native.share.mockRejectedValue(new Error('Share canceled'))
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    await vi.waitFor(() => expect(native.share).toHaveBeenCalled())
+    await new Promise((r) => setTimeout(r, 50))
+    expect(screen.queryByText('Esportazione non riuscita. Riprova.')).toBeNull()
+  })
+
+  it('nell\'app Android se il file non si scrive mostra un errore', async () => {
+    native.isNativePlatform.mockReturnValue(true)
+    native.writeFile.mockRejectedValue(new Error('Disk full'))
+    const { user } = await setup()
+    await user.click(screen.getByRole('button', { name: 'Esporta' }))
+
+    expect(await screen.findByText('Esportazione non riuscita. Riprova.')).toBeTruthy()
+    expect(native.share).not.toHaveBeenCalled()
   })
 
   // Spec backup, scenario "Ripristino"

@@ -1,3 +1,6 @@
+import { Capacitor } from '@capacitor/core'
+import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
+import { Share } from '@capacitor/share'
 import { type ChangeEvent, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -27,7 +30,25 @@ export default function BackupScreen({ onRestored, onBack }: Props) {
       toast.error('Esportazione non riuscita. Riprova.')
       return
     }
-    const file = new File([text], `kokufin-backup-${today()}.json`, { type: 'application/json' })
+    const name = `kokufin-backup-${today()}.json`
+    // Nell'APK la WebView non supporta navigator.share con file né <a download>:
+    // il file si scrive nella cache dell'app e si passa al foglio di condivisione di Android
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const { uri } = await Filesystem.writeFile({
+          path: name,
+          data: text,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8,
+        })
+        await Share.share({ files: [uri] })
+      } catch (e) {
+        // "Share canceled": foglio di condivisione chiuso dall'utente
+        if ((e as Error).message !== 'Share canceled') toast.error('Esportazione non riuscita. Riprova.')
+      }
+      return
+    }
+    const file = new File([text], name, { type: 'application/json' })
     // Sul telefono il foglio di condivisione permette di salvare il file o di inviarlo
     if (navigator.canShare?.({ files: [file] })) {
       try {
