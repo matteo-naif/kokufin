@@ -3,7 +3,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import IconProvider from '@/components/IconProvider'
-import SettingsScreen from '@/screens/SettingsScreen'
+import SettingsScreen from '@/features/settings/SettingsScreen'
 
 afterEach(cleanup)
 

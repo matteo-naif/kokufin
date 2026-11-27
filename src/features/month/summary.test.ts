@@ -1,53 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
-import {
-  categoryTotals,
-  idealCents,
-  inMonth,
-  monthLabel,
-  monthOf,
-  monthTotals,
-  newestFirst,
-  shiftMonth,
-  today,
-} from '@/data/summary'
+import { categoryTotals, idealCents, inMonth, monthTotals, newestFirst } from '@/features/month/summary'
 
 let nextId = 1
 function tx(date: string, amountCents: number, categoryId: string, kind: Transaction['kind'] = 'expense'): Transaction {
   return { id: nextId++, date, amountCents, kind, categoryId }
 }
 
-describe('today', () => {
-  it('usa la data locale, non UTC', () => {
-    expect(today(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05')
-  })
-})
-
-describe('mese', () => {
-  it('si ricava dalla data', () => {
-    expect(monthOf('2026-11-25')).toBe('2026-11')
-  })
-
-  it('si sposta avanti e indietro, anche tra anni e senza limiti sul passato', () => {
-    expect(shiftMonth('2026-11', 1)).toBe('2026-12')
-    expect(shiftMonth('2026-12', 1)).toBe('2027-01')
-    expect(shiftMonth('2026-01', -1)).toBe('2025-12')
-    expect(shiftMonth('2026-11', -240)).toBe('2006-11')
-  })
-
+describe('inMonth', () => {
   it('filtra le transazioni del mese', () => {
     const a = tx('2026-11-01', 100, 'groceries')
     const b = tx('2026-11-30', 100, 'groceries')
     const c = tx('2026-10-31', 100, 'groceries')
     const d = tx('2026-12-01', 100, 'groceries')
     expect(inMonth([a, b, c, d], '2026-11')).toEqual([a, b])
-  })
-})
-
-describe('monthLabel', () => {
-  it('mostra mese e anno in italiano con l\'iniziale maiuscola', () => {
-    expect(monthLabel('2026-11')).toBe('Novembre 2026')
-    expect(monthLabel('2027-01')).toBe('Gennaio 2027')
   })
 })
 

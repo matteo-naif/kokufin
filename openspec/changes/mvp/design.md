@@ -25,6 +25,24 @@ Queste regole derivano dalla skill `andrej-karpathy-skills` (https://github.com/
 - Font inclusi nell'app con `@fontsource/space-mono` e `@fontsource/work-sans`, così funzionano offline.
 - Icone dal pacchetto `@phosphor-icons/react`: nel bundle entrano solo le icone importate, quindi funzionano offline.
 
+## Struttura del codice
+
+Il codice è organizzato per feature. Ogni feature ha una cartella in `src/features/` con le sue schermate, la logica che usa solo lei e i test accanto ai file:
+
+- `month/`: vista del mese (`MonthScreen`), ripartizione per categoria (`CategoryBreakdown`) e calcoli del mese (`summary.ts`).
+- `transactions/`: form di inserimento e modifica (`TransactionForm`).
+- `backup/`: esportazione e ripristino (`BackupScreen`, `backup.ts`).
+- `settings/`: indice delle impostazioni (`SettingsScreen`) e preferenze (`PreferencesScreen`).
+
+Il codice usato da più feature resta fuori da `features/`:
+
+- `src/components/`: componenti di interfaccia generici, anche se oggi li usa una sola feature.
+- `src/data/`: database (`db.ts`): modelli, tabelle e query.
+- `src/lib/`: funzioni pure senza accesso ai dati: importi (`money.ts`), date e mesi (`dates.ts`).
+- `src/config/`: categorie e bucket.
+
+`App.tsx` collega le feature alle rotte.
+
 ## Modello dati
 
 - `Transaction`: `id`, `date` (ISO `YYYY-MM-DD`), `amountCents` (intero, sempre positivo), `kind` (`income` | `expense`), `categoryId`, `note?`.

@@ -5,6 +5,14 @@ Prima di scrivere codice leggi `openspec/changes/mvp/design.md` e segui le regol
 - Tutti gli identificatori del codice sono in inglese: nomi di tipi, campi e chiavi dei modelli, valori delle union, `id` di categorie e bucket, nomi di tabelle e funzioni. Nessun modello mescola chiavi italiane e inglesi.
 - In italiano restano solo i testi mostrati all'utente (per esempio i `name` delle categorie e le etichette dell'interfaccia) , i commenti nel codice, le descrizioni dei test e la documentazione.
 
+## Struttura
+
+La struttura è descritta in `design.md`, sezione "Struttura del codice".
+
+- Una feature non importa mai da un'altra feature. Se un modulo serve a più feature, va in `src/components/`, `src/data/`, `src/lib/` o `src/config/`.
+- Un modulo usato da una sola feature sta nella cartella di quella feature. Fanno eccezione i componenti di interfaccia generici, che non conoscono il dominio (es. `Tabs`): stanno in `src/components/` anche se oggi li usa una sola feature.
+- Le cartelle delle feature sono piatte: niente sottocartelle e niente file `index.ts` che riesportano.
+
 ## Import
 
 - Gli import dei moduli del progetto usano sempre l'alias `@/`, che corrisponde a `src/` (es. `import { db } from '@/data/db'`). Niente percorsi relativi (`./`, `../`), nemmeno per i file nella stessa cartella.

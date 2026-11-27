@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import IconProvider from '@/components/IconProvider'
 import { db, type Transaction } from '@/data/db'
-import MonthScreen, { type MonthTab } from '@/screens/MonthScreen'
+import MonthScreen, { type MonthTab } from '@/features/month/MonthScreen'
 
 beforeAll(() => {
   // Solo Date: timer veri per Dexie e user-event

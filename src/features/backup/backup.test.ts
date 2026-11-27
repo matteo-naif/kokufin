@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createBackup, parseBackup, restoreBackup } from '@/data/backup'
 import { db, DEFAULT_SETTINGS, getSettings, type Transaction } from '@/data/db'
+import { createBackup, parseBackup, restoreBackup } from '@/features/backup/backup'
 
 const TX: Transaction[] = [
   { id: 1, date: '2026-11-01', amountCents: 250000, kind: 'income', categoryId: 'salary' },

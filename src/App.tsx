@@ -4,12 +4,12 @@ import { useHashLocation } from 'wouter/use-hash-location'
 import IconProvider from '@/components/IconProvider'
 import Toaster from '@/components/Toaster'
 import { db, type Transaction } from '@/data/db'
-import { monthOf, today } from '@/data/summary'
-import BackupScreen from '@/screens/BackupScreen'
-import MonthScreen, { type MonthTab } from '@/screens/MonthScreen'
-import PreferencesScreen from '@/screens/PreferencesScreen'
-import SettingsScreen from '@/screens/SettingsScreen'
-import TransactionForm from '@/screens/TransactionForm'
+import BackupScreen from '@/features/backup/BackupScreen'
+import MonthScreen, { type MonthTab } from '@/features/month/MonthScreen'
+import PreferencesScreen from '@/features/settings/PreferencesScreen'
+import SettingsScreen from '@/features/settings/SettingsScreen'
+import TransactionForm from '@/features/transactions/TransactionForm'
+import { monthOf, today } from '@/lib/dates'
 
 // Indirizzi con # (useHashLocation): l'APK carica l'app da file locali, senza server
 function App() {

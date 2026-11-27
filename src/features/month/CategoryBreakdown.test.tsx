@@ -2,7 +2,7 @@
 import { cleanup, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { Transaction } from '@/data/db'
-import CategoryBreakdown from '@/screens/CategoryBreakdown'
+import CategoryBreakdown from '@/features/month/CategoryBreakdown'
 
 afterEach(cleanup)
 

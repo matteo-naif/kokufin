@@ -8,8 +8,8 @@ import IconProvider from '@/components/IconProvider'
 import Toaster from '@/components/Toaster'
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
-import { today } from '@/data/summary'
-import TransactionForm from '@/screens/TransactionForm'
+import TransactionForm from '@/features/transactions/TransactionForm'
+import { today } from '@/lib/dates'
 
 // jsdom non implementa <dialog>: stub minimo
 beforeAll(() => {

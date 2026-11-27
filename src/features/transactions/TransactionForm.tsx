@@ -8,8 +8,8 @@ import ScreenHeader from '@/components/ScreenHeader'
 import { inputClass, primaryButtonClass, secondaryButtonClass } from '@/components/styles'
 import { type Category, EXPENSE_CATEGORIES, INCOME_CATEGORIES, SPENDING_BUCKETS } from '@/config/categories'
 import { db, type Transaction } from '@/data/db'
-import { centsToInput, parseAmount } from '@/data/money'
-import { today } from '@/data/summary'
+import { today } from '@/lib/dates'
+import { centsToInput, parseAmount } from '@/lib/money'
 
 interface Props {
   transaction?: Transaction // assente = nuova transazione

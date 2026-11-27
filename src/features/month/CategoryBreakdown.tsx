@@ -1,7 +1,8 @@
 import { CATEGORY_NAME, SPENDING_BUCKETS } from '@/config/categories'
 import type { Transaction } from '@/data/db'
-import { formatCents } from '@/data/money'
-import { categoryTotals, monthLabel, monthTotals } from '@/data/summary'
+import { categoryTotals, monthTotals } from '@/features/month/summary'
+import { monthLabel } from '@/lib/dates'
+import { formatCents } from '@/lib/money'
 
 interface Props {
   txs: Transaction[] // transazioni del mese
